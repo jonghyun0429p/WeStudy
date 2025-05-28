@@ -1,37 +1,63 @@
-HELP.md
-.gradle
+# Spring Boot 설정 파일 (민감 정보 포함)
+application.yml
+application-*.yml
+.env
+
+# 로그 및 민감 정보
+*.log
+*.key
+*.pem
+*.crt
+*.jks
+firebase-config.json
+secret.*
+
+# 빌드 결과
+.gradle/
 build/
 !gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### STS ###
+# (예외적으로 src 내부 build 폴더는 추적 X로 변경)
+# → 실제 불필요하며 위험할 수 있음
+# 제거:
+# !**/src/main/**/build/
+# !**/src/test/**/build/
+
+# IDE 설정 (STS, IntelliJ, NetBeans, VSCode 등)
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
 .sts4-cache
 bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
-
-### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
 out/
-!**/src/main/**/out/
-!**/src/test/**/out/
+.vscode/
 
-### NetBeans ###
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
-.vscode/
+# Test 결과
+test-output/
+
+# 바이너리 파일
+*.jar
+*.war
+*.class
+
+# OS별 파일
+.DS_Store
+Thumbs.db
+
+# 기타 임시 파일
+*.swp
+*~
