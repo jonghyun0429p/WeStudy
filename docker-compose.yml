@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: westudy-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mariadb
+      - redis
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: westudy
+      DB_NAME: westudy
+      DB_PASS: study1234
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+  mariadb:
+    image: mariadb:11
+    container_name: westudy-mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: rootpass
+      MARIADB_DATABASE: westudy
+      MARIADB_USER: westudy
+      MARIADB_PASSWORD: study1234
+
+  redis:
+    image: redis
+    container_name: westudy
+    ports:
+      - "6379:6379"

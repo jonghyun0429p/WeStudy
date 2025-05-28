@@ -1,13 +1,13 @@
-package jong.WeStudy;
+package com.westudy.Westudy;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class WeStudyApplication {
+public class WestudyApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(WeStudyApplication.class, args);
+		SpringApplication.run(WestudyApplication.class, args);
 	}
 
 }

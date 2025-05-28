@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:westudy}?serverTimezone=Asia/Seoul
+    username: ${DB_USER:westudy}
+    password: ${DB_PASS:study1234}
+  thymeleaf:
+    cache: false
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.westudy.*.entity
