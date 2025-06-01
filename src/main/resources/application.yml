@@ -12,3 +12,6 @@ spring:
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml
   type-aliases-package: com.westudy.*.entity
+
+jwt:
+  secret: i4IDmbcAFVdGsUU2aaTn8DLIBezGjWVm
