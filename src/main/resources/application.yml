@@ -14,4 +14,4 @@ mybatis:
   type-aliases-package: com.westudy.*.entity
 
 jwt:
-  secret: i4IDmbcAFVdGsUU2aaTn8DLIBezGjWVm
+  secret: "WcQ3A6dqHAvYcZYGUrGf+uupYCjTJoAab2FyMsdIEgE="
