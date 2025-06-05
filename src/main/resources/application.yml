@@ -12,6 +12,13 @@ spring:
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml
   type-aliases-package: com.westudy.*.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    com.westudy.user.mapper: DEBUG
+    org.mybatis: DEBUG
 
 jwt:
   secret: "WcQ3A6dqHAvYcZYGUrGf+uupYCjTJoAab2FyMsdIEgE="
