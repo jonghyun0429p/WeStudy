@@ -8,6 +8,7 @@ import com.westudy.user.exception.UserException;
 import com.westudy.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,10 +17,14 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserMapper userMapper;
     private final UserConverter userConverter;
+    private final PasswordEncoder passwordEncoder;
 
     public void register(UserDTO userDto) {
-        log.info("register user: {}", userDto.getUserName());
+        log.info("register user: {}", userDto.getUsername());
         checkDuplicateEmail(userDto.getEmail());
+
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+
         User user = userConverter.toEntity(userDto);
         userMapper.insertUser(user);
         log.info("로그인 처리 완료");

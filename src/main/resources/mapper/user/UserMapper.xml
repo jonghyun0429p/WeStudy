@@ -12,8 +12,8 @@
     </select>
 
     <insert id="insertUser" parameterType="com.westudy.user.entity.User" useGeneratedKeys="true" keyProperty="userId">
-        INSERT INTO user (username, password, email, nickname, phone_number, created_at)
-        VALUES (#{userName}, #{password}, #{email}, #{nickname}, #{phoneNumber}, NOW())
+        INSERT INTO user (username, password, email, nickname, phone_number, created_at, role)
+        VALUES (#{username}, #{password}, #{email}, #{nickname}, #{phoneNumber}, NOW(), #{role})
     </insert>
 
     <delete id="deleteByUserName" parameterType="string">
