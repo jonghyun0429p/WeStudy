@@ -25,6 +25,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        //URI 추출
+        String requestURI = request.getRequestURI();
+
+        logger.info(requestURI+"URI확인");
+
+        if (requestURI.equals("/users/login")
+                || requestURI.equals("/users/signup")
+                || requestURI.startsWith("/swagger-ui")
+                || requestURI.startsWith("/v3/api-docs")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // 토큰 추출
         String token = tokenProvider.resolveToken(request);
 

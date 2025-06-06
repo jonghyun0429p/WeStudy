@@ -2,6 +2,7 @@ package com.westudy.security.config;
 
 import com.westudy.security.filter.CustomUsernamePasswordFilter;
 import com.westudy.security.filter.JwtAuthenticationFilter;
+import com.westudy.security.handler.CustomAuthenticationSuccessHandler;
 import com.westudy.security.provider.JwtTokenProvider;
 import com.westudy.security.service.CustomUserDetailService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,6 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
@@ -28,14 +31,25 @@ public class SecurityConfig {
 
     private final CustomUserDetailService customUserDetailService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
-        AuthenticationManager authenticationManager = authenticationManager(http, passwordEncoder());
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+
+//        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+//        authenticationManagerBuilder.userDetailsService(customUserDetailService)
+//                .passwordEncoder(passwordEncoder());
+//
+//        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
         CustomUsernamePasswordFilter customUsernamePasswordFilter =
-                new CustomUsernamePasswordFilter(authenticationManager, jwtTokenProvider);
+                new CustomUsernamePasswordFilter(authenticationManager);
+        customUsernamePasswordFilter.setAuthenticationSuccessHandler(customAuthenticationSuccessHandler);
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtTokenProvider);
 
         return http.csrf(csrf -> csrf.disable())
@@ -56,14 +70,6 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/"))
                 .addFilterBefore(customUsernamePasswordFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(jwtAuthenticationFilter, LogoutFilter.class)
-                .build();
-    }
-
-    public AuthenticationManager authenticationManager(HttpSecurity httpSecurity, PasswordEncoder passwordEncoder) throws Exception {
-        return httpSecurity.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(customUserDetailService)
-                .passwordEncoder(passwordEncoder)
-                .and()
                 .build();
     }
 

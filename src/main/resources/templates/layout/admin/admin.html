@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Page</title>
+</head>
+<body>
+<h1>Admin Page</h1>
+
+<p>Welcome, <span th:text="${email}">[email]</span>!</p>
+
+<p>Your roles:</p>
+<ul>
+    <li th:each="role : ${roles}" th:text="${role.authority}"></li>
+</ul>
+
+<a href="/">Go to Home</a>
+</body>
+</html>
