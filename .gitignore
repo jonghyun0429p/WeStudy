@@ -9,6 +9,7 @@ application-*.yml
 *.pem
 *.crt
 *.jks
+*.sql
 firebase-config.json
 secret.*
 

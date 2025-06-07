@@ -5,15 +5,6 @@
     <title>Admin Page</title>
 </head>
 <body>
-<h1>Admin Page</h1>
-
-<p>Welcome, <span th:text="${email}">[email]</span>!</p>
-
-<p>Your roles:</p>
-<ul>
-    <li th:each="role : ${roles}" th:text="${role.authority}"></li>
-</ul>
-
-<a href="/">Go to Home</a>
+<h1 th:text="${nickname} + ' 관리자님, 환영합니다!'">관리자님, 환영합니다!</h1>
 </body>
 </html>
