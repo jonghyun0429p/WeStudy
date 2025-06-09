@@ -1,0 +1,48 @@
+<div class="login-container">
+  <h2>WeStudy 로그인</h2>
+
+  <!-- form 태그 X → div 로 감싸고 → JS 로 처리 -->
+  <div id="login-form">
+    <input type="text" id="email" placeholder="이메일" required>
+    <input type="password" id="password" placeholder="비밀번호" required>
+    <button type="button" id="login-button">로그인</button>
+  </div>
+
+  <div class="footer">WeStudy © 2025</div>
+</div>
+
+<script>
+  document.getElementById('login-button').addEventListener('click', function () {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    const jsonData = {
+      email: email,
+      password: password
+    };
+
+    fetch('/users/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(jsonData),
+      credentials: 'include'
+    })
+            .then(response => {
+              if (response.ok) {
+                return response.json();
+              } else {
+                throw new Error('로그인 실패');
+              }
+            })
+            .then(data => {
+              console.log('로그인 성공', data);
+              window.location.assign(data.redirect_url);
+            })
+            .catch(error => {
+              console.error('로그인 에러:', error);
+              alert('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
+            });
+  });
+</script>
