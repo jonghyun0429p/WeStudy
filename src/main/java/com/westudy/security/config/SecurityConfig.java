@@ -55,10 +55,13 @@ public class SecurityConfig {
         return http.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable()) // 일단 테스트과정에서는 사용 X
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))//JWT사용하니까 세션 사용 안함
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //JWT사용하니까 세션 사용 안함
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/api/auth/**", "/", "/users/signup", "/users/login").permitAll()//사용자 로그인도 여기에 집어 넣을 예정.
+                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // 페이지 기본 구성
+                        .requestMatchers("/login").permitAll()//페이지 로딩용
+                        .requestMatchers("/api/auth/**", "/", "/users/signup", "/users/login").permitAll()// api 서버 관리용
+                        .requestMatchers("/admin","/admin/**").hasRole("ADMIN")//관리자는 관리자만 페이지 이동 가능.
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
@@ -68,8 +71,10 @@ public class SecurityConfig {
                 )
                 .logout(logout-> logout.logoutUrl("/users/logout")
                         .logoutSuccessUrl("/"))
+                // ✅ JWTAuthenticationFilter 는 가장 먼저 실행
+                .addFilterBefore(jwtAuthenticationFilter, LogoutFilter.class)
+                // ✅ CustomUsernamePasswordFilter 는 UsernamePasswordAuthenticationFilter 앞에 (로그인 전용)
                 .addFilterBefore(customUsernamePasswordFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(jwtAuthenticationFilter, LogoutFilter.class)
                 .build();
     }
 

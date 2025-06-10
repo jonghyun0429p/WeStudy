@@ -42,4 +42,12 @@ public class UserService {
         }
         log.info("중복 체크 완료.");
     }
+
+    public String getUserNickname(String userEmail){
+        User user = userMapper.findByEmail(userEmail);
+        if(user == null){
+            throw new UserException(UserErrorCode.USER_USERNAME_UNEXITED);
+        }
+        return user.getNickname();
+    }
 }
