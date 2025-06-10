@@ -1,14 +1,15 @@
 spring:
-  datasource:
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:westudy}?serverTimezone=Asia/Seoul
-    username: ${DB_USER:westudy}
-    password: ${DB_PASS:study1234}
+  profiles:
+    active: local   # 기본 profile 은 local (도커 실행시 docker 로 override 됨)
+
   thymeleaf:
     cache: false
-  data:
-    redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
+
+  sql:
+    init:
+      mode: always
+      encoding: utf-8
+
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml
   type-aliases-package: com.westudy.*.entity
@@ -19,6 +20,7 @@ logging:
   level:
     com.westudy.user.mapper: DEBUG
     org.mybatis: DEBUG
+    spring.security.debug: DEBUG
 
 jwt:
-  secret: "WcQ3A6dqHAvYcZYGUrGf+uupYCjTJoAab2FyMsdIEgE="
+  secret: "WasnnJKWdwnmad8423nJLnD928319023123SAjsnaJ124584u9450SLmLWAjo123"
