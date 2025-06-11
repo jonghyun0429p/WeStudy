@@ -38,15 +38,25 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         boolean isAdmin = customUserDetail.getAuthorities().stream()
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
 
-        if(isAdmin){
-            redirectUrl = "/";
-        }else{
+        if (isAdmin) {
             redirectUrl = "/admin";
+        } else {
+            redirectUrl = "/";
         }
 
-        Cookie accessTokenCookie = new Cookie("access_token", tokenInfo.getAccess_token());
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setHttpOnly(true);
+        boolean isProduction = false; // 운영 여부 체크
+
+        String cookieHeader = "access_token=" + tokenInfo.getAccess_token()
+                + "; Path=/"
+                + "; HttpOnly";
+
+        if (isProduction) {
+            cookieHeader += "; SameSite=None; Secure";
+        } else {
+            cookieHeader += "; SameSite=Lax"; // 개발용 테스트 시 Lax로 충분
+        }
+
+        response.setHeader("Set-Cookie", cookieHeader);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
@@ -54,7 +64,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         ObjectMapper objectMapper = new ObjectMapper();
 
         var responseMap = new HashMap<String, Object>();
-        responseMap.put("redirect_url",redirectUrl);
+        responseMap.put("redirect_url", redirectUrl);
 
         String responseJson = objectMapper.writeValueAsString(responseMap);
         response.getWriter().write(responseJson);
