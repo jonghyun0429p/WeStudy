@@ -29,7 +29,7 @@ public class CustomUserDetailService implements UserDetailsService {
         log.info("User 추출");
         if(user == null) {
             log.info("사용자 추출 실패");
-            throw new UserException(UserErrorCode.USER_USERNAME_EXITED);
+            throw new UserException(UserErrorCode.USER_USERNAME_UNEXITED);
         }
         return new CustomUserDetail(user);
     }
