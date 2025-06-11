@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.HashMap;
 
+@Slf4j
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
@@ -31,6 +33,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
+
+        log.info("Authorities: " + customUserDetail.getAuthorities());
 
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(customUserDetail.getAuthorities(), customUserDetail.getUsername());
 
@@ -69,4 +73,5 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         String responseJson = objectMapper.writeValueAsString(responseMap);
         response.getWriter().write(responseJson);
     }
+
 }
