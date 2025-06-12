@@ -8,7 +8,7 @@
     <select id="findByUsername" resultType="com.westudy.user.entity.User">
         SELECT *
         FROM user
-        WHERE user_name = #{userName}
+        WHERE username = #{username}
     </select>
 
     <insert id="insertUser" parameterType="com.westudy.user.entity.User" useGeneratedKeys="true" keyProperty="userId">
