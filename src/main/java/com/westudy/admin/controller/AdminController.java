@@ -25,7 +25,6 @@ public class AdminController {
 
         String userEmail = customUserDetail.getUsername();
 
-
         return ResponseEntity.ok(adminService.getAdminPageData(userEmail));
     }
 }
