@@ -15,3 +15,9 @@ CREATE TABLE IF NOT EXISTS user (
                                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                                     role VARCHAR(20) DEFAULT 'USER_USER'
 );
+
+-- 4. token 테이블 생성(refresh)
+CREATE TABLE IF NOT EXISTS token (
+    userid BIGINT KEY,
+    token VARCHAR(255) NOT NULL
+)
