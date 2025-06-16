@@ -7,7 +7,17 @@
 </head>
 <body>
 <header>
-  <h1><a href="/">WeStudy</a></h1>
+  <a href="/" class="logo">🚀</a>
+
+  <div class="header-right">
+    <th:block th:if="${nickname != null}">
+      <span th:text="${nickname} + ' 님'" class="nickname"></span>
+      <a href="/users/logout" class="auth-link">로그아웃</a>
+    </th:block>
+    <th:block th:unless="${nickname != null}">
+      <a href="/login" class="auth-link">로그인</a>
+    </th:block>
+  </div>
 </header>
 
 <main th:replace="${main}"></main>

@@ -15,7 +15,7 @@ h1 {
     margin-bottom: 10px;
 }
 p {
-    font-size: 18px;
+    font-size: 20px;
     color: #555;
 }
 .form-container {
@@ -50,12 +50,93 @@ p {
 }
 .form-container button:hover {
     background-color: #357ab8;
+}html, body {
+     margin: 0;
+     padding: 0;
+     height: 100%;
+ }
+
+body {
+    display: flex;
+    flex-direction: column;
 }
-.footer {
-    margin-top: 50px;
-    font-size: 14px;
-    color: #aaa;
+
+header {
+    height: 5vh;
+    background-color: #333;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* 좌우 정렬 */
+    padding: 0 2rem;
+    border-bottom: 1px solid #ccc;
 }
+
+.logo {
+    color: white;
+    font-size: 1.8rem;
+    text-decoration: none;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    white-space: nowrap;
+}
+
+.nickname {
+    font-weight: bold;
+}
+
+.auth-link {
+    color: white;
+    border: 1px solid white;
+    padding: 0.3rem 0.7rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.auth-link:hover {
+    background-color: white;
+    color: #333;
+}
+
+
+main {
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+    height: 80vh;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+footer {
+    height: 5vh;
+    background-color: #d6efff;
+    color: white;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 2px solid #aaaaaa;
+    font-size: 10px;
+}
+
+footer p {
+    font-size: 15px;
+}
+
 /* login 페이지 전용 스타일 */
 .login-container {
     background-color: #fff;
