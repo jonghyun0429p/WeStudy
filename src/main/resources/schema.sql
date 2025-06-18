@@ -18,6 +18,6 @@ CREATE TABLE IF NOT EXISTS user (
 
 -- 4. token 테이블 생성(refresh)
 CREATE TABLE IF NOT EXISTS token (
-    userid BIGINT KEY,
-    token VARCHAR(255) NOT NULL
-)
+                                    userid BIGINT KEY,
+                                    token VARCHAR(255) NOT NULL
+);
