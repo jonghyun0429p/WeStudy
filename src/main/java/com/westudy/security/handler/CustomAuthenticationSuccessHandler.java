@@ -36,7 +36,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         log.info("Authorities: " + customUserDetail.getAuthorities());
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(customUserDetail.getAuthorities(), customUserDetail.getUsername());
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(customUserDetail.getAuthorities(), customUserDetail.getUsername(), customUserDetail.getUserNickname());
+
 
         String redirectUrl;
         boolean isAdmin = customUserDetail.getAuthorities().stream()
