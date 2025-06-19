@@ -16,16 +16,25 @@ public class UserQueryAdapter implements UserQueryPort {
 
     private final UserMapper userMapper;
 
+    private User requireUser(User user){
+        if(user == null){
+            throw new UserException(UserErrorCode.USER_EMPTY);
+        }
+        return user;
+    }
+
     @Override
     public Long getUserIdByEmail(String email) {
-        User user = userMapper.findByEmail(email);
-        if (user == null) throw new UserException(UserErrorCode.USER_USERNAME_UNEXITED);
-        log.info("getUserId in Adapter" + user.getId());
-        return user.getId();
+        return requireUser(userMapper.findByEmail(email)).getId();
     }
 
     @Override
     public User getUserByEmail(String email) {
-        return userMapper.findByEmail(email);
+        return requireUser(userMapper.findByEmail(email));
+    }
+
+    @Override
+    public User getUserByUserId(long userId){
+        return requireUser(userMapper.findByUserId(userId));
     }
 }
