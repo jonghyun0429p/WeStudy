@@ -1,5 +1,7 @@
 package com.westudy.security.exception;
 
+import com.westudy.security.enums.TokenErrorCode;
+
 public class TokenException extends RuntimeException {
     private final TokenErrorCode errorCode;
 
