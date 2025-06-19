@@ -1,4 +1,4 @@
-package com.westudy.security.exception;
+package com.westudy.security.enums;
 
 import jakarta.servlet.http.HttpServletResponse;
 
