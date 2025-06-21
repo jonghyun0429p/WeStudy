@@ -1,25 +1,24 @@
 package com.westudy.security.provider;
 
 
-import com.westudy.security.exception.TokenErrorCode;
+import com.westudy.security.enums.TokenErrorCode;
+import com.westudy.security.enums.TokenType;
 import com.westudy.security.exception.TokenException;
 import com.westudy.security.dto.TokenInfo;
+import com.westudy.user.enums.UserRole;
+import com.westudy.user.exception.UserErrorCode;
+import com.westudy.user.exception.UserException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +37,7 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(decodedKey);
     }
 
-    public TokenInfo generateToken(Collection<? extends GrantedAuthority> authorityInfo, String id) {
+    public TokenInfo generateToken(Collection<? extends GrantedAuthority> authorityInfo, String email, String nickname, long userId) {
 
         List<String> roles = authorityInfo.stream()
                 .map(GrantedAuthority::getAuthority)
@@ -46,19 +45,8 @@ public class JwtTokenProvider {
 
         long now = System.currentTimeMillis();
 
-        Date accessTokenExpiresIn = new Date(now + THIRTY_MINUTES);
-        String accessToken = Jwts.builder()
-                .setSubject(id)
-                .claim("roles", roles)
-                .setExpiration(accessTokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
-        Date refreshTokenExpiresIn = new Date(now + ONE_DAY);
-        String refreshToken = Jwts.builder()
-                .setExpiration(refreshTokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
+        String accessToken = generateAccessToken(email, roles, nickname);
+        String refreshToken = generateRefreshToken(userId);
 
         return TokenInfo.builder()
                 .grant_type("Bearer")
@@ -67,37 +55,81 @@ public class JwtTokenProvider {
                 .build();
     }
 
-    public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
+    public String generateAccessToken(String email, List<String> roles, String nickname){
+
+
+        String role = roles.stream()
+                .findFirst()
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_ROLE_ERROR));
+
+        long now = System.currentTimeMillis();
+
+        Date accessTokenExpiresIn = new Date(now + THIRTY_MINUTES);
+
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("roles", List.of(role))
+                .claim("nickname", nickname)
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
     }
 
-    public Authentication getAuthentication(String accessToken) {
-        Claims claims = parseClaims(accessToken);
-        List<String> roles = claims.get("roles", List.class);
+    public String generateRefreshToken(long userId){
+        long now = System.currentTimeMillis();
 
-        if(claims.get("auth") == null){
+        Date refreshTokenExpiresIn = new Date(now + ONE_DAY);
+        return Jwts.builder()
+                .setSubject(String.valueOf(userId))
+                .setExpiration(refreshTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String resolveAccessToken(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("access_token".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        throw new TokenException(TokenErrorCode.COOKIE_NOT_HAVE_TOKEN);
+    }
+    public String resolveRefreshToken(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("refresh_token".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        throw new TokenException(TokenErrorCode.COOKIE_NOT_HAVE_TOKEN);
+    }
+
+    public String getEmail(String token) {
+        Claims claims = parseClaims(token, TokenType.ACCESS);
+        if (claims.get("roles") == null) {
             throw new TokenException(TokenErrorCode.INVALID_TOKEN);
         }
-
-        Collection<? extends GrantedAuthority> authorities = roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
-
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        return claims.getSubject();
     }
 
-    public Claims parseClaims(String accessToken) {
-        try{
-            return Jwts.parserBuilder()
+    public List<String> getRoles(String token) {
+        Claims claims = parseClaims(token, TokenType.ACCESS);
+        return claims.get("roles", List.class);
+    }
+
+    public Claims parseClaims(String token, TokenType type) {
+
+        Claims claims;
+        try {
+            claims = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
-                    .parseClaimsJws(accessToken)
+                    .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
             throw new TokenException(TokenErrorCode.EXPIRED_TOKEN);
@@ -108,5 +140,12 @@ public class JwtTokenProvider {
         } catch (IllegalArgumentException e) {
             throw new TokenException(TokenErrorCode.MISSING_TOKEN);
         }
+
+        if (type == TokenType.ACCESS) {
+            if (claims.get("roles") == null || claims.get("nickname") == null) {
+                throw new TokenException(TokenErrorCode.INVALID_TOKEN);
+            }
+        }
+        return claims;
     }
 }
