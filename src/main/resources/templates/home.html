@@ -5,29 +5,8 @@
     <h1>🚀 Welcome to WeStudy!</h1>
     <p>This is the home page rendered by Thymeleaf.</p>
 
-    <div id="auth-buttons"></div>
-
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const authButtonsDiv = document.getElementById("auth-buttons");
 
-            fetch('/api/auth/check', {
-                method: 'GET',
-                credentials: 'include'
-            })
-                .then(response => response.ok ? response.json() : Promise.reject())
-                .then(userInfo => {
-                    authButtonsDiv.innerHTML = `
-                        <p><strong>${userInfo.nickname}</strong> 님 환영합니다!</p>
-                        <form action="/users/logout" method="post">
-                          <button type="submit">로그아웃</button>
-                        </form>`;
-                })
-                .catch(() => {
-                    authButtonsDiv.innerHTML = `
-                        <a href="/login"><button type="button">로그인</button></a>`;
-                });
-        });
     </script>
 </th:block>
 </html>
