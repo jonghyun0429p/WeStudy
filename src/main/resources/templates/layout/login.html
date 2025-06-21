@@ -5,8 +5,12 @@
   <div class="login-container">
     <h2>WeStudy 로그인</h2>
     <div id="login-form">
+      <label for="email">이메일</label>
       <input type="text" id="email" placeholder="이메일" required />
+
+      <label for="password">비밀번호</label>
       <input type="password" id="password" placeholder="비밀번호" required />
+
       <button type="button" id="login-button">로그인</button>
     </div>
   </div>
@@ -16,7 +20,7 @@
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
 
-      fetch('/users/login', {
+      fetch('/api/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

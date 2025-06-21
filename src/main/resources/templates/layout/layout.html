@@ -12,7 +12,7 @@
   <div class="header-right">
     <th:block th:if="${nickname != null}">
       <span th:text="${nickname} + ' 님'" class="nickname"></span>
-      <a href="/users/logout" class="auth-link">로그아웃</a>
+      <a href="/api/users/logout" class="auth-link">로그아웃</a>
     </th:block>
     <th:block th:unless="${nickname != null}">
       <a href="/login" class="auth-link">로그인</a>
@@ -28,7 +28,7 @@
   <nav>
     <a href="/about">소개</a> |
     <a href="/privacy">개인정보처리방침</a> |
-    <a href="mailto:contact@westudy.com">문의하기</a>
+    <a href="mailto:bwhdgus0429@gmail.com">문의하기</a>
   </nav>
 </footer>
 </body>
