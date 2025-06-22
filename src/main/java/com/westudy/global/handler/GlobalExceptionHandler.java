@@ -1,10 +1,8 @@
 package com.westudy.global.exception;
 
 import com.westudy.global.dto.ErrorResponse;
-import com.westudy.security.exception.TokenErrorCode;
-import com.westudy.security.exception.TokenException;
-import com.westudy.user.exception.UserErrorCode;
-import com.westudy.user.exception.UserException;
+import com.westudy.global.enums.BaseErrorCode;
+import com.westudy.security.enums.TokenErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,20 +19,10 @@ public class GlobalExceptionHandler  {
                 .body(errorResponse);
     }
 
-    @ExceptionHandler(TokenException.class)
-    public ResponseEntity<ErrorResponse> handleTokenException(TokenException e) {
-        TokenErrorCode errorCode = e.getErrorCode();
-        ErrorResponse errorResponse = new ErrorResponse(errorCode.name(), errorCode.getMessage());
-
-        return ResponseEntity
-                .status(errorCode.getHttpStatus())
-                .body(errorResponse);
-    }
-
-    @ExceptionHandler(UserException.class)
-    public ResponseEntity<ErrorResponse> handleUserException(UserException e){
-        UserErrorCode errorCode = e.getErrorCode();
-        ErrorResponse errorResponse = new ErrorResponse(errorCode.name(), errorCode.getMessage());
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<ErrorResponse> handleTokenException(BaseException e) {
+        BaseErrorCode errorCode = e.getErrorCode();
+        ErrorResponse errorResponse = new ErrorResponse(errorCode.getCode(), errorCode.getMessage());
 
         return ResponseEntity
                 .status(errorCode.getHttpStatus())

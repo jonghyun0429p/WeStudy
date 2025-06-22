@@ -1,7 +1,7 @@
 package com.westudy.user.enums;
 
+import com.westudy.global.exception.BaseException;
 import com.westudy.user.exception.UserErrorCode;
-import com.westudy.user.exception.UserException;
 
 public enum UserRole {
     ROLE_USER,
@@ -11,7 +11,7 @@ public enum UserRole {
         try {
             return UserRole.valueOf(value);
         } catch (Exception e) {
-            throw new UserException(UserErrorCode.USER_ROLE_ERROR); // 나중에 에러 처리가 필요하면 적용하는걸로.
+            throw new BaseException(UserErrorCode.USER_ROLE_ERROR); // 나중에 에러 처리가 필요하면 적용하는걸로.
         }
     }
 }

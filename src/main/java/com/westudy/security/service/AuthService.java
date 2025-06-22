@@ -1,18 +1,15 @@
 package com.westudy.security.service;
 
-import com.westudy.security.dto.TokenDTO;
+import com.westudy.global.exception.BaseException;
 import com.westudy.security.dto.TokenInfo;
 import com.westudy.security.entity.CustomUserDetail;
 import com.westudy.security.enums.TokenErrorCode;
 import com.westudy.security.enums.TokenType;
-import com.westudy.security.exception.TokenException;
 import com.westudy.security.mapper.TokenMapper;
 import com.westudy.security.provider.JwtTokenProvider;
 import com.westudy.user.entity.User;
-import com.westudy.user.enums.UserRole;
-import com.westudy.user.port.UserQueryPort;
+import com.westudy.security.port.UserQueryPort;
 import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +57,7 @@ public class AuthService {
 
     public Map<String, Object> getCurrentUserNickname(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new TokenException(TokenErrorCode.MISSING_TOKEN);
+            throw new BaseException(TokenErrorCode.MISSING_TOKEN);
         }
 
         CustomUserDetail userDetail = (CustomUserDetail) authentication.getPrincipal();
@@ -79,7 +76,7 @@ public class AuthService {
             Authentication auth = getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(auth);
             return;
-        }catch (TokenException accessError){
+        }catch (BaseException accessError){
             log.info("엑세스 토큰 문제 "+accessError.getErrorCode());
             try{
                 String refreshToken = jwtTokenProvider.resolveRefreshToken(request);
@@ -98,7 +95,7 @@ public class AuthService {
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
                 return;
-            }catch (TokenException refreshError){
+            }catch (BaseException refreshError){
                 log.info("리프레시 토큰 문제 "+refreshError.getErrorCode());
                 SecurityContextHolder.clearContext();
             }
@@ -163,7 +160,7 @@ public class AuthService {
 
     public List<String> rolesEmptyCheck(List<String> roles){
         if(roles == null){
-            throw new TokenException(TokenErrorCode.INVALID_TOKEN);
+            throw new BaseException(TokenErrorCode.INVALID_TOKEN);
         }
         return roles;
     }
@@ -171,10 +168,10 @@ public class AuthService {
     public void isSameRefresh(String refresh, long userId){
         String savedRefresh = tokenMapper.findByUserid(userId).getToken();
         if(savedRefresh == null){
-            throw new TokenException(TokenErrorCode.MISSING_TOKEN);
+            throw new BaseException(TokenErrorCode.MISSING_TOKEN);
         }
         if (!refresh.equals(savedRefresh)){
-            throw new TokenException(TokenErrorCode.NOT_SAME_REFRESHTOKEN);
+            throw new BaseException(TokenErrorCode.NOT_SAME_REFRESHTOKEN);
         }
     }
 }

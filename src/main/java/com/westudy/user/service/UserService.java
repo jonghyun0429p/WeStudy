@@ -38,16 +38,42 @@ public class UserService {
         log.info("checkDuplicateEmail");
         User user = userMapper.findByEmail(email);
         if(user != null){
-            throw new UserException(UserErrorCode.USER_USERNAME_DUPLICATE);
+            throw new BaseException(UserErrorCode.USER_USERNAME_DUPLICATE);
         }
         log.info("중복 체크 완료.");
     }
 
     public String getUserNickname(String userEmail){
         User user = userMapper.findByEmail(userEmail);
-        if(user == null){
-            throw new UserException(UserErrorCode.USER_USERNAME_UNEXITED);
-        }
         return user.getNickname();
+    }
+
+    private User requireUser(User user){
+        if(user == null){
+            throw new BaseException(UserErrorCode.USER_EMPTY);
+        }
+        return user;
+    }
+
+    public UserInfoDTO getUserInfo(Long userId) {
+        User user = findByUserId(userId);
+        return UserInfoDTO.from(user);
+    }
+
+    public UserEditDTO getUserEdit(Long userId){
+        User user = findByUserId(userId);
+        return UserEditDTO.from(user);
+    }
+
+    public User findByUsername(String username) {
+        return requireUser(userMapper.findByUsername(username));
+    }
+
+    public User findByUserId(long userId){ return requireUser(userMapper.findByUserId(userId)); }
+
+    public  User findByEmail(String email){ return  requireUser(userMapper.findByEmail(email)); }
+
+    public User getUserByUserId(long userId){
+        return requireUser(userMapper.findByUserId(userId));
     }
 }
