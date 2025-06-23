@@ -1,86 +1,50 @@
+/* ========== 공통 전역 스타일 ========== */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f7f9fc;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
+    font-family: 'Arial', sans-serif;
+    background-color: whitesmoke;
     color: #333;
 }
-h1 {
-    color: #4a90e2;
-    margin-bottom: 10px;
-}
-p {
-    font-size: 20px;
-    color: #555;
-}
-.form-container {
-    background-color: #fff;
-    padding: 20px 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-.form-container div {
-    margin-bottom: 15px;
-}
-.form-container label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-.form-container input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-.form-container button {
-    width: 100%;
-    padding: 10px;
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-.form-container button:hover {
-    background-color: #357ab8;
-}html, body {
-     margin: 0;
-     padding: 0;
-     height: 100%;
- }
 
-body {
-    display: flex;
-    flex-direction: column;
-}
-
+/* ========== Header ========== */
 header {
-    height: 5vh;
-    background-color: #333;
-    color: white;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1000;
+    height: 5vh;
+    background-color: white;
+    color: black;
     display: flex;
     align-items: center;
-    justify-content: space-between; /* 좌우 정렬 */
+    justify-content: space-between;
     padding: 0 2rem;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid rgb(74, 74, 74);
+    z-index: 5; /* 다른 요소 위에 표시되도록 */
+}
+
+.nickname-link:link{
+    color: #262d4a;
+    text-decoration: none;
+}
+
+.nickname-link:hover{
+    color: #424d7e;
+    text-decoration: none;
 }
 
 .logo {
     color: white;
     font-size: 1.8rem;
     text-decoration: none;
+}
+
+.logo-img {
+    width: 5vh;
+    height: 5vh;
+    /*border: 1px solid blue;*/
+    border-radius: 5px;
 }
 
 .header-right {
@@ -95,8 +59,8 @@ header {
 }
 
 .auth-link {
-    color: white;
-    border: 1px solid white;
+    color: #262d4a;
+    border: 1.5px solid #262d4a;
     padding: 0.3rem 0.7rem;
     border-radius: 5px;
     text-decoration: none;
@@ -105,22 +69,28 @@ header {
 }
 
 .auth-link:hover {
-    background-color: white;
+    background-color: rgba(38, 45, 74, 0.51);
     color: #333;
 }
 
-
+/* ========== Main ========== */
 main {
     margin-top: 5vh;
     margin-bottom: 5vh;
-    height: 80vh;
-    padding: 1rem;
-    overflow-y: auto;
+    min-height: 90vh;
 }
 
+.centered-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 10vh);
+}
+
+/* ========== Footer ========== */
 footer {
     height: 5vh;
-    background-color: #d6efff;
+    background-color: rgb(2, 4, 32);
     color: white;
     position: fixed;
     bottom: 0;
@@ -128,56 +98,35 @@ footer {
     right: 0;
     display: flex;
     align-items: center;
-    justify-content: center;
-    border-top: 2px solid #aaaaaa;
+    justify-content: right;
+    border-top: 1px solid rgb(74, 74, 74);;
     font-size: 10px;
 }
 
 footer p {
     font-size: 15px;
+    margin-right: 2vw;
 }
 
-/* login 페이지 전용 스타일 */
-.login-container {
-    background-color: #fff;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 400px;
-    text-align: center;
-    margin: 100px auto;
+footer a {
+    font-size: 12px;
+    margin-right: 1vw;
+    margin-left: 1vw;
 }
 
-.login-container h2 {
-    margin-bottom: 20px;
-    color: #333;
+.footer-link:link{
+    color: whitesmoke;
+    text-decoration: none;
 }
 
-.login-container form {
-    display: flex;
-    flex-direction: column;
+.footer-link:visited {
+    color: #6483aa;
 }
 
-.login-container input[type="text"],
-.login-container input[type="password"] {
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
+.footer-link:active{
+    color : #001a39;
 }
 
-.login-container button {
-    padding: 12px;
-    background-color: #4a90e2;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.login-container button:hover {
-    background-color: #357bd8;
+.footer-link:hover{
+    color : #1555a6;
 }

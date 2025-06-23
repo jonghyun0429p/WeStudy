@@ -1,35 +1,45 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko" th:fragment="layout(main)">
-<head>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:fragment="head">
   <meta charset="UTF-8">
   <title>WeStudy</title>
   <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
-<header>
-  <a href="/" class="logo">🚀</a>
 
-  <div class="header-right">
-    <th:block th:if="${nickname != null}">
-      <span th:text="${nickname} + ' 님'" class="nickname"></span>
-      <a href="/api/users/logout" class="auth-link">로그아웃</a>
-    </th:block>
-    <th:block th:unless="${nickname != null}">
-      <a href="/login" class="auth-link">로그인</a>
-    </th:block>
-  </div>
-</header>
+<!-- 전체 레이아웃 fragment -->
+<div th:fragment="layout(content)">
+  <header>
+    <a href="/" class="logo">
+      <img src="/images/westudyLogo.png" class="logo-img" alt="WeStudy 로고">
+    </a>
 
-<main th:replace="${main}"></main>
+    <div class="header-right">
+      <th:block th:if="${nickname != null}">
+        <a href="/page/user/info/data" class="nickname-link">
+          <span th:text="${nickname} + ' 님'" class="nickname"></span>
+        </a>
+        <a href="/api/users/logout" class="auth-link">로그아웃</a>
+      </th:block>
+      <th:block th:unless="${nickname != null}">
+        <a href="/page/user/login" class="auth-link">로그인</a>
+      </th:block>
+    </div>
+  </header>
 
-<footer class="footer">
-  <hr />
-  <p>© 2025 WeStudy. All rights reserved.</p>
-  <nav>
-    <a href="/about">소개</a> |
-    <a href="/privacy">개인정보처리방침</a> |
-    <a href="mailto:bwhdgus0429@gmail.com">문의하기</a>
-  </nav>
-</footer>
+  <main th:class="${mainClass != null} ? ${mainClass} : 'default-main'">
+    <th:block th:replace="${content}"></th:block>
+  </main>
+
+  <footer class="footer">
+    <p>© 2025 WeStudy. All rights reserved.</p>
+    <nav>
+      <a href="/about" class="footer-link">소개</a> |
+      <a href="/privacy" class="footer-link">개인정보처리방침</a> |
+      <a href="mailto:bwhdgus0429@gmail.com" class="footer-link">문의하기</a>
+    </nav>
+  </footer>
+</div>
+
 </body>
 </html>
