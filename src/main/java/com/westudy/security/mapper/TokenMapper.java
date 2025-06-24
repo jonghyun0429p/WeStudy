@@ -9,5 +9,5 @@ public interface TokenMapper {
 
     void deleteByUserid(long userid);
 
-    TokenDTO findByuserid(long userid);
+    TokenDTO findByUserid(long userid);
 }

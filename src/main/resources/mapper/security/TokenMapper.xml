@@ -16,7 +16,7 @@
         VALUES (#{userid}, #{token})
     </insert>
 
-    <delete id="deleteByUserid" parameterType="String">
+    <delete id="deleteByUserid" parameterType="long">
         DELETE FROM token
         WHERE userid = #{userid}
     </delete>
