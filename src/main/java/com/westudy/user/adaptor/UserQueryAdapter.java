@@ -1,10 +1,10 @@
 package com.westudy.user.adapter;
 
+import com.westudy.global.exception.BaseException;
 import com.westudy.user.entity.User;
 import com.westudy.user.exception.UserErrorCode;
-import com.westudy.user.exception.UserException;
 import com.westudy.user.mapper.UserMapper;
-import com.westudy.user.port.UserQueryPort;
+import com.westudy.security.port.UserQueryPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ public class UserQueryAdapter implements UserQueryPort {
 
     private User requireUser(User user){
         if(user == null){
-            throw new UserException(UserErrorCode.USER_EMPTY);
+            throw new BaseException(UserErrorCode.USER_EMPTY);
         }
         return user;
     }

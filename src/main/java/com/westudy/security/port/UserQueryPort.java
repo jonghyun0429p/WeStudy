@@ -1,4 +1,4 @@
-package com.westudy.user.port;
+package com.westudy.security.port;
 
 import com.westudy.user.entity.User;
 
