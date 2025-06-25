@@ -1,14 +1,20 @@
 package com.westudy.user.controller;
 
+import com.westudy.security.util.SecurityUtil;
 import com.westudy.user.dto.UserDTO;
+import com.westudy.user.dto.UserEditDTO;
 import com.westudy.user.dto.UserLoginDTO;
 import com.westudy.user.entity.User;
 import com.westudy.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,6 +27,20 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<Map<String, String>> signup(@RequestBody UserDTO userDto) {
         userService.register(userDto);
-        return "redirect:/";
+        Map<String, String> result = new HashMap<>();
+        result.put("redirect_url", "/login");
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/update")
+    @Operation(summary = "유저 정보 변경", description = "유저 변경 사항을 적용합니다.")
+    public ResponseEntity<Map<String, String>> userPasswordUpdate(@RequestBody UserEditDTO userEditDTO){
+        userService.updateUser(SecurityUtil.getCurrentUserId(), userEditDTO);
+        Map<String, String> result = new HashMap<>();
+        result.put("redirect_url", "/");
+        return ResponseEntity.ok(result);
+
+
+
     }
 }
