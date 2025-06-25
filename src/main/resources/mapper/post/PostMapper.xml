@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.westudy.post.mapper.PostMapper">
+    <select id="findByPostId" resultType="com.westudy.post.entity.Post" parameterType="long">
+        SELECT *
+        FROM post
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByUserId" resultType="com.westudy.post.entity.Post" parameterType="long">
+        SELECT *
+        FROM post
+        WHERE user_id = #{user_id}
+    </select>
+
+    <insert id="insertPost" parameterType="com.westudy.post.entity.Post" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO post (user_id, study_id, views, title, summary, create_at)
+        VALUES (#{user_id}, #{study_id}, 0, #{title}, #{summary}, now())
+    </insert>
+
+    <update id="updatePost" parameterType="com.westudy.post.entity.Post">
+        UPDATE post
+        SET title = #{title}, summary = #{summary}
+        WHERE id = #{id}
+    </update>
+
+    <update id="deleteByPostId" parameterType="long">
+        UPDATE post
+        SET delete_at = now()
+        WHERE id = #{id}
+    </update>
+</mapper>
