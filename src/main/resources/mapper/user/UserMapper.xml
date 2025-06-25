@@ -8,7 +8,7 @@
     <select id="findByUserId" resultType="com.westudy.user.entity.User">
         SELECT *
         FROM user
-        WHERE id = #{userId}
+        WHERE id = #{id}
     </select>
 
     <select id="findByUsername" resultType="com.westudy.user.entity.User">
@@ -17,7 +17,7 @@
         WHERE username = #{username}
     </select>
 
-    <insert id="insertUser" parameterType="com.westudy.user.entity.User" useGeneratedKeys="true" keyProperty="userId">
+    <insert id="insertUser" parameterType="com.westudy.user.entity.User" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user (username, password, email, nickname, phone_number, created_at, role)
         VALUES (#{username}, #{password}, #{email}, #{nickname}, #{phoneNumber}, NOW(), #{role})
     </insert>
@@ -32,6 +32,18 @@
         FROM user
         WHERE email = #{email}
     </select>
+
+    <update id="updateUser" parameterType="User">
+        UPDATE user
+        SET username = #{username}, password = #{password}, email = #{email}, nickname = #{nickname}, phone_number = #{phoneNumber}
+        WHERE id = #{id}
+    </update>
+    
+    <update id="deleteByUserId" parameterType="long">
+        UPDATE user
+        SET delete_at = now()
+        WHERE id = #{id}
+    </update>
 
 
 </mapper>

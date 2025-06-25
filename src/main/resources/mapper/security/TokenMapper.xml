@@ -5,20 +5,20 @@
 
 <mapper namespace="com.westudy.security.mapper.TokenMapper">
 
-    <select id="findByUserid" resultType="com.westudy.security.dto.TokenDTO">
+    <select id="findByUserId" resultType="com.westudy.security.dto.TokenDTO">
         SELECT *
         FROM token
-        WHERE userid = #{userid}
+        WHERE userId = #{userId}
     </select>
 
     <insert id="insertToken" parameterType="com.westudy.security.dto.TokenDTO">
-        INSERT INTO token (userid, token)
-        VALUES (#{userid}, #{token})
+        INSERT INTO token (userId, token)
+        VALUES (#{userId}, #{token})
     </insert>
 
-    <delete id="deleteByUserid" parameterType="long">
+    <delete id="deleteByUserId" parameterType="long">
         DELETE FROM token
-        WHERE userid = #{userid}
+        WHERE userId = #{userId}
     </delete>
 
 </mapper>

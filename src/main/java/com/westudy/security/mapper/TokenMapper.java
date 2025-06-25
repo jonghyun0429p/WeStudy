@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface TokenMapper {
     void insertToken(long userid, String token);
 
-    void deleteByUserid(long userid);
+    void deleteByUserId(long userId);
 
-    TokenDTO findByUserid(long userid);
+    TokenDTO findByUserId(long userId);
 }
