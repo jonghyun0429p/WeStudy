@@ -11,14 +11,4 @@ public class UserInfoDTO {
     private String nickname;
     private String email;
     private String phoneNumber;
-
-    public static UserInfoDTO from(User user){
-        UserInfoDTO dto = new UserInfoDTO();
-        dto.username = user.getUsername();
-        dto.nickname = user.getNickname();
-        dto.email = user.getEmail();
-        dto.phoneNumber = user.getPhoneNumber();
-
-        return dto;
-    }
 }

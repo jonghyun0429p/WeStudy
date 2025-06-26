@@ -12,15 +12,4 @@ public class UserEditDTO {
     private String nickname;
     private String email;
     private String phoneNumber;
-
-    public static UserEditDTO from(User user){
-        UserEditDTO dto = new UserEditDTO();
-        dto.username = user.getUsername();
-        dto.password = user.getPassword();
-        dto.nickname = user.getNickname();
-        dto.email = user.getEmail();
-        dto.phoneNumber = user.getPhoneNumber();
-
-        return dto;
-    }
 }

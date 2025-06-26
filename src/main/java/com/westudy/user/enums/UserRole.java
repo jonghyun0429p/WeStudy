@@ -1,7 +1,6 @@
 package com.westudy.user.enums;
 
 import com.westudy.global.exception.BaseException;
-import com.westudy.user.exception.UserErrorCode;
 
 public enum UserRole {
     ROLE_USER,

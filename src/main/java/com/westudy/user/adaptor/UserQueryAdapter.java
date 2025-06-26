@@ -2,7 +2,7 @@ package com.westudy.user.adapter;
 
 import com.westudy.global.exception.BaseException;
 import com.westudy.user.entity.User;
-import com.westudy.user.exception.UserErrorCode;
+import com.westudy.user.enums.UserErrorCode;
 import com.westudy.user.mapper.UserMapper;
 import com.westudy.security.port.UserQueryPort;
 import lombok.RequiredArgsConstructor;

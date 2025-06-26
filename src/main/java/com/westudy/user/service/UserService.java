@@ -6,13 +6,11 @@ import com.westudy.user.dto.UserDTO;
 import com.westudy.user.dto.UserEditDTO;
 import com.westudy.user.dto.UserInfoDTO;
 import com.westudy.user.entity.User;
-import com.westudy.user.exception.UserErrorCode;
+import com.westudy.user.enums.UserErrorCode;
 import com.westudy.user.mapper.UserMapper;
-import com.westudy.security.port.UserQueryPort;
 import com.westudy.user.port.SecurityPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -80,12 +78,12 @@ public class UserService {
 
     public UserInfoDTO getUserInfo(Long userId) {
         User user = findByUserId(userId);
-        return UserInfoDTO.from(user);
+        return userConverter.toUserInfo(user);
     }
 
     public UserEditDTO getUserEdit(Long userId){
         User user = findByUserId(userId);
-        return UserEditDTO.from(user);
+        return userConverter.toUserEdit(user);
     }
 
     public User findByUsername(String username) {

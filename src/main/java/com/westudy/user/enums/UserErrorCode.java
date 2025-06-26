@@ -1,4 +1,4 @@
-package com.westudy.user.exception;
+package com.westudy.user.enums;
 
 import com.westudy.global.enums.BaseErrorCode;
 import jakarta.servlet.http.HttpServletResponse;
