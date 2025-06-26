@@ -112,12 +112,12 @@ public class AuthService {
     }
 
     public void deleteToken(long userid){
-        tokenMapper.deleteByUserid(userid);
+        tokenMapper.deleteByUserId(userid);
     }
 
     public void insertToken(long userid, String refreshToken){
-        if(tokenMapper.findByUserid(userid) != null){
-            tokenMapper.deleteByUserid(userid);
+        if(tokenMapper.findByUserId(userid) != null){
+            tokenMapper.deleteByUserId(userid);
         }
         tokenMapper.insertToken(userid, refreshToken);
     }
@@ -166,7 +166,7 @@ public class AuthService {
     }
 
     public void isSameRefresh(String refresh, long userId){
-        String savedRefresh = tokenMapper.findByUserid(userId).getToken();
+        String savedRefresh = tokenMapper.findByUserId(userId).getToken();
         if(savedRefresh == null){
             throw new BaseException(TokenErrorCode.MISSING_TOKEN);
         }

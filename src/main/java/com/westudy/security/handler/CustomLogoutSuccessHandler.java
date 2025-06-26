@@ -19,13 +19,6 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response,
                                 Authentication authentication) throws IOException {
-        response.setContentType("application/json");
-        response.setCharacterEncoding("utf-8");
-
-        Map<String, String> responseMap = new HashMap<>();
-        responseMap.put("redirect_url", "/");
-
-        String json = objectMapper.writeValueAsString(responseMap);
-        response.getWriter().write(json);
+        response.sendRedirect("/");
     }
 }

@@ -10,17 +10,19 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/page/admin")
 public class AdminController {
 
     private final AdminService adminService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/admin/assign")
+    @GetMapping("/")
     public ResponseEntity<Map<String, Object>> adminPage(@AuthenticationPrincipal CustomUserDetail customUserDetail){
 
         String userEmail = customUserDetail.getUsername();

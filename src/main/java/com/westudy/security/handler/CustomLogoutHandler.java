@@ -3,8 +3,7 @@ package com.westudy.security.handler;
 import com.westudy.security.mapper.TokenMapper;
 import com.westudy.security.provider.JwtTokenProvider;
 import com.westudy.security.service.AuthService;
-import com.westudy.user.port.UserQueryPort;
-import jakarta.servlet.http.Cookie;
+import com.westudy.security.port.UserQueryPort;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
@@ -28,15 +27,13 @@ public class CustomLogoutHandler  implements LogoutHandler {
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        String token = jwtTokenProvider.resolveToken(request);
+        String token = jwtTokenProvider.resolveAccessToken(request);
 
-        if(token != null){
-            Authentication auth = jwtTokenProvider.getAuthentication(token);
-            long userId = userQueryPort.getUserIdByEmail(auth.getName());
-            tokenMapper.deleteByUserid(userId);
-        }
+        Authentication auth = authService.getAuthentication(token);
+        long userId = userQueryPort.getUserIdByEmail(auth.getName());
+        tokenMapper.deleteByUserId(userId);
 
-        Cookie cookie = authService.makeEmptyCookie();
-        response.addCookie(cookie);
+        response.addHeader("Set-Cookie", authService.makeEmptyCookie("access_token"));
+        response.addHeader("Set-Cookie", authService.makeEmptyCookie("refresh_token"));
     }
 }

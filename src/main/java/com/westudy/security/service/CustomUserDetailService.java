@@ -1,10 +1,10 @@
 package com.westudy.security.service;
 
 
+import com.westudy.global.exception.BaseException;
 import com.westudy.security.entity.CustomUserDetail;
 import com.westudy.user.entity.User;
-import com.westudy.user.exception.UserErrorCode;
-import com.westudy.user.exception.UserException;
+import com.westudy.user.enums.UserErrorCode;
 import com.westudy.user.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +29,7 @@ public class CustomUserDetailService implements UserDetailsService {
         log.info("User 추출");
         if(user == null) {
             log.info("사용자 추출 실패");
-            throw new UserException(UserErrorCode.USER_USERNAME_UNEXITED);
+            throw new BaseException(UserErrorCode.USER_USERNAME_UNEXITED);
         }
         return new CustomUserDetail(user);
     }
