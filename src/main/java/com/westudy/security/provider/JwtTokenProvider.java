@@ -1,13 +1,11 @@
 package com.westudy.security.provider;
 
 
+import com.westudy.global.exception.BaseException;
 import com.westudy.security.enums.TokenErrorCode;
 import com.westudy.security.enums.TokenType;
-import com.westudy.security.exception.TokenException;
 import com.westudy.security.dto.TokenInfo;
-import com.westudy.user.enums.UserRole;
-import com.westudy.user.exception.UserErrorCode;
-import com.westudy.user.exception.UserException;
+import com.westudy.user.enums.UserErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -60,7 +58,7 @@ public class JwtTokenProvider {
 
         String role = roles.stream()
                 .findFirst()
-                .orElseThrow(() -> new UserException(UserErrorCode.USER_ROLE_ERROR));
+                .orElseThrow(() -> new BaseException(UserErrorCode.USER_ROLE_ERROR));
 
         long now = System.currentTimeMillis();
 
@@ -95,7 +93,7 @@ public class JwtTokenProvider {
             }
         }
 
-        throw new TokenException(TokenErrorCode.COOKIE_NOT_HAVE_TOKEN);
+        throw new BaseException(TokenErrorCode.COOKIE_NOT_HAVE_TOKEN);
     }
     public String resolveRefreshToken(HttpServletRequest request) {
         if (request.getCookies() != null) {
@@ -106,13 +104,13 @@ public class JwtTokenProvider {
             }
         }
 
-        throw new TokenException(TokenErrorCode.COOKIE_NOT_HAVE_TOKEN);
+        throw new BaseException(TokenErrorCode.COOKIE_NOT_HAVE_TOKEN);
     }
 
     public String getEmail(String token) {
         Claims claims = parseClaims(token, TokenType.ACCESS);
         if (claims.get("roles") == null) {
-            throw new TokenException(TokenErrorCode.INVALID_TOKEN);
+            throw new BaseException(TokenErrorCode.INVALID_TOKEN);
         }
         return claims.getSubject();
     }
@@ -132,18 +130,18 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
-            throw new TokenException(TokenErrorCode.EXPIRED_TOKEN);
+            throw new BaseException(TokenErrorCode.EXPIRED_TOKEN);
         } catch (UnsupportedJwtException e) {
-            throw new TokenException(TokenErrorCode.UNSUPPORTED_TOKEN);
+            throw new BaseException(TokenErrorCode.UNSUPPORTED_TOKEN);
         } catch (MalformedJwtException e) {
-            throw new TokenException(TokenErrorCode.MALFORMED_TOKEN);
+            throw new BaseException(TokenErrorCode.MALFORMED_TOKEN);
         } catch (IllegalArgumentException e) {
-            throw new TokenException(TokenErrorCode.MISSING_TOKEN);
+            throw new BaseException(TokenErrorCode.MISSING_TOKEN);
         }
 
         if (type == TokenType.ACCESS) {
             if (claims.get("roles") == null || claims.get("nickname") == null) {
-                throw new TokenException(TokenErrorCode.INVALID_TOKEN);
+                throw new BaseException(TokenErrorCode.INVALID_TOKEN);
             }
         }
         return claims;
