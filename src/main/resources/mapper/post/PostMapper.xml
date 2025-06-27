@@ -16,9 +16,31 @@
         WHERE user_id = #{user_id}
     </select>
 
+    <select id="findNotice" resultType="com.westudy.post.entity.Post">
+        SELECT *
+        FROM post
+        WHERE is_notice = true
+        ORDER BY create_at DESC
+        LIMIT 2
+    </select>
+
+    <select id="findPost" resultType="com.westudy.post.entity.Post">
+        SELECT *
+        FROM post
+        WHERE is_notice = false AND delete_at IS NULL
+        ORDER BY create_at DESC
+        LIMIT #{size} OFFSET #{offset};
+    </select>
+
+    <select id="countPosts" resultType="long">
+        SELECT COUNT(*)
+        FROM post
+        WHERE is_notice = false AND delete_at IS NULL
+    </select>
+
     <insert id="insertPost" parameterType="com.westudy.post.entity.Post" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO post (user_id, study_id, views, title, summary, create_at)
-        VALUES (#{user_id}, #{study_id}, 0, #{title}, #{summary}, now())
+        INSERT INTO post (user_id, study_id, views, is_notice, category, title, summary, create_at)
+        VALUES (#{userId}, #{studyId}, 0, #{isNotice}, #{category}, #{title}, #{summary}, now())
     </insert>
 
     <update id="updatePost" parameterType="com.westudy.post.entity.Post">

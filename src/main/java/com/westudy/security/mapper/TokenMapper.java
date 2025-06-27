@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface TokenMapper {
-    void insertToken(long userid, String token);
+    void insertToken(long userId, String token);
 
     void deleteByUserId(long userId);
 

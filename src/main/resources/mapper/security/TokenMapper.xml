@@ -8,17 +8,17 @@
     <select id="findByUserId" resultType="com.westudy.security.dto.TokenDTO">
         SELECT *
         FROM token
-        WHERE userId = #{userId}
+        WHERE user_id = #{userId}
     </select>
 
     <insert id="insertToken" parameterType="com.westudy.security.dto.TokenDTO">
-        INSERT INTO token (userId, token)
+        INSERT INTO token (user_id, token)
         VALUES (#{userId}, #{token})
     </insert>
 
     <delete id="deleteByUserId" parameterType="long">
         DELETE FROM token
-        WHERE userId = #{userId}
+        WHERE user_id = #{userId}
     </delete>
 
 </mapper>
