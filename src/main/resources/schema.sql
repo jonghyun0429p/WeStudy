@@ -27,8 +27,9 @@ CREATE TABLE IF NOT EXISTS token (
 CREATE TABLE IF NOT EXISTS post (
                                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                     user_id BIGINT NOT NULL,
-                                    study_id BIGINT NOT NULL UNIQUE,
+                                    study_id BIGINT,
                                     views BIGINT NOT NULL,
+                                    is_notice BOOLEAN DEFAULT FALSE,
                                     category VARCHAR(30) NOT NULL,
                                     title VARCHAR(100),
                                     summary VARCHAR(100),
