@@ -1,4 +1,4 @@
-/* ========== 홈 페이지 전용 중앙 정렬 ========== */
+/* ====== home.css (Bootstrap 기반 중앙 정렬 스타일) ====== */
 .home-center {
     display: flex;
     flex-direction: column;
@@ -6,4 +6,29 @@
     justify-content: center;
     min-height: 70vh;
     text-align: center;
+}
+
+/* 홈 CTA 버튼 */
+.main-button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.25s, transform 0.15s;
+    margin-top: 2rem;
+}
+
+.main-button:hover {
+    background-color: #0b5ed7;
+    transform: translateY(-2px);
+}
+
+.main-button:active {
+    transform: translateY(0);
+    background-color: #0a58ca;
 }

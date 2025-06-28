@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <th:block th:replace="~{layout/layout :: head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/board.css}" />
+</head>
+
+<body>
+<div th:replace="~{layout/layout :: layout(~{::content})}"
+     th:with="mainClass='default-main'">
+    <div th:fragment="content" class="post-board">
+
+        <h2 class="board-title mb-3">📋 게시글 목록</h2>
+
+        <!-- 게시글 목록 -->
+        <div class="post-list">
+            <div th:each="post : ${pages}" class="card"
+                 th:attr="data-post-id=${post.postId}"
+                 onclick="goToDetail(this)">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${post.title}">제목</h5>
+                    <h6 class="card-subtitle">
+                        카테고리: <span th:text="${post.postCategory}">카테고리</span> |
+                        조회수: <span th:text="${post.views}">0</span>
+                    </h6>
+                    <p class="card-text" th:text="${post.summary}">요약 내용</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination mt-4">
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item">
+                        <a class="page-link" th:href="@{'/page/post?page=1'}">처음</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" th:href="@{/page/post(page=${currentPage - 1 > 0 ? currentPage - 1 : 1})}">이전</a>
+                    </li>
+                    <li class="page-item">
+                        <span class="page-link" th:text="'현재 페이지: ' + ${currentPage}">현재 페이지</span>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" th:href="@{/page/post(page=${currentPage + 1 < pageCount ? currentPage + 1 : pageCount })}">다음</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- 검색창 -->
+        <form class="mt-4 d-flex justify-content-center" th:action="@{/page/post/search}" method="get">
+            <input type="text" name="keyword" class="form-control w-50 me-2" placeholder="검색어를 입력하세요" required>
+            <button type="submit" class="btn btn-outline-secondary">검색</button>
+        </form>
+
+        <!-- 우측 하단 글 작성 버튼 -->
+        <th:block th:if="${nickname != null}">
+            <a href="/page/post/write" class="btn btn-primary position-fixed"
+               style="bottom: 2rem; right: 2rem; z-index: 1000;">
+                ✍ 글 작성
+            </a>
+        </th:block>
+
+    </div>
+</div>
+
+<script>
+    function goToDetail(element) {
+        const postId = element.getAttribute("data-post-id");
+        if (postId) {
+            window.location.href = `/page/post/detail?id=${postId}`;
+        }
+    }
+</script>
+</body>
+</html>

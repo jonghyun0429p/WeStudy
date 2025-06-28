@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <th:block th:replace="~{layout/layout :: head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/board.css}" />
+</head>
+
+<body>
+<div th:replace="~{layout/layout :: layout(~{::content})}"
+     th:with="mainClass='default-main'">
+    <div th:fragment="content" class="post-edit">
+
+        <h2 class="mb-4">✏️ 게시글 수정</h2>
+
+        <form th:action="@{/api/post/edit}" method="post">
+            <input type="hidden" name="postId" th:value="${page.postId}" />
+
+            <div class="mb-3">
+                <label for="title" class="form-label">제목</label>
+                <input type="text" id="title" name="title" class="form-control"
+                       th:value="${page.title}" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="category" class="form-label">카테고리</label>
+                <input type="text" id="category" name="category" class="form-control"
+                       th:value="${page.category}" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="content" class="form-label">내용</label>
+                <textarea id="content" name="content" class="form-control"
+                          rows="10" required th:text="${page.content}"></textarea>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <a th:href="@{'/page/post/detail?id=' + ${page.postId}}" class="btn btn-secondary me-2">취소</a>
+                <button type="submit" class="btn btn-primary">수정 완료</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+</body>
+</html>
