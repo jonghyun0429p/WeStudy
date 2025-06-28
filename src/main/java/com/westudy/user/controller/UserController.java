@@ -1,5 +1,6 @@
 package com.westudy.user.controller;
 
+import com.westudy.global.util.ResponseUtils;
 import com.westudy.security.util.SecurityUtil;
 import com.westudy.user.dto.UserDTO;
 import com.westudy.user.dto.UserEditDTO;
@@ -25,22 +26,16 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
+    @Operation(summary = "유저 회원가입", description = "유저를 회원가입 시킵니다.")
     public ResponseEntity<Map<String, String>> signup(@RequestBody UserDTO userDto) {
         userService.register(userDto);
-        Map<String, String> result = new HashMap<>();
-        result.put("redirect_url", "/login");
-        return ResponseEntity.ok(result);
+        return ResponseUtils.redirect("/login");
     }
 
     @PostMapping("/update")
     @Operation(summary = "유저 정보 변경", description = "유저 변경 사항을 적용합니다.")
     public ResponseEntity<Map<String, String>> userPasswordUpdate(@RequestBody UserEditDTO userEditDTO){
         userService.updateUser(SecurityUtil.getCurrentUserId(), userEditDTO);
-        Map<String, String> result = new HashMap<>();
-        result.put("redirect_url", "/");
-        return ResponseEntity.ok(result);
-
-
-
+        return ResponseUtils.redirect("/");
     }
 }

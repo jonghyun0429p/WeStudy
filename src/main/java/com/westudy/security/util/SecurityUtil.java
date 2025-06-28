@@ -14,4 +14,12 @@ public class SecurityUtil {
         }
         throw new BaseException(SecurityErrorCode.AUTHENTICATION_EMPTY);
     }
+
+    public static String getCurrentNickname(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(auth.getPrincipal() instanceof CustomUserDetail userDetail){
+            return userDetail.getUserNickname();
+        }
+        throw new BaseException(SecurityErrorCode.AUTHENTICATION_EMPTY);
+    }
 }
