@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local   # 기본 profile 은 local (도커 실행시 docker 로 override 됨)
+    active: ${SPRING_PROFILES_ACTIVE:local}
 
   thymeleaf:
     cache: false
@@ -10,11 +10,16 @@ spring:
       mode: always
       encoding: utf-8
 
+app:
+  env: ${SPRING_PROFILES_ACTIVE:local}
+
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml
   type-aliases-package: com.westudy.*.entity
   configuration:
     map-underscore-to-camel-case: true
+
+
 
 logging:
   level:

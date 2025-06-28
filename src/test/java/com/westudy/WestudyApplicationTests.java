@@ -17,16 +17,16 @@ class WestudyApplicationTests {
 	@Test
 	void insertUserTest() {
 		User user = User.builder()
-				.userName("testuser")
+				.username("testuser")
 				.password("password123")
-				.nickName("테스트유저")
+				.nickname("테스트유저")
 				.email("test@example.com")
 				.phoneNumber("010-1234-5678")
 				.createdAt(LocalDateTime.now())
 				.build();
 
 		userMapper.insertUser(user);
-		System.out.println("삽입 완료: " + user.getUserName());
+		System.out.println("삽입 완료: " + user.getUsername());
 	}
 
 }
