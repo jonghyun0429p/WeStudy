@@ -22,4 +22,28 @@ public class SecurityUtil {
         }
         throw new BaseException(SecurityErrorCode.AUTHENTICATION_EMPTY);
     }
+
+    public static String resolveCurrentNicknameSafely() {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.getPrincipal() instanceof CustomUserDetail userDetail) {
+                return userDetail.getUserNickname();
+            }
+        } catch (Exception ignored) {
+            // 예외 무시
+        }
+        return null;
+    }
+
+    public static Long resolveCurrentUserIdSafely() {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.getPrincipal() instanceof CustomUserDetail userDetail) {
+                return userDetail.getUserId();
+            }
+        } catch (Exception ignored) {
+            // 예외 무시
+        }
+        return null;
+    }
 }

@@ -61,7 +61,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico", "/.well-known/**").permitAll()
-                        .requestMatchers("/", "/page/user/signup", "/page/user/login").permitAll()
+                        .requestMatchers("/", "/page/user/signup", "/page/user/login", "/page/post", "/page/post/").permitAll()
                         .requestMatchers("/api/auth/**", "/api/users/signup", "/api/users/login").permitAll()
                         .requestMatchers("/page/admin/**", "/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

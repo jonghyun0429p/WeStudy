@@ -45,7 +45,7 @@
 
     <update id="updatePost" parameterType="com.westudy.post.entity.Post">
         UPDATE post
-        SET title = #{title}, summary = #{summary}
+        SET title = #{title}, summary = #{summary}, category = #{category}
         WHERE id = #{id}
     </update>
 

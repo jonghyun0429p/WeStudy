@@ -22,7 +22,7 @@ public class CustomUserDetail implements UserDetails {
 
     public long getUserId(){ return user.getId(); }
 
-    public String getUserEmail(){ return getUserEmail(); }
+    public String getUserEmail(){ return user.getEmail(); }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
