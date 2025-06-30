@@ -1,6 +1,7 @@
 package com.westudy.user.service;
 
 import com.westudy.global.exception.BaseException;
+import com.westudy.global.util.RequireHelper;
 import com.westudy.user.converter.UserConverter;
 import com.westudy.user.dto.UserDTO;
 import com.westudy.user.dto.UserEditDTO;
@@ -69,13 +70,6 @@ public class UserService {
         return user.getNickname();
     }
 
-    private User requireUser(User user){
-        if(user == null){
-            throw new BaseException(UserErrorCode.USER_EMPTY);
-        }
-        return user;
-    }
-
     public UserInfoDTO getUserInfo(Long userId) {
         User user = findByUserId(userId);
         return userConverter.toUserInfo(user);
@@ -87,14 +81,21 @@ public class UserService {
     }
 
     public User findByUsername(String username) {
-        return requireUser(userMapper.findByUsername(username));
+        return RequireHelper.requireNonNull(
+                userMapper.findByUsername(username), new BaseException(UserErrorCode.USER_EMPTY));
     }
 
-    public User findByUserId(long userId){ return requireUser(userMapper.findByUserId(userId)); }
+    public User findByUserId(long userId){
+        return RequireHelper.requireNonNull(
+                userMapper.findByUserId(userId), new BaseException(UserErrorCode.USER_EMPTY)); }
 
-    public  User findByEmail(String email){ return  requireUser(userMapper.findByEmail(email)); }
+    public  User findByEmail(String email){
+        return RequireHelper.requireNonNull(
+                userMapper.findByEmail(email), new BaseException(UserErrorCode.USER_EMPTY)); }
 
     public User getUserByUserId(long userId){
-        return requireUser(userMapper.findByUserId(userId));
+
+        return RequireHelper.requireNonNull(
+                userMapper.findByUserId(userId), new BaseException(UserErrorCode.USER_EMPTY));
     }
 }

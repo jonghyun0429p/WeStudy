@@ -25,25 +25,5 @@ public class RequireHelper {
         }
         return list;
     }
-
-    public static User requireUser(User user) {
-        return requireNonNull(user, new BaseException(UserErrorCode.USER_EMPTY));
-    }
-
-    public static Post requirePost(Post post){
-        return requireNonNull(post, new BaseException(PostErrorCode.POST_NOT_FOUND));
-    }
-
-    public static PostDetailDBDTO requirePostDetail(PostDetailDBDTO postDetailDBDTO){
-        return requireNonNull(postDetailDBDTO, new BaseException(PostErrorCode.POST_NOT_FOUND));
-    }
-
-    public static List<Post> requirePostList(List<Post> post) {
-        return requireNonEmpty(post, new BaseException(PostErrorCode.POST_NOT_FOUND));
-    }
-
-    public static List<PostResponseDTO> requirePostResponseList(List<PostResponseDTO> posts){
-        return requireNonEmpty(posts, new BaseException(PostErrorCode.POST_NOT_FOUND));
-    }
 }
 

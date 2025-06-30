@@ -1,10 +1,12 @@
 package com.westudy.post.service;
 
+import com.westudy.global.exception.BaseException;
 import com.westudy.global.util.RequireHelper;
 import com.westudy.post.converter.PostConverter;
 import com.westudy.post.dto.*;
 import com.westudy.post.entity.Post;
 import com.westudy.post.entity.PostContent;
+import com.westudy.post.enums.PostErrorCode;
 import com.westudy.post.mapper.PostContentMapper;
 import com.westudy.post.mapper.PostDetailMapper;
 import com.westudy.post.mapper.PostMapper;
@@ -76,11 +78,13 @@ public class PostSevice {
 
     //Read
     public Post findByPostId(long postId){
-        return RequireHelper.requirePost(postMapper.findByPostId(postId));
+        return RequireHelper.requireNonNull(
+                postMapper.findByPostId(postId), new BaseException(PostErrorCode.POST_NOT_FOUND));
     }
 
     public List<Post> findByUserId(long userId){
-        return RequireHelper.requirePostList(postMapper.findByUserId(userId));
+        return RequireHelper.requireNonEmpty(
+                postMapper.findByUserId(userId), new BaseException(PostErrorCode.POST_NOT_FOUND));
     }
 
     public List<Post> findByNotice(){
@@ -92,11 +96,14 @@ public class PostSevice {
     }
 
     public PostDetailDBDTO getPostDetail(long postId){
-        return RequireHelper.requirePostDetail(postDetailMapper.findPostDetailById(postId));
+        return RequireHelper.requireNonNull(
+                postDetailMapper.findPostDetailById(postId), new BaseException(PostErrorCode.POST_NOT_FOUND));
     }
 
-    public List<PostResponseDTO> findSearchPosts(String keyword, int offset){
-        return RequireHelper.requirePostResponseList(postDetailMapper.findSearchPosts(keyword, POST_SIZE, POST_SIZE*offset));
+    public List<PostResponseDTO> findSearchPosts(String keyword, int page){
+        return RequireHelper.requireNonEmpty(
+                postDetailMapper.findSearchPosts(keyword, POST_SIZE, POST_SIZE*(page-1)),
+                new BaseException(PostErrorCode.POST_NOT_FOUND));
     }
 
     public long getPostCount(){
