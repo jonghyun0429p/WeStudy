@@ -5,40 +5,69 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/board.css}" />
 </head>
-
 <body>
-<div th:replace="~{layout/layout :: layout(~{::content})}"
-     th:with="mainClass='default-main'">
+<div th:replace="~{layout/layout :: layout(~{::content})}" th:with="mainClass='default-main'">
     <div th:fragment="content" class="post-edit">
-
         <h2 class="mb-4">✏️ 게시글 수정</h2>
-
-        <form th:action="@{/api/post/edit}" method="post">
-            <input type="hidden" name="postId" th:value="${page.postId}" />
-
+        <form id="editForm">
+            <input type="hidden" id="postId" th:value="${page.postId}" />
             <div class="mb-3">
                 <label for="title" class="form-label">제목</label>
-                <input type="text" id="title" name="title" class="form-control"
-                       th:value="${page.title}" required />
+                <input type="text" id="title" class="form-control" th:value="${page.title}" required />
             </div>
-
             <div class="mb-3">
-                <label for="category" class="form-label">카테고리</label>
-                <input type="text" id="category" name="category" class="form-control"
-                       th:value="${page.category}" required />
+                <label for="postCategory" class="form-label">카테고리</label>
+                <select id="postCategory" class="form-select" required>
+                    <option disabled selected value="">-- 선택하세요 --</option>
+                    <option value="FREE">자유</option>
+                    <option value="STUDY">스터디</option>
+                    <option value="QNA">질문</option>
+                    <option value="NOTICE">공지사항</option>
+                </select>
             </div>
-
             <div class="mb-3">
                 <label for="content" class="form-label">내용</label>
-                <textarea id="content" name="content" class="form-control"
-                          rows="10" required th:text="${page.content}"></textarea>
+                <textarea id="content" class="form-control" rows="10" required th:text="${page.content}"></textarea>
             </div>
-
             <div class="d-flex justify-content-end">
                 <a th:href="@{'/page/post/detail?id=' + ${page.postId}}" class="btn btn-secondary me-2">취소</a>
                 <button type="submit" class="btn btn-primary">수정 완료</button>
             </div>
         </form>
+        <script th:inline="javascript">
+            document.addEventListener("DOMContentLoaded", function () {
+                // 서버에서 전달된 현재 카테고리 값 (예: "FREE", "STUDY")
+                const currentCategory = /*[[${page.category}]]*/ "FREE";
+                document.getElementById("postCategory").value = currentCategory;
+
+                // submit 이벤트 핸들러 등록
+                document.getElementById("editForm").addEventListener("submit", async function (e) {
+                    e.preventDefault();
+                    const data = {
+                        postId: document.getElementById("postId").value,
+                        title: document.getElementById("title").value,
+                        postCategory: document.getElementById("postCategory").value,
+                        content: document.getElementById("content").value,
+                        isNotice: false
+                    };
+                    try {
+                        const res = await fetch("/api/post/update", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(data)
+                        });
+                        if (res.ok) {
+                            window.location.href = "/page/post/detail?id=" + data.postId;
+                        } else {
+                            alert("게시글 수정에 실패했습니다.");
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert("에러가 발생했습니다.");
+                    }
+                });
+            });
+        </script>
 
     </div>
 </div>
