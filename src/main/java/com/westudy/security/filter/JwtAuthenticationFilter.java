@@ -53,13 +53,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (!isSkip(requestURI)) {
             try {
                 authService.authenticateToken(request, response);
+                logger.info("토큰 인증 성공");
             } catch (BaseException e) {
                 SecurityContextHolder.clearContext();
-                jwtAuthenticationEntryPoint.commence(request, response, new JwtAuthenticationException(e));
-                return;
+                throw new JwtAuthenticationException(e);  // AuthenticationException 상속
             }
         }
-
+        logger.info("토큰 통과 성공");
         filterChain.doFilter(request,response);
 
 //        try {
