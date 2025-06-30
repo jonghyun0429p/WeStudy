@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <th:block th:replace="~{layout/layout :: head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/board.css}" />
+</head>
+<body>
+<div th:replace="~{layout/layout :: layout(~{::content})}" th:with="mainClass='default-main'">
+    <div th:fragment="content" class="post-create">
+        <h2 class="mb-4">✏️ 게시글 작성</h2>
+        <form id="postForm">
+            <div class="mb-3">
+                <label for="title" class="form-label">제목</label>
+                <input type="text" id="title" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label for="postCategory" class="form-label">카테고리</label>
+                <select id="postCategory" class="form-select" required>
+                    <option disabled selected value="">-- 선택하세요 --</option>
+                    <option value="FREE">자유</option>
+                    <option value="STUDY">스터디</option>
+                    <option value="QNA">질문</option>
+                    <option value="NOTICE">공지사항</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="content" class="form-label">내용</label>
+                <textarea id="content" class="form-control" rows="10" required></textarea>
+            </div>
+            <div class="d-flex justify-content-end">
+                <a th:href="@{'/page/post'}" class="btn btn-secondary me-2">취소</a>
+                <button type="submit" class="btn btn-primary">작성 완료</button>
+            </div>
+        </form>
+        <script>
+            document.getElementById("postForm").addEventListener("submit", async function (e) {
+                e.preventDefault();
+                const data = {
+                    title: document.getElementById("title").value,
+                    postCategory: document.getElementById("postCategory").value,
+                    content: document.getElementById("content").value,
+                    isNotice: false
+                };
+                try {
+                    const res = await fetch("/api/post/insert", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(data)
+                    });
+                    if (res.ok) {
+                        window.location.href = "/page/post";
+                    } else {
+                        alert("게시글 작성에 실패했습니다.");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("에러가 발생했습니다.");
+                }
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

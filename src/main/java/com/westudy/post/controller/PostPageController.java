@@ -1,6 +1,7 @@
 package com.westudy.post.controller;
 
 import com.westudy.global.exception.BaseException;
+import com.westudy.post.enums.PostCategory;
 import com.westudy.post.enums.PostErrorCode;
 import com.westudy.post.service.PostSevice;
 import com.westudy.security.util.SecurityUtil;
@@ -47,9 +48,17 @@ public class PostPageController {
 
             model.addAttribute("pages", postSevice.findSearchPosts(keyword, page));
             model.addAttribute("pageCount", postSevice.getSearchedPostCount(keyword));
+            model.addAttribute("currentPage", page);
 
             return "/layout/post/board";
 
+    }
+
+    @GetMapping("/write")
+    @Operation(summary = "게시글 작성", description = "게시글 작성시 나오는 페이지")
+    public String getPostWrite(){
+
+        return "/layout/post/write";
     }
 
     @GetMapping("/detail")
@@ -60,6 +69,7 @@ public class PostPageController {
 
 
         model.addAttribute("page", postSevice.getPostDetailResponse(id));
+        model.addAttribute("categories", PostCategory.values());
         return "/layout/post/detail";
     }
 
@@ -70,6 +80,7 @@ public class PostPageController {
             @RequestParam(value = "id")Long id,
             Model model){
         model.addAttribute("page", postSevice.getPostDetailResponse(id));
+        model.addAttribute("categories", PostCategory.values());
         return "/layout/post/edit";
     }
 }

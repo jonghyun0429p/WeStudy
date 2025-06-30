@@ -10,5 +10,5 @@ public class PostInsertDTO {
     private PostCategory postCategory;
     private boolean isNotice;
     private String title;
-    private String Content;
+    private String content;
 }
