@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.westudy.study.mapper.StudyMapper">
+    <insert id="insertStudy" parameterType="com.westudy.study.entity.Study" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO study (user_id, post_id, title, location, max_member, state, created_at, delete_at)
+        VALUES (#{userId}, #{postId}, #{title}, #{locaion}, #{maxNumber}, #{state}, now(), NULL)
+    </insert>
+
+    <update id="updateStudy" parameterType="com.westudy.study.dto.StudyUpdateDTO">
+        UPDATE study
+        SET title = #{title}, location = #{location}, max_member = #{maxNumber}, state = #{state}
+        WHERE id = #{id}
+    </update>
+
+    <update id="deleteStudy">
+        UPDATE study
+        SET delete_at = now()
+        WHERE id = #{id}
+    </update>
+
+    <select id="findByStudyId" resultType="com.westudy.study.entity.Study">
+        SELECT *
+        FROM study
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByPostId" resultType="com.westudy.study.entity.Study">
+        SELECT *
+        FROM study
+        WHERE post_id = #{id}
+    </select>
+
+    <select id="findStudy" resultType="com.westudy.study.dto.StudyResponseDTO">
+        SELECT id, post_id, user_id, title, location, max_member, state
+        FROM study
+        WHERE delete_at IS NULL
+        ORDER BY created_at DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+    <select id="countStudy" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM study
+        WHERE delete_at IS NULL
+    </select>
+</mapper>
