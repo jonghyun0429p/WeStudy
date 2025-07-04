@@ -71,6 +71,8 @@ main {
 .default-main {
     padding-top: 5vh;
     padding-bottom: 5vh;
+    padding-right: 4vw;
+    padding-left: 4vw;
     min-height: 90vh; /* 내용이 적어도 공간 확보 */
 }
 
@@ -100,7 +102,7 @@ footer {
 }
 
 footer p {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     margin-right: 2vw;
 }
 

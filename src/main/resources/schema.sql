@@ -51,15 +51,17 @@ CREATE TABLE IF NOT EXISTS post_content (
 -- 7. study 테이블 생성
 CREATE TABLE IF NOT EXISTS study (
                                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                    post_id BIGINT NOT NULL UNIQUE,
+                                    post_id BIGINT UNIQUE,
+                                    user_id BIGINT NOT NULL,
                                     title VARCHAR(100),
                                     location varchar(50),
                                     max_member BIGINT NOT NULL,
-                                    state varchar(10) DEFAULT  'RECRUITING',
+                                    state varchar(20) DEFAULT  'RECRUITING',
                                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                                     delete_at DATETIME,
 
-                                    CONSTRAINT fk_study_post FOREIGN KEY (post_id) REFERENCES post(id)
+                                    CONSTRAINT fk_study_post FOREIGN KEY (post_id) REFERENCES post(id),
+                                    CONSTRAINT fk_study_user FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
 -- 8. study 참여자 테이블 생성
@@ -68,7 +70,7 @@ CREATE TABLE IF NOT EXISTS study_participant (
                                    study_id BIGINT NOT NULL,
                                    user_id BIGINT NOT NULL,
                                    joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                   status VARCHAR(20) DEFAULT 'APPROVED', -- WAITING, APPROVED, REJECTED, CANCELLED 등
+                                   status VARCHAR(20) DEFAULT 'WAITING', -- WAITING, APPROVED, REJECTED, CANCELLED 등
 
                                    UNIQUE KEY unique_participant (study_id, user_id), -- 중복 신청 방지
                                    CONSTRAINT fk_participant_study FOREIGN KEY (study_id) REFERENCES study(id),
