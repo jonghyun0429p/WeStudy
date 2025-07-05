@@ -1,5 +1,6 @@
 package com.westudy.study.dto;
 
+import com.westudy.study.enums.StudyStates;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,5 +11,5 @@ public class StudyInsertDTO {
     private String title;
     private String location;
     private int maxMember;
-    private String state;
+    private StudyStates state;
 }

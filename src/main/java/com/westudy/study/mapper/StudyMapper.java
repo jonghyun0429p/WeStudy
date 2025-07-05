@@ -15,6 +15,9 @@ public interface StudyMapper {
     Study findByStudyId(long id);
     Study findByPostId(long id);
     long countStudy();
+    long countSearchStudy(String keyword);
     void updateStudy(StudyUpdateDTO studyUpdateDTO);
     void deleteStudy(long id);
+
+
 }
