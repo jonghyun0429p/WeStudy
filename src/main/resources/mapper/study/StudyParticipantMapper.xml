@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.westudy.study.mapper.StudyParticipantMapper">
+
+    <insert id="insertStudyParticipant" parameterType="com.westudy.study.entity.StudyParticipant" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO study_participant (study_id, user_id, joined_at, status)
+        VALUES (study_id = #{studyId}, user_id = #{userId}, joined_at = now(), status = 'WAITING')
+    </insert>
+
+    <update id="updateStudyParticipant" parameterType="map">
+        UPDATE study_participant
+        SET status = #{status}
+        WHERE study_id = #{studyId} AND user_id = #{userId}
+    </update>
+
+    <select id="findByUserId" resultType="com.westudy.study.entity.StudyParticipant">
+        SELECT *
+        FROM study_participant
+        WHERE user_id = #{id}
+    </select>
+
+    <select id="findByStudyId" resultType="com.westudy.study.entity.StudyParticipant">
+        SELECT *
+        FROM study_participant
+        WHERE study_id = #{id}
+    </select>
+    <select id="countStudyMember" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM study_participant
+        WHERE study_id = #{studyId} AND status = 'APPROVED'
+    </select>
+</mapper>
