@@ -11,5 +11,5 @@ import java.util.List;
 public interface PostDetailMapper {
     PostDetailDBDTO findPostDetailById(@Param("postId") long postId);
     List<PostResponseDTO> findSearchPosts(String keyword, int size, int offset);
-    int countSearchPosts(String keyword);
+    long countSearchPosts(String keyword);
 }
