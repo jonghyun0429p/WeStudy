@@ -12,8 +12,8 @@ public interface StudyMapper {
     void insertStudy(Study study);
     List<StudyResponseDTO> findStudy(int size, int offset);
     List<StudyResponseDTO> findSearchStudy(String keyword, int page);
-    Study findByStudyId(long id);
-    Study findByPostId(long id);
+    StudyResponseDTO findByStudyId(long id);
+    StudyResponseDTO findByPostId(long id);
     long countStudy();
     long countSearchStudy(String keyword);
     void updateStudy(StudyUpdateDTO studyUpdateDTO);

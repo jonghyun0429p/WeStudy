@@ -33,8 +33,6 @@ public class StudyService {
         this.studyParticipantMapper = studyParticipantMapper;
     }
 
-
-
     // create
     public void insertStudy(StudyInsertDTO studyInsertDTO){
         long userId = SecurityUtil.getCurrentUserId();
@@ -52,14 +50,14 @@ public class StudyService {
         return studyMapper.countStudy();
     }
 
-    public Study findByStudyId(long studyId){
+    public StudyResponseDTO findByStudyId(long studyId){
         return RequireHelper.requireNonNull(
                 studyMapper.findByStudyId(studyId), new BaseException(StudyErrorCode.STUDY_EMPTY)
         );
 
     }
 
-    public Study findByPostId(long postId){
+    public StudyResponseDTO findByPostId(long postId){
         return RequireHelper.requireNonNull(
                 studyMapper.findByPostId(postId), new BaseException(StudyErrorCode.STUDY_EMPTY)
         );

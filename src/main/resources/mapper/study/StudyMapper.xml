@@ -21,16 +21,16 @@
         WHERE id = #{id}
     </update>
 
-    <select id="findByStudyId" resultType="com.westudy.study.entity.Study">
-        SELECT *
+    <select id="findByStudyId" resultType="com.westudy.study.dto.StudyResponseDTO">
+        SELECT id, post_id, user_id, title, location, max_member, state
         FROM study
-        WHERE id = #{id}
+        WHERE id = #{id} AND delete_at IS NULL
     </select>
 
-    <select id="findByPostId" resultType="com.westudy.study.entity.Study">
-        SELECT *
+    <select id="findByPostId" resultType="com.westudy.study.dto.StudyResponseDTO">
+        SELECT id, title, location, max_member, state
         FROM study
-        WHERE post_id = #{id}
+        WHERE post_id = #{id} AND delete_at IS NULL
     </select>
 
     <select id="findStudy" resultType="com.westudy.study.dto.StudyResponseDTO">
