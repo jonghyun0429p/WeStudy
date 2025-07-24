@@ -1,5 +1,6 @@
 package com.westudy.study.entity;
 
+import com.westudy.study.enums.StudyParticipantStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,5 +17,5 @@ public class StudyParticipant {
     private long studyId;
     private long userId;
     private LocalDateTime joinedAt;
-    private String status;
+    private StudyParticipantStatus status;
 }

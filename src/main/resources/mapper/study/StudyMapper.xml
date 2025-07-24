@@ -20,6 +20,11 @@
         SET delete_at = now()
         WHERE id = #{id}
     </update>
+    <update id="updateStudyState" parameterType="com.westudy.study.enums.StudyStates">
+        UPDATE study
+        SET state = #{state}
+        WHERE id = #{id}
+    </update>
 
     <select id="findByStudyId" resultType="com.westudy.study.dto.StudyResponseDTO">
         SELECT id, post_id, user_id, title, location, max_member, state

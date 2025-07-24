@@ -3,6 +3,7 @@ package com.westudy.study.mapper;
 import com.westudy.study.dto.StudyResponseDTO;
 import com.westudy.study.dto.StudyUpdateDTO;
 import com.westudy.study.entity.Study;
+import com.westudy.study.enums.StudyStates;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public interface StudyMapper {
     long countStudy();
     long countSearchStudy(String keyword);
     void updateStudy(StudyUpdateDTO studyUpdateDTO);
+    void updateStudyState(StudyStates studyStates, long id);
     void deleteStudy(long id);
 
 

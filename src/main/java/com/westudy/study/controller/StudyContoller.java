@@ -8,11 +8,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -24,6 +22,35 @@ public class StudyContoller {
 
     public StudyContoller(StudyService studyService) {
         this.studyService = studyService;
+    }
+
+    @PostMapping("/application")
+    @Operation(summary = "스터디 신청", description = "스터디 신청 상태로 변환")
+    public ResponseEntity<Map<String, String>> applicationStudy(@RequestBody long studyId){
+
+        studyService.applicationStudy(studyId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/approve")
+    @Operation(summary = "스터디 인원 승인", description = "스터디 신청 인원 승인 요청")
+    public ResponseEntity<Map<String, String>> approveStudy(@RequestBody long studyId, long userId){
+        boolean isFull = studyService.approveAndCheckIfFull(userId, studyId);
+        log.info("스터디 인원 승인 성공");
+
+        Map<String, String> response = new HashMap<>();
+        response.put("status", isFull ? "FULL" : "OK");
+
+        return ResponseEntity.ok(response); // 항상 200
+    }
+
+    @PostMapping("/reject")
+    @Operation(summary = "스터디 인원 거절", description = "스터디 인원 거절 요청")
+    public ResponseEntity<Map<String, String>> resultStudy(@RequestBody long studyId, long userId){
+        studyService.requestReject(userId, studyId);
+
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/insert")

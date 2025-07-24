@@ -10,7 +10,7 @@
         VALUES (study_id = #{studyId}, user_id = #{userId}, joined_at = now(), status = 'WAITING')
     </insert>
 
-    <update id="updateStudyParticipant" parameterType="map">
+    <update id="updateStudyParticipant" parameterType="com.westudy.study.dto.StudyParticipantUpdateDTO">
         UPDATE study_participant
         SET status = #{status}
         WHERE study_id = #{studyId} AND user_id = #{userId}
