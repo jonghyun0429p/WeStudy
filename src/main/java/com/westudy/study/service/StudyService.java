@@ -3,13 +3,10 @@ package com.westudy.study.service;
 import com.westudy.global.exception.BaseException;
 import com.westudy.global.util.RequireHelper;
 import com.westudy.security.util.SecurityUtil;
-import com.westudy.study.controller.StudyContoller;
 import com.westudy.study.converter.StudyConverter;
-import com.westudy.study.dto.StudyInsertDTO;
-import com.westudy.study.dto.StudyResponseDTO;
-import com.westudy.study.dto.StudyUpdateDTO;
-import com.westudy.study.entity.Study;
+import com.westudy.study.dto.*;
 import com.westudy.study.enums.StudyErrorCode;
+import com.westudy.study.enums.StudyParticipantStatus;
 import com.westudy.study.enums.StudyStates;
 import com.westudy.study.mapper.StudyMapper;
 import com.westudy.study.mapper.StudyParticipantMapper;
@@ -26,6 +23,7 @@ public class StudyService {
     private final StudyMapper studyMapper;
     private final StudyConverter studyConverter;
     private final StudyParticipantMapper studyParticipantMapper;
+    private final Object lock = new Object();
 
     public StudyService(StudyMapper studyMapper, StudyConverter studyConverter, StudyParticipantMapper studyParticipantMapper) {
         this.studyMapper = studyMapper;
@@ -33,10 +31,56 @@ public class StudyService {
         this.studyParticipantMapper = studyParticipantMapper;
     }
 
+    public void applicationStudy(long studyId){
+        long userId = SecurityUtil.getCurrentUserId();
+        insertStudyParticipant(studyId);
+    }
+
+    public boolean approveAndCheckIfFull(long userId, long studyId){
+
+        synchronized (lock){
+            int maxMember = findByStudyId(studyId).getMaxMember();
+            int members = getStudyParticipantCount(studyId);
+
+            if(maxMember > members){
+                updateStudyParticipant(new StudyParticipantUpdateDTO(userId, studyId, StudyParticipantStatus.APPROVED));
+            }else{
+                throw new BaseException(StudyErrorCode.STUDY_FULL);
+            }
+
+            if(members+1 == maxMember){
+                studyMapper.updateStudyState(StudyStates.CLOSED, studyId);
+                return true;
+            }
+            return  false;
+        }
+    }
+
+    public void requestReject(long userId, long studyId){
+        updateStudyParticipant(new StudyParticipantUpdateDTO(userId, studyId, StudyParticipantStatus.REJECTED));
+    }
+
+    public void requestCancel(long studyId){
+        long userId = SecurityUtil.getCurrentUserId();
+        studyParticipantMapper.updateStudyParticipant(new StudyParticipantUpdateDTO(userId, studyId, StudyParticipantStatus.CANCELLED));
+    }
+
+    public boolean canApprove(long studyId){
+        int maxMember = findByStudyId(studyId).getMaxMember();
+        int members = getStudyParticipantCount(studyId);
+
+        return maxMember > members;
+    }
+
     // create
     public void insertStudy(StudyInsertDTO studyInsertDTO){
         long userId = SecurityUtil.getCurrentUserId();
         studyMapper.insertStudy(studyConverter.toStudy(studyInsertDTO, userId));
+    }
+
+    public void insertStudyParticipant(long studyId){
+        long userId = SecurityUtil.getCurrentUserId();
+        studyParticipantMapper.insertStudyParticipant(studyId, userId);
     }
 
     //read
@@ -79,21 +123,21 @@ public class StudyService {
         );
     }
 
+    public int getStudyParticipantCount(long studyId){
+        return studyParticipantMapper.countStudyMember(studyId);
+    }
+
     //update
     public void updateStudy(StudyUpdateDTO studyUpdateDTO){
-        int memberCount = studyParticipantMapper.countStudyMember(studyUpdateDTO.getId());
-        if(studyUpdateDTO.getMaxMember() > memberCount){
-            studyUpdateDTO.setState(StudyStates.RECRUITING);
-        }else{
-            studyUpdateDTO.setState(StudyStates.CLOSED);
-        }
-
         studyMapper.updateStudy(studyUpdateDTO);
+    }
+
+    public void updateStudyParticipant(StudyParticipantUpdateDTO studyParticipantUpdateDTO){
+        studyParticipantMapper.updateStudyParticipant(studyParticipantUpdateDTO);
     }
 
     //delete
     public void deleteStudy(long studyId){
         studyMapper.deleteStudy(studyId);
     }
-
 }

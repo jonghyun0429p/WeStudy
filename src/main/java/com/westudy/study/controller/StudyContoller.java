@@ -53,6 +53,14 @@ public class StudyContoller {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/cancel")
+    @Operation(summary = "스터디 신청 취소", description = "스터디 신청한 인원이 취소")
+    public ResponseEntity<Map<String, String>> cancelStudy(@RequestBody long studyId){
+        studyService.requestCancel(studyId);
+
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/insert")
     @Operation(summary = "스터디 생성", description = "스터디를 생성하면 DB에 저장")
     public ResponseEntity<Map<String, String>> insertStudy(@RequestBody StudyInsertDTO studyInsertDTO){
