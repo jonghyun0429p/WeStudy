@@ -5,7 +5,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public enum StudyErrorCode implements BaseErrorCode {
     STUDY_EMPTY(HttpServletResponse.SC_NOT_FOUND, "스터디가 없습니다."),
-    STUDY_FULL(HttpServletResponse.SC_BAD_REQUEST, "스터디가 이미 가득 차있습니다.");
+    STUDY_FULL(HttpServletResponse.SC_BAD_REQUEST, "스터디가 이미 가득 차있습니다."),
+    STUDY_NOT_WRITER(HttpServletResponse.SC_BAD_REQUEST, "스터디의 작성자가 아닙니다.");
 
     private final int httpStatus;
     private final String message;

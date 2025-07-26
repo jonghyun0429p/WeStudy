@@ -15,11 +15,11 @@ import java.time.LocalDateTime;
 public class Study {
     private long id;
     private long userId;
-    private long postId;
+    private Long postId;
     private String title;
-    private String locaion;
+    private String location;
     private int maxMember;
     private StudyStates state;
-    private LocalDateTime createAt;
-    private LocalDateTime deleteAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime deletedAt;
 }

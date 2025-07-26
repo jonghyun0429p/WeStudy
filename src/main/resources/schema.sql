@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS post_content (
 -- 7. study 테이블 생성
 CREATE TABLE IF NOT EXISTS study (
                                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                    post_id BIGINT UNIQUE,
+                                    post_id BIGINT UNIQUE NULL,
                                     user_id BIGINT NOT NULL,
                                     title VARCHAR(100),
                                     location varchar(50),

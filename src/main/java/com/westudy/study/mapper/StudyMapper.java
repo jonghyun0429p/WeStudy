@@ -1,5 +1,6 @@
 package com.westudy.study.mapper;
 
+import com.westudy.study.dto.StudyParticipanResponseDTO;
 import com.westudy.study.dto.StudyResponseDTO;
 import com.westudy.study.dto.StudyUpdateDTO;
 import com.westudy.study.entity.Study;
@@ -20,6 +21,8 @@ public interface StudyMapper {
     void updateStudy(StudyUpdateDTO studyUpdateDTO);
     void updateStudyState(StudyStates studyStates, long id);
     void deleteStudy(long id);
+
+    long findStudyWriter(long id);
 
 
 }

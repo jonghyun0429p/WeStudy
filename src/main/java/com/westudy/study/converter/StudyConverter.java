@@ -13,7 +13,7 @@ public class StudyConverter {
         return Study.builder()
                 .userId(userId)
                 .title(studyInsertDTO.getTitle())
-                .locaion(studyInsertDTO.getLocation())
+                .location(studyInsertDTO.getLocation())
                 .maxMember(studyInsertDTO.getMaxMember())
                 .state(studyInsertDTO.getState())
                 .build();

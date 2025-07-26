@@ -72,6 +72,21 @@ public class StudyService {
         return maxMember > members;
     }
 
+    public List<StudyParticipanResponseDTO> getParticipantList(long studyId){
+        if(isWriter(studyId)){
+            return findParticipantByStudyId(studyId);
+        }else{
+            throw new BaseException(StudyErrorCode.STUDY_NOT_WRITER);
+        }
+    }
+
+    public boolean isWriter(long studyId){
+        long userId = SecurityUtil.getCurrentUserId();
+        long studyUserId = studyMapper.findStudyWriter(studyId);
+
+        return userId == studyUserId;
+    }
+
     // create
     public void insertStudy(StudyInsertDTO studyInsertDTO){
         long userId = SecurityUtil.getCurrentUserId();
@@ -123,12 +138,25 @@ public class StudyService {
         );
     }
 
+    public List<StudyParticipanResponseDTO> findParticipantByStudyId(long studyId){
+        return RequireHelper.requireNonEmpty(
+                studyParticipantMapper.findByStudyId(studyId), new BaseException(StudyErrorCode.STUDY_EMPTY)
+        );
+    }
+
     public int getStudyParticipantCount(long studyId){
         return studyParticipantMapper.countStudyMember(studyId);
     }
 
     //update
     public void updateStudy(StudyUpdateDTO studyUpdateDTO){
+        if(studyUpdateDTO.getState() == null){
+            if(studyUpdateDTO.getMaxMember() > studyParticipantMapper.countStudyMember(studyUpdateDTO.getId())){
+                studyUpdateDTO.setState(StudyStates.RECRUITING);
+            }else {
+                studyUpdateDTO.setState(StudyStates.CLOSED);
+            }
+        }
         studyMapper.updateStudy(studyUpdateDTO);
     }
 

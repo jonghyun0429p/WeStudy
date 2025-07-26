@@ -44,6 +44,12 @@ public class StudyPageController {
         model.addAttribute("currentPage", page);
         return "/layout/study/board";
     }
+//    @GetMapping("/manage")
+//    @Operation(summary = "스터디 신청자 관리 페이지", description = "스터디 신청자들 관리하는 페이지")
+//    public String getStudyParticipantManage(
+//            @RequestParam(value = "id") long id) {
+//            studyService.getStudyParticipant(id);
+//    }
 
     @GetMapping("/write")
     @Operation(summary = "스터디 작성 페이지", description = "스터디 작성 페이지")

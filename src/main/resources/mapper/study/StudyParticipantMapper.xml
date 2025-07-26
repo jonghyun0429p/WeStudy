@@ -22,11 +22,13 @@
         WHERE user_id = #{id}
     </select>
 
-    <select id="findByStudyId" resultType="com.westudy.study.entity.StudyParticipant">
-        SELECT *
-        FROM study_participant
+    <select id="findByStudyId" resultType="com.westudy.study.dto.StudyParticipanResponseDTO">
+        SELECT sp.id, sp.study_id, sp.user_id, u.nickname, sp.joined_at
+        FROM study_participant sp
+        join user u On sp.user_id = u.id
         WHERE study_id = #{id}
     </select>
+
     <select id="countStudyMember" resultType="java.lang.Integer">
         SELECT COUNT(*)
         FROM study_participant

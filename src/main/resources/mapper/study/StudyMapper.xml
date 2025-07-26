@@ -6,12 +6,12 @@
 <mapper namespace="com.westudy.study.mapper.StudyMapper">
     <insert id="insertStudy" parameterType="com.westudy.study.entity.Study" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO study (user_id, post_id, title, location, max_member, state, created_at, delete_at)
-        VALUES (#{userId}, #{postId}, #{title}, #{locaion}, #{maxNumber}, #{state}, now(), NULL)
+        VALUES (#{userId}, #{postId}, #{title}, #{location}, #{maxMember}, #{state}, now(), NULL)
     </insert>
 
     <update id="updateStudy" parameterType="com.westudy.study.dto.StudyUpdateDTO">
         UPDATE study
-        SET title = #{title}, location = #{location}, max_member = #{maxNumber}, state = #{state}
+        SET title = #{title}, location = #{location}, max_member = #{maxMember}, state = #{state}
         WHERE id = #{id}
     </update>
 
@@ -58,9 +58,16 @@
         ORDER BY created_at DESC
         LIMIT #{size} OFFSET #{page}
     </select>
+
     <select id="countSearchStudy" resultType="java.lang.Long">
         SELECT COUNT(*)
         FROM study
         WHERE delete_at IS NULL AND title LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <select id="findStudyWriter" resultType="java.lang.Long">
+        SELECT user_id
+        FROM study
+        WHERE id = #{id}
     </select>
 </mapper>
