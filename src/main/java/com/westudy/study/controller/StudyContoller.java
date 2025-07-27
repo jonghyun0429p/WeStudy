@@ -2,6 +2,7 @@ package com.westudy.study.controller;
 
 import com.westudy.global.util.ResponseUtils;
 import com.westudy.study.dto.StudyInsertDTO;
+import com.westudy.study.dto.StudyManageDTO;
 import com.westudy.study.dto.StudyUpdateDTO;
 import com.westudy.study.service.StudyService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,8 +36,8 @@ public class StudyContoller {
 
     @PostMapping("/approve")
     @Operation(summary = "스터디 인원 승인", description = "스터디 신청 인원 승인 요청")
-    public ResponseEntity<Map<String, String>> approveStudy(@RequestBody long studyId, long userId){
-        boolean isFull = studyService.approveAndCheckIfFull(userId, studyId);
+    public ResponseEntity<Map<String, String>> approveStudy(@RequestBody StudyManageDTO studyManageDTO){
+                boolean isFull = studyService.approveAndCheckIfFull(studyManageDTO.getUserId(), studyManageDTO.getStudyId());
         log.info("스터디 인원 승인 성공");
 
         Map<String, String> response = new HashMap<>();
@@ -47,8 +48,8 @@ public class StudyContoller {
 
     @PostMapping("/reject")
     @Operation(summary = "스터디 인원 거절", description = "스터디 인원 거절 요청")
-    public ResponseEntity<Map<String, String>> resultStudy(@RequestBody long studyId, long userId){
-        studyService.requestReject(userId, studyId);
+    public ResponseEntity<Map<String, String>> resultStudy(@RequestBody StudyManageDTO studyManageDTO){
+        studyService.requestReject(studyManageDTO.getUserId(), studyManageDTO.getStudyId());
 
         return ResponseEntity.ok().build();
     }

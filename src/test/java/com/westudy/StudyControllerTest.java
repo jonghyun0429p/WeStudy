@@ -16,6 +16,9 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -84,7 +87,7 @@ public class StudyControllerTest {
         StudyUpdateDTO dto = new StudyUpdateDTO();
         dto.setId(savedStudyId);
         dto.setTitle("수정된 스터디 제목");
-        dto.setLocation("부산");
+        dto.setLocation("서울");
         dto.setMaxMember(10);
 
         mockMvc.perform(post("/api/study/update")
@@ -130,5 +133,51 @@ public class StudyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(studyId)))
                 .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("스터디 승인")
+    void approveStudy() throws Exception{
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("studyId", 17L);
+        body.put("userId", 3L);
+        String json = objectMapper.writeValueAsString(body);
+
+        mockMvc.perform(post("/api/study/approve")
+                .cookie(authCookies)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("스터디 거부")
+    void rejectStudy() throws Exception{
+        Map<String, Object> body = new HashMap<>();
+        body.put("studyId", 17L);
+        body.put("userId", 2L);
+        String json = objectMapper.writeValueAsString(body);
+
+        mockMvc.perform(post("/api/study/reject")
+                        .cookie(authCookies)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    @Order(8)
+    @DisplayName("스터디 취소")
+    void cancelApplication() throws Exception{
+        long studyId = 8;
+
+        mockMvc.perform(post("/api/study/cancel")
+                        .cookie(authCookies)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(studyId)))
+                .andExpect(status().is2xxSuccessful());
     }
 }
