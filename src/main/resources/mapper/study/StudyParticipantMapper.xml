@@ -7,7 +7,7 @@
 
     <insert id="insertStudyParticipant" parameterType="com.westudy.study.entity.StudyParticipant" keyProperty="id" useGeneratedKeys="true">
         INSERT INTO study_participant (study_id, user_id, joined_at, status)
-        VALUES (study_id = #{studyId}, user_id = #{userId}, joined_at = now(), status = 'WAITING')
+        VALUES (#{studyId}, #{userId}, now(), #{status})
     </insert>
 
     <update id="updateStudyParticipant" parameterType="com.westudy.study.dto.StudyParticipantUpdateDTO">
@@ -33,5 +33,11 @@
         SELECT COUNT(*)
         FROM study_participant
         WHERE study_id = #{studyId} AND status = 'APPROVED'
+    </select>
+
+    <select id="findByUserIdAndStudyId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM study_participant
+        WHERE user_id = #{userId} AND study_id = #{studyId}
     </select>
 </mapper>

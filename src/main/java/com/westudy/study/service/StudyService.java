@@ -12,6 +12,7 @@ import com.westudy.study.mapper.StudyMapper;
 import com.westudy.study.mapper.StudyParticipantMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -31,10 +32,13 @@ public class StudyService {
         this.studyParticipantMapper = studyParticipantMapper;
     }
 
-    public void applicationStudy(long studyId){
+
+    @Transactional
+    public void applicationStudy(long studyId) {
         long userId = SecurityUtil.getCurrentUserId();
         insertStudyParticipant(studyId);
     }
+
 
     public boolean approveAndCheckIfFull(long userId, long studyId){
 
@@ -95,7 +99,12 @@ public class StudyService {
 
     public void insertStudyParticipant(long studyId){
         long userId = SecurityUtil.getCurrentUserId();
-        studyParticipantMapper.insertStudyParticipant(studyId, userId);
+        if(studyParticipantMapper.findByUserIdAndStudyId(userId, studyId) == 0){
+            studyParticipantMapper.insertStudyParticipant(studyConverter.toStudyParticipant(studyId, userId));
+        }else {
+            throw new BaseException(StudyErrorCode.STUDY_ALREADY_APPLICATION);
+        }
+
     }
 
     //read

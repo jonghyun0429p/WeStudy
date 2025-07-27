@@ -12,16 +12,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("local")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Rollback
 public class StudyControllerTest {
 
     @Autowired
@@ -100,5 +103,32 @@ public class StudyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(String.valueOf(savedStudyId)))
                 .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("스터디 신청")
+    void applicationStudy() throws Exception {
+        long studyId = 8;
+        System.out.println("📌 studyId: " + studyId);
+
+        mockMvc.perform(post("/api/study/application")
+                        .cookie(authCookies)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(studyId)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("스터디 중복 신청")
+    void applicationDuplicationStudy() throws Exception{
+        long studyId = 8;
+
+        mockMvc.perform(post("/api/study/application")
+                        .cookie(authCookies)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(studyId)))
+                .andExpect(status().is4xxClientError());
     }
 }

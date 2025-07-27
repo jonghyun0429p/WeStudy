@@ -1,6 +1,7 @@
 package com.westudy.study.controller;
 
 import com.westudy.post.enums.PostCategory;
+import com.westudy.study.dto.StudyParticipanResponseDTO;
 import com.westudy.study.service.StudyService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.stereotype.Controller;
@@ -44,12 +45,6 @@ public class StudyPageController {
         model.addAttribute("currentPage", page);
         return "/layout/study/board";
     }
-//    @GetMapping("/manage")
-//    @Operation(summary = "스터디 신청자 관리 페이지", description = "스터디 신청자들 관리하는 페이지")
-//    public String getStudyParticipantManage(
-//            @RequestParam(value = "id") long id) {
-//            studyService.getStudyParticipant(id);
-//    }
 
     @GetMapping("/write")
     @Operation(summary = "스터디 작성 페이지", description = "스터디 작성 페이지")
@@ -66,5 +61,15 @@ public class StudyPageController {
         model.addAttribute("page", studyService.getStudyDetailResponse(id));
 
         return "/layout/study/edit";
+    }
+
+    @GetMapping("/manage")
+    @Operation(summary = "스터디 신청자 관리 페이지", description = "스터디 신청자들 관리하는 페이지")
+    public String getStudyParticipantManage(
+            @RequestParam(value = "id") long id,
+            Model model) {
+        model.addAttribute("participant", studyService.getParticipantList(id));
+
+        return "/layout/study/detail";
     }
 }

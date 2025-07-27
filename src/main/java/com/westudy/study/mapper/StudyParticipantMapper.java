@@ -11,9 +11,10 @@ import java.util.Map;
 
 @Mapper
 public interface StudyParticipantMapper {
-    void insertStudyParticipant(@Param("userId") long userId, @Param("studyId") long studyId);
+    void insertStudyParticipant(StudyParticipant studyParticipant);
     StudyParticipant findByUserId(long userId);
     List<StudyParticipanResponseDTO> findByStudyId(long studyId);
+    int findByUserIdAndStudyId(long userId, long studyId);
     int countStudyMember(long studyId);
     void updateStudyParticipant(StudyParticipantUpdateDTO studyParticipantUpdateDTO);
     void deleteByUserId(long id);
