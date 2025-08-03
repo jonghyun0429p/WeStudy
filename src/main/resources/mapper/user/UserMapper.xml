@@ -35,7 +35,7 @@
 
     <update id="updateUser" parameterType="User">
         UPDATE user
-        SET username = #{username}, password = #{password}, email = #{email}, nickname = #{nickname}, phone_number = #{phoneNumber}
+        SET username = #{username}, password = #{password}, email = #{email}, nickname = #{nickname}, phone_number = #{phoneNumber}, modified_at = now()
         WHERE id = #{id}
     </update>
     

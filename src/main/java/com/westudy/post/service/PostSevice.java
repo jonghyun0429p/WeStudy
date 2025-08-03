@@ -66,6 +66,14 @@ public class PostSevice {
 
     }
 
+    public void isWriter(long postId){
+        long id = SecurityUtil.getCurrentUserId();
+        long postWriter = postMapper.findUserIdByPostId(postId);
+        if(id != postWriter){
+            throw new BaseException(PostErrorCode.POST_ID_NOT_SAME);
+        }
+    }
+
     //Create
     public void insertPost(Long userId, PostInsertDTO postInsertDTO){
         log.info("게시글 데이터 변환 및 저장");
@@ -116,6 +124,7 @@ public class PostSevice {
 
     //Update
     public void updatePost(PostUpdateDTO postUpdateDTO){
+        isWriter(postUpdateDTO.getPostId());
         Post oldPost = postMapper.findByPostId(postUpdateDTO.getPostId());
         Post newPost = postConverter.toUpdatePost(oldPost, postUpdateDTO);
         postMapper.updatePost(newPost);
@@ -124,6 +133,7 @@ public class PostSevice {
 
     //Delete
     public void deletePost(long postId){
+        isWriter(postId);
         postMapper.deleteByPostId(postId);
     }
 

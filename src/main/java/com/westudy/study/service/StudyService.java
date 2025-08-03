@@ -77,18 +77,23 @@ public class StudyService {
     }
 
     public List<StudyParticipanResponseDTO> getParticipantList(long studyId){
-        if(isWriter(studyId)){
-            return findParticipantByStudyId(studyId);
-        }else{
+        isWriter(studyId);
+        return findParticipantByStudyId(studyId);
+    }
+
+    public void isWriter(long studyId){
+        long userId = SecurityUtil.getCurrentUserId();
+        long studyUserId = studyMapper.findStudyWriter(studyId);
+        if(userId != studyUserId){
             throw new BaseException(StudyErrorCode.STUDY_NOT_WRITER);
         }
     }
 
-    public boolean isWriter(long studyId){
-        long userId = SecurityUtil.getCurrentUserId();
-        long studyUserId = studyMapper.findStudyWriter(studyId);
-
-        return userId == studyUserId;
+    public void isParticipant(long userId){
+        long id = SecurityUtil.getCurrentUserId();
+        if(userId != id){
+            throw new BaseException(StudyErrorCode.STUDY_NOT_PARTICIPANT);
+        }
     }
 
     // create
@@ -159,6 +164,7 @@ public class StudyService {
 
     //update
     public void updateStudy(StudyUpdateDTO studyUpdateDTO){
+        isWriter(studyUpdateDTO.getId());
         if(studyUpdateDTO.getState() == null){
             if(studyUpdateDTO.getMaxMember() > studyParticipantMapper.countStudyMember(studyUpdateDTO.getId())){
                 studyUpdateDTO.setState(StudyStates.RECRUITING);
@@ -170,11 +176,13 @@ public class StudyService {
     }
 
     public void updateStudyParticipant(StudyParticipantUpdateDTO studyParticipantUpdateDTO){
+        isParticipant(studyParticipantUpdateDTO.getUserId());
         studyParticipantMapper.updateStudyParticipant(studyParticipantUpdateDTO);
     }
 
     //delete
     public void deleteStudy(long studyId){
+        isWriter(studyId);
         studyMapper.deleteStudy(studyId);
     }
 }

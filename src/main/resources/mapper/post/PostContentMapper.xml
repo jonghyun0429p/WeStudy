@@ -6,7 +6,7 @@
 <mapper namespace="com.westudy.post.mapper.PostContentMapper">
 
     <insert id="insertContent" parameterType="com.westudy.post.entity.PostContent">
-        INSERT INTO post_content (post_id, content, modify_at)
+        INSERT INTO post_content (post_id, content, post_content.modified_at)
         VALUES (#{postId}, #{content}, NULL)
     </insert>
     <select id="findByPostId" resultType="com.westudy.post.entity.PostContent" parameterType="long">
@@ -16,7 +16,7 @@
     </select>
     <update id="updateContent" parameterType="com.westudy.post.entity.PostContent">
         UPDATE post_content
-        SET post_id = #{postId}, content = #{content}, modify_at = now()
+        SET post_id = #{postId}, content = #{content}, modified_at = now()
         WHERE post_id = #{postId}
     </update>
     <update id="deleteByPostId" parameterType="long">

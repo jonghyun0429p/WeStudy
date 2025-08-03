@@ -13,6 +13,7 @@ public interface PostMapper {
     List<Post> findByUserId(long userId);
     List<Post> findNotice();
     List<Post> findPost(int size, int offset);
+    long findUserIdByPostId(long id);
     long countPosts();
     void insertPost(Post post);
     void updatePost(Post post);

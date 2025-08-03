@@ -38,6 +38,12 @@
         WHERE is_notice = false AND delete_at IS NULL
     </select>
 
+    <select id="findUserIdByPostId" resultType="java.lang.Long">
+        SELECT user_id
+        FROM post
+        WHERE id = #{id}
+    </select>
+
     <insert id="insertPost" parameterType="com.westudy.post.entity.Post" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO post (user_id, study_id, views, is_notice, category, title, summary, create_at)
         VALUES (#{userId}, #{studyId}, 0, #{isNotice}, #{category}, #{title}, #{summary}, now())
@@ -45,7 +51,7 @@
 
     <update id="updatePost" parameterType="com.westudy.post.entity.Post">
         UPDATE post
-        SET title = #{title}, summary = #{summary}, category = #{category}
+        SET title = #{title}, summary = #{summary}, category = #{category}, modified_at = now()
         WHERE id = #{id}
     </update>
 

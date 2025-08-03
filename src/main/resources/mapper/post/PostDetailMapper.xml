@@ -24,7 +24,7 @@
                p.views,
                u.nickname,
                p.create_at,
-               c.modify_at
+               c.modified_at
         FROM post p
         JOIN post_content c on p.id = c.post_id
         JOIN westudy.user u on u.id = p.user_id

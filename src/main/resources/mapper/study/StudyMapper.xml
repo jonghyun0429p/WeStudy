@@ -22,7 +22,7 @@
     </update>
     <update id="updateStudyState" parameterType="com.westudy.study.enums.StudyStates">
         UPDATE study
-        SET state = #{state}
+        SET state = #{state}, modified_at = now()
         WHERE id = #{id}
     </update>
 

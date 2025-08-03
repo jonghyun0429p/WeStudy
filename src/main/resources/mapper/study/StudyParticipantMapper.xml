@@ -12,7 +12,7 @@
 
     <update id="updateStudyParticipant" parameterType="com.westudy.study.dto.StudyParticipantUpdateDTO">
         UPDATE study_participant
-        SET status = #{status}
+        SET status = #{status}, modified_at = now()
         WHERE study_id = #{studyId} AND user_id = #{userId}
     </update>
 
