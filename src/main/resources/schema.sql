@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS user (
                                     nickname VARCHAR(50) NOT NULL,
                                     phone_number VARCHAR(20) NOT NULL,
                                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                    modified_at DATETIME,
                                     delete_at DATETIME,
                                     role VARCHAR(20) DEFAULT 'USER_USER'
 );
@@ -34,6 +35,7 @@ CREATE TABLE IF NOT EXISTS post (
                                     title VARCHAR(100),
                                     summary VARCHAR(100),
                                     create_at DATETIME DEFAULT  CURRENT_TIMESTAMP,
+                                    modified_at DATETIME,
                                     delete_at DATETIME,
 
                                     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES user(id)
@@ -43,7 +45,7 @@ CREATE TABLE IF NOT EXISTS post (
 CREATE TABLE IF NOT EXISTS post_content (
                                     post_id BIGINT NOT NULL UNIQUE,
                                     content VARCHAR(1000) NOT NULL,
-                                    modify_at DATETIME,
+                                    modified_at DATETIME,
 
                                     CONSTRAINT fk_post_content_post FOREIGN KEY (post_id) REFERENCES post(id)
 );
@@ -58,6 +60,7 @@ CREATE TABLE IF NOT EXISTS study (
                                     max_member BIGINT NOT NULL,
                                     state varchar(20) DEFAULT  'RECRUITING',
                                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                    modified_at DATETIME,
                                     delete_at DATETIME,
 
                                     CONSTRAINT fk_study_post FOREIGN KEY (post_id) REFERENCES post(id),
@@ -70,9 +73,23 @@ CREATE TABLE IF NOT EXISTS study_participant (
                                    study_id BIGINT NOT NULL,
                                    user_id BIGINT NOT NULL,
                                    joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                   modified_at DATETIME,
                                    status VARCHAR(20) DEFAULT 'WAITING', -- WAITING, APPROVED, REJECTED, CANCELLED 등
 
                                    UNIQUE KEY unique_participant (study_id, user_id), -- 중복 신청 방지
                                    CONSTRAINT fk_participant_study FOREIGN KEY (study_id) REFERENCES study(id),
                                    CONSTRAINT fk_participant_user FOREIGN KEY (user_id) REFERENCES user(id)
 );
+
+CREATE TABLE IF NOT EXISTS comment (
+                                id      BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                user_id BIGINT NOT NULL,
+                                post_id BIGINT NOT NULL,
+                                content VARCHAR(100) NOT NULL,
+                                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                modified_at DATETIME,
+                                delete_at DATETIME,
+
+                                CONSTRAINT fk_comment_user FOREIGN KEY (user_id) REFERENCES user(id),
+                                CONSTRAINT fk_comment_post FOREIGN KEY (post_id) REFERENCES post(id)
+)
