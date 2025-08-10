@@ -92,4 +92,17 @@ CREATE TABLE IF NOT EXISTS comment (
 
                                 CONSTRAINT fk_comment_user FOREIGN KEY (user_id) REFERENCES user(id),
                                 CONSTRAINT fk_comment_post FOREIGN KEY (post_id) REFERENCES post(id)
-)
+);
+
+CREATE TABLE IF NOT EXISTS likes (
+                                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                     post_id BIGINT NULL,
+                                     user_id BIGINT NOT NULL,
+                                     comment_id BIGINT NULL,
+                                     like_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+                                     CONSTRAINT fk_likes_post FOREIGN KEY (post_id) REFERENCES post(id),
+                                     CONSTRAINT fk_likes_user FOREIGN KEY (user_id) REFERENCES user(id),
+                                     CONSTRAINT fk_likes_comment FOREIGN KEY (comment_id) REFERENCES comment(id)
+);
+
