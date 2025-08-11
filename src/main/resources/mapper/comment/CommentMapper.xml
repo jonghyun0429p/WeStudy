@@ -22,7 +22,7 @@
     <update id="updateComment">
         UPDATE comment
         SET content = #{content}, modified_at = now()
-        WHERE id = #{id}
+        WHERE id = #{id} AND post_id = #{postId}
     </update>
     <update id="deleteComment">
         UPDATE comment
