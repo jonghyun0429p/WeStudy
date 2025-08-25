@@ -106,3 +106,12 @@ CREATE TABLE IF NOT EXISTS likes (
                                      CONSTRAINT fk_likes_comment FOREIGN KEY (comment_id) REFERENCES comment(id)
 );
 
+CREATE TABLE IF NOT EXISTS like_count (
+                                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                        post_id BIGINT NULL,
+                                        comment_id BIGINT NULL,
+                                        like_count BIGINT NOT NULL DEFAULT 0,
+
+                                        CONSTRAINT fk_likes_post FOREIGN KEY (post_id) REFERENCES post(id),
+                                        CONSTRAINT fk_likes_comment FOREIGN KEY (comment_id) REFERENCES comment(id)
+)
