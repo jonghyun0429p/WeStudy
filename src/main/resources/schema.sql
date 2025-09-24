@@ -103,7 +103,10 @@ CREATE TABLE IF NOT EXISTS likes (
 
                                      CONSTRAINT fk_likes_post FOREIGN KEY (post_id) REFERENCES post(id),
                                      CONSTRAINT fk_likes_user FOREIGN KEY (user_id) REFERENCES user(id),
-                                     CONSTRAINT fk_likes_comment FOREIGN KEY (comment_id) REFERENCES comment(id)
+                                     CONSTRAINT fk_likes_comment FOREIGN KEY (comment_id) REFERENCES comment(id),
+
+                                     UNIQUE KEY ux_likes_post_user (post_id, user_id),
+                                     UNIQUE KEY ux_likes_comment_user (comment_id, user_id)
 );
 
 CREATE TABLE IF NOT EXISTS like_count (
@@ -112,6 +115,9 @@ CREATE TABLE IF NOT EXISTS like_count (
                                         comment_id BIGINT NULL,
                                         like_count BIGINT NOT NULL DEFAULT 0,
 
-                                        CONSTRAINT fk_likes_post FOREIGN KEY (post_id) REFERENCES post(id),
-                                        CONSTRAINT fk_likes_comment FOREIGN KEY (comment_id) REFERENCES comment(id)
+                                        CONSTRAINT fk_like_count_post FOREIGN KEY (post_id) REFERENCES post(id),
+                                        CONSTRAINT fk_like_count_comment FOREIGN KEY (comment_id) REFERENCES comment(id),
+
+                                        UNIQUE KEY ux_cnt_post (post_id),
+                                        UNIQUE KEY ux_cnt_comment (comment_id)
 )
