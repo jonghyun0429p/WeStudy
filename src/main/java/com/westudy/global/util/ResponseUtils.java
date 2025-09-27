@@ -18,4 +18,16 @@ public class ResponseUtils {
         result.put("redirect_url", url);
         return ResponseEntity.ok(result);
     }
+
+    public static ResponseEntity<Map<String, String>> ok(String message){
+        Map<String, String> result = new HashMap<>();
+        result.put("message", message);
+        return ResponseEntity.ok(result);
+    }
+
+    public static ResponseEntity<Map<String, String>> reject(String message){
+        Map<String, String> result = new HashMap<>();
+        result.put("message", message);
+        return ResponseEntity.badRequest().body(result);
+    }
 }
