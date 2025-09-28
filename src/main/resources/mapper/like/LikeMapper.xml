@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.westudy.like.mapper.LikeMapper">
+
+    <insert id="insertLikeComment">
+        INSERT INTO likes (user_id, comment_id, like_at)
+        VALUES (#{userId}, #{commentId}, now())
+        ON DUPLICATE KEY UPDATE comment_id = comment_id;
+    </insert>
+    <insert id="insertLikePost">
+        INSERT INTO likes (post_id, user_id, like_at)
+        VALUES (#{postId}, #{userId}, now())
+        ON DUPLICATE KEY UPDATE post_id = post_id;
+    </insert>
+    <update id="addLikeCommentCount">
+        UPDATE like_count
+        SET like_count = like_count+1
+        WHERE comment_id = #{commentId}
+    </update>
+    <update id="addLikePostCount">
+        UPDATE like_count
+        SET like_count = like_count+1
+        WHERE post_id = #{postId}
+    </update>
+    <insert id="ensurePostLikeCount">
+        INSERT INTO like_count (post_id, like_count)
+        VALUES (#{postId}, 0)
+        ON DUPLICATE KEY UPDATE like_count = like_count;
+    </insert>
+    <insert id="ensureCommentLikeCount">
+        INSERT INTO like_count (comment_id, like_count)
+        VALUES (#{commentId}, 0)
+        ON DUPLICATE KEY UPDATE like_count = like_count;
+    </insert>
+    <update id="minusLikeCommentCount">
+        UPDATE like_count
+        SET like_count = like_count-1
+        WHERE comment_id = #{commentId}
+    </update>
+    <update id="minusLikePostCount">
+        UPDATE like_count
+        SET like_count = like_count-1
+        WHERE post_id = #{postId}
+    </update>
+    <delete id="deleteLikeComment">
+        DELETE FROM likes
+        WHERE comment_id = #{commentId} AND user_id = #{userId}
+    </delete>
+    <delete id="deleteLikePost">
+        DELETE FROM likes
+        WHERE post_id = #{postId} AND user_id = #{userId}
+    </delete>
+    <select id="isPostLiked" resultType="boolean">
+        SELECT EXISTS(
+            SELECT 1 FROM likes
+            WHERE post_id = #{postId} AND user_id = #{userId}
+        )
+    </select>
+    <select id="isCommentLiked" resultType="boolean">
+        SELECT EXISTS(
+            SELECT 1 FROM likes
+            WHERE comment_id = #{commentId} AND user_id = #{userId}
+        )
+    </select>
+    <select id="findPostLikeCount" resultType="Integer">
+        SELECT COALESCE(like_count, 0)
+        FROM like_count
+        WHERE post_id = #{postId}
+    </select>
+    <select id="findCommentLikeCount" resultType="Integer">
+        SELECT COALESCE(like_count, 0)
+        FROM like_count
+        WHERE comment_id = #{postId}
+    </select>
+
+</mapper>

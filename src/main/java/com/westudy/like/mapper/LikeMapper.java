@@ -10,6 +10,12 @@ public interface LikeMapper {
     void addLikePostCount(long postId);
     void deleteLikeComment(long commentId, long userId);
     void deleteLikePost(long commentId, long userId);
+    void ensurePostLikeCount(long postId);
+    void ensureCommentLikeCount(long commentId);
     void minusLikeCommentCount(long commentId);
     void minusLikePostCount(long postId);
+    boolean isPostLiked(long postId, long userId);
+    boolean isCommentLiked(long commetnId, long userId);
+    int findPostLikeCount(long postId);
+    int findCommentLikeCount(long comment);
 }
