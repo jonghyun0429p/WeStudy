@@ -1,7 +1,6 @@
 package com.westudy.study.dto;
 
 import com.westudy.study.enums.StudyParticipantStatus;
-import com.westudy.study.enums.StudyStates;
 import lombok.Getter;
 import lombok.Setter;
 

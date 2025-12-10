@@ -1,7 +1,5 @@
 package com.westudy.study.controller;
 
-import com.westudy.post.enums.PostCategory;
-import com.westudy.study.dto.StudyParticipanResponseDTO;
 import com.westudy.study.service.StudyService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.stereotype.Controller;

@@ -4,17 +4,16 @@ import com.westudy.global.util.ResponseUtils;
 import com.westudy.security.util.SecurityUtil;
 import com.westudy.user.dto.UserDTO;
 import com.westudy.user.dto.UserEditDTO;
-import com.westudy.user.dto.UserLoginDTO;
-import com.westudy.user.entity.User;
 import com.westudy.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Controller

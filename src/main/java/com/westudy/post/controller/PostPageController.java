@@ -1,20 +1,14 @@
 package com.westudy.post.controller;
 
-import com.westudy.global.exception.BaseException;
 import com.westudy.post.enums.PostCategory;
-import com.westudy.post.enums.PostErrorCode;
 import com.westudy.post.service.PostSevice;
-import com.westudy.security.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.Map;
 
 @Slf4j
 @Controller

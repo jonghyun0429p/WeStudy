@@ -1,6 +1,5 @@
 package com.westudy.user.dto;
 
-import com.westudy.user.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 

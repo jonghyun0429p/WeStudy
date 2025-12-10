@@ -4,10 +4,8 @@ import com.westudy.study.dto.StudyParticipanResponseDTO;
 import com.westudy.study.dto.StudyParticipantUpdateDTO;
 import com.westudy.study.entity.StudyParticipant;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface StudyParticipantMapper {

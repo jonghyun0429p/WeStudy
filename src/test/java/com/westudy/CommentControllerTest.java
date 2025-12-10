@@ -3,8 +3,6 @@ package com.westudy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.westudy.comment.dto.CommentInsertDTO;
 import com.westudy.comment.dto.CommentUpdateDTO;
-import com.westudy.post.dto.PostInsertDTO;
-import com.westudy.post.enums.PostCategory;
 import com.westudy.user.dto.UserLoginDTO;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.*;

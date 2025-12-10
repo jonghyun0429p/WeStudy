@@ -1,6 +1,5 @@
 package com.westudy.study.mapper;
 
-import com.westudy.study.dto.StudyParticipanResponseDTO;
 import com.westudy.study.dto.StudyResponseDTO;
 import com.westudy.study.dto.StudyUpdateDTO;
 import com.westudy.study.entity.Study;

@@ -2,7 +2,6 @@ package com.westudy.global.exception;
 
 import com.westudy.global.dto.ErrorResponse;
 import com.westudy.global.enums.BaseErrorCode;
-import com.westudy.security.enums.TokenErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

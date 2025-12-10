@@ -61,12 +61,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         logger.info("토큰 통과 성공");
         filterChain.doFilter(request,response);
-
-//        try {
-//            authService.authenticateToken(request, response);
-//            filterChain.doFilter(request,response);
-//        }catch (TokenException error){
-//            logger.info("토큰 인증 실패 " + error.getErrorCode());
-//        }
     }
 }

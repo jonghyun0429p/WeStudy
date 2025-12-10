@@ -1,7 +1,6 @@
 package com.westudy.admin.sevice;
 
 import com.westudy.user.service.UserService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -26,7 +26,9 @@ logging:
   level:
     com.westudy.user.mapper: DEBUG
     org.mybatis: DEBUG
-    spring.security.debug: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    com.westudy: DEBUG
 
 jwt:
   secret: "WasnnJKWdwnmad8423nJLnD928319023123SAjsnaJ124584u9450SLmLWAjo123"

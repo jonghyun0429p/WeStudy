@@ -4,7 +4,6 @@ import com.westudy.user.entity.User;
 import com.westudy.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 @Repository
 @RequiredArgsConstructor

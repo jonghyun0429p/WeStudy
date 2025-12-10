@@ -3,11 +3,9 @@ package com.westudy.post.converter;
 import com.westudy.post.dto.*;
 import com.westudy.post.entity.Post;
 import com.westudy.post.entity.PostContent;
-import com.westudy.post.enums.PostCategory;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

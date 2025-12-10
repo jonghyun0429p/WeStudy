@@ -6,10 +6,10 @@ import com.westudy.like.mapper.LikeMapper;
 import com.westudy.security.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
-
-import java.util.Map;
+import org.springframework.stereotype.Service;
 
 @Slf4j
+@Service
 public class LikeService {
 
     private final LikeMapper likeMapper;
