@@ -1,58 +1,189 @@
-<!-- login.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
   <th:block th:replace="~{layout/layout :: head}"></th:block>
-  <link rel="stylesheet" th:href="@{/css/style.css}" />
-  <link rel="stylesheet" th:href="@{/css/login.css}" />
-  <title>로그인 페이지</title>
+  <title>Westudy 로그인</title>
 </head>
 
-<body>
-<!-- ⚠️ 여기에서 th:with를 분리해서 적용 -->
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light-primary dark:text-text-dark-primary">
+
 <th:block th:with="mainClass='centered-main'">
   <div th:replace="~{layout/layout :: layout(~{::content})}">
     <div th:fragment="content">
-      <div class="login-container">
-        <h2>WeStudy 로그인</h2>
-        <form id="login-form" class="login-form">
-          <div class="form-row">
-            <label for="email">이메일</label>
-            <input type="text" id="email" placeholder="이메일" required />
+
+      <div class="flex w-full justify-center py-16 px-4">
+        <div class="w-full max-w-md rounded-xl bg-card-light dark:bg-card-dark shadow-lg p-8">
+          <div class="flex flex-col gap-3 text-center mb-6">
+            <h1 class="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary">
+              Westudy에 오신 것을 환영합니다!
+            </h1>
+            <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">
+              로그인하여 스터디를 시작해보세요.
+            </p>
           </div>
-          <div class="form-row">
-            <label for="password">비밀번호</label>
-            <input type="password" id="password" placeholder="비밀번호" required />
+
+          <form id="login-form" class="flex flex-col gap-4">
+            <!-- 이메일 -->
+            <div class="flex flex-col">
+              <label for="email"
+                     class="text-sm font-medium text-text-light-primary dark:text-text-dark-primary pb-2">
+                이메일
+              </label>
+              <input
+                      id="email"
+                      type="email"
+                      required
+                      placeholder="이메일 주소를 입력하세요"
+                      class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg
+                       text-text-light-primary dark:text-text-dark-primary
+                       focus:outline-0 focus:ring-2 focus:ring-primary
+                       focus:ring-offset-2 focus:ring-offset-background-light
+                       dark:focus:ring-offset-background-dark
+                       border border-border-light dark:border-border-dark
+                       bg-background-light dark:bg-background-dark
+                       h-12 placeholder:text-text-light-secondary dark:placeholder:text-text-dark-secondary
+                       px-3 text-base font-normal leading-normal transition-shadow"
+              />
+            </div>
+
+            <!-- 비밀번호 -->
+            <div class="flex flex-col">
+              <label for="password"
+                     class="text-sm font-medium text-text-light-primary dark:text-text-dark-primary pb-2">
+                비밀번호
+              </label>
+              <div class="relative">
+                <input
+                        id="password"
+                        type="password"
+                        required
+                        placeholder="비밀번호를 입력하세요"
+                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg
+                         text-text-light-primary dark:text-text-dark-primary
+                         focus:outline-0 focus:ring-2 focus:ring-primary
+                         focus:ring-offset-2 focus:ring-offset-background-light
+                         dark:focus:ring-offset-background-dark
+                         border border-border-light dark:border-border-dark
+                         bg-background-light dark:bg-background-dark
+                         h-12 placeholder:text-text-light-secondary dark:placeholder:text-text-dark-secondary
+                         pr-10 px-3 text-base font-normal leading-normal transition-shadow"
+                />
+                <button type="button"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-text-light-secondary dark:text-text-dark-secondary">
+                  <span class="material-symbols-outlined text-xl">visibility_off</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 에러 메시지 -->
+            <p id="login-error" class="text-red-500 text-sm mt-1 px-1 hidden">
+              아이디 또는 비밀번호를 확인해주세요.
+            </p>
+
+            <!-- 로그인 버튼 -->
+            <button
+                    type="button"
+                    id="login-button"
+                    class="mt-2 flex w-full h-11 cursor-pointer items-center justify-center overflow-hidden rounded-lg
+                     bg-primary text-text-light-primary text-base font-bold leading-normal tracking-[0.015em]
+                     hover:bg-opacity-90 transition-opacity">
+              <span class="truncate">로그인</span>
+            </button>
+          </form>
+
+          <!-- 기타 링크/회원가입 -->
+          <div class="flex justify-center gap-6 px-4 py-4 text-sm font-medium mt-2">
+            <a href="#"
+               class="text-text-light-secondary dark:text-text-dark-secondary hover:text-primary dark:hover:text-primary transition-colors">
+              아이디/비밀번호 찾기
+            </a>
+            <div class="w-px bg-border-light dark:bg-border-dark"></div>
+            <button
+                    type="button"
+                    id="signup-button"
+                    class="text-text-light-secondary dark:text-text-dark-secondary hover:text-primary dark:hover:text-primary transition-colors">
+              회원가입
+            </button>
           </div>
-          <button type="button" id="login-button">로그인</button>
-          <button type="button" id="signup-button" onclick="window.location.href='/page/user/signup'">회원가입</button>
-        </form>
+
+          <p class="text-text-light-secondary dark:text-text-dark-secondary text-sm text-center mb-2">
+            또는
+          </p>
+          <div class="flex flex-col items-stretch gap-3">
+            <!-- 카카오 / 구글 버튼은 그대로 -->
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 </th:block>
 
+<!-- 로그인 스크립트만 둔다 -->
 <script>
-  document.getElementById('login-button').addEventListener('click', function () {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('[login] DOM loaded');
 
-    fetch('/api/users/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-      credentials: 'include'
-    })
-            .then(response => response.ok ? response.json() : Promise.reject())
-            .then(data => {
-              console.log('로그인 성공', data);
-              window.location.assign(data.redirect_url);
-            })
-            .catch(error => {
-              console.error('로그인 에러:', error);
-              alert('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
-            });
+    const loginButton = document.getElementById('login-button');
+    const emailInput  = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const errorEl = document.getElementById('login-error');
+
+    if (!loginButton) {
+      console.warn('[login] login-button not found');
+      return;
+    }
+
+    loginButton.addEventListener('click', () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      if (errorEl) {
+        errorEl.classList.add('hidden');
+      }
+
+      if (!email || !password) {
+        if (errorEl) {
+          errorEl.textContent = '이메일과 비밀번호를 모두 입력해주세요.';
+          errorEl.classList.remove('hidden');
+        }
+        return;
+      }
+
+      fetch('/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include'
+      })
+              .then(response => response.ok ? response.json() : Promise.reject(response))
+              .then(data => {
+                console.log('로그인 성공', data);
+                if (data.redirect_url) {
+                  window.location.assign(data.redirect_url);
+                } else {
+                  window.location.assign('/');
+                }
+              })
+              .catch(error => {
+                console.error('로그인 에러:', error);
+                if (errorEl) {
+                  errorEl.textContent = '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.';
+                  errorEl.classList.remove('hidden');
+                } else {
+                  alert('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
+                }
+              });
+    });
+
+    const signupButton = document.getElementById('signup-button');
+    if (signupButton) {
+      signupButton.addEventListener('click', () => {
+        window.location.href = '/page/user/signup';
+      });
+    }
   });
 </script>
+
 </body>
 </html>
