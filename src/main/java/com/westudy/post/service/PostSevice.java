@@ -20,7 +20,7 @@ import java.util.List;
 @Service
 public class PostSevice {
 
-    private final int POST_SIZE = 20;
+//    private final int POST_SIZE = 12;
 
     private final PostMapper postMapper;
     private final PostContentMapper postContentMapper;
@@ -34,16 +34,16 @@ public class PostSevice {
         this.postConverter = postConverter;
     }
 
-    public List<PostResponseDTO> getPostList(int page){
+    public List<PostResponseDTO> getPostList(int page, int postSize){
         List<Post> postList = findByNotice();
-        postList.addAll(findByPost(page));
+        postList.addAll(findByPost(page, postSize));
 
         return postConverter.toResponseDTOList(postList);
     }
 
-    public List<PostResponseDTO> getSearchPostList(String keyword, int page){
+    public List<PostResponseDTO> getSearchPostList(String keyword, int page, int postSize){
         List<PostResponseDTO> postList = postConverter.toResponseDTOList(findByNotice());
-        postList.addAll(findSearchPosts(keyword, page));
+        postList.addAll(findSearchPosts(keyword, page, postSize));
 
         return postList;
     }
@@ -51,17 +51,19 @@ public class PostSevice {
     public PostDetailResponseDTO getPostDetailResponse(long postId){
         log.info("아이디로 추출 시도");
         PostDetailDBDTO postDetailDBDTO = getPostDetail(postId);
+        log.info("생성일 확인.");
+        log.info(postDetailDBDTO.getCreatedAt().toString());
         String nickname = SecurityUtil.getCurrentNickname();
 
         return postConverter.toDetailResponseDTO(postDetailDBDTO, nickname);
     }
 
-    public long getPostPage(){
+    public long getPostPage(int postSize){
         long count = getPostCount();
-        if(count % POST_SIZE == 0){
-            return getPostCount() / POST_SIZE;
+        if(count % postSize == 0){
+            return getPostCount() / postSize;
         }else {
-            return getPostCount() / POST_SIZE + 1;
+            return getPostCount() / postSize + 1;
         }
 
     }
@@ -99,8 +101,8 @@ public class PostSevice {
         return postMapper.findNotice();
     }
 
-    public List<Post> findByPost(int page){
-        return postMapper.findPost(POST_SIZE, POST_SIZE*(page-1));
+    public List<Post> findByPost(int page, int postSize){
+        return postMapper.findPost(postSize, postSize*(page-1));
     }
 
     public PostDetailDBDTO getPostDetail(long postId){
@@ -108,9 +110,9 @@ public class PostSevice {
                 postDetailMapper.findPostDetailById(postId), new BaseException(PostErrorCode.POST_NOT_FOUND));
     }
 
-    public List<PostResponseDTO> findSearchPosts(String keyword, int page){
+    public List<PostResponseDTO> findSearchPosts(String keyword, int page, int postSize){
         return RequireHelper.requireNonEmpty(
-                postDetailMapper.findSearchPosts(keyword, POST_SIZE, POST_SIZE*(page-1)),
+                postDetailMapper.findSearchPosts(keyword, postSize, postSize*(page-1)),
                 new BaseException(PostErrorCode.POST_NOT_FOUND));
     }
 

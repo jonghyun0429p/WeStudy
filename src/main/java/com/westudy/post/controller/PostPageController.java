@@ -1,14 +1,19 @@
 package com.westudy.post.controller;
 
+import com.westudy.post.dto.PostDetailResponseDTO;
+import com.westudy.post.dto.PostResponseDTO;
 import com.westudy.post.enums.PostCategory;
 import com.westudy.post.service.PostSevice;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Objects;
 
 @Slf4j
 @Controller
@@ -22,13 +27,16 @@ public class PostPageController {
     }
 
     @GetMapping({"/",""})
-    @Operation(summary = "게시글 요청", description = "기본 게시글 요청 페이지 공지사항 2개 + 게시글 20개 띄우기")
+    @Operation(summary = "게시글 요청", description = "기본 게시글 요청 페이지 공지사항 2개 + 게시글 12개 띄우기")
     public String getPostPage(
             @RequestParam(value = "page", defaultValue = "1")int page,
+            @CookieValue(name = "postSize", required = false) Integer postSize,
             Model model){
 
-        model.addAttribute("pages", postSevice.getPostList(page));
-        model.addAttribute("pageCount", postSevice.getPostPage());
+        int size = (postSize != null && postSize > 0) ? postSize : 12;
+
+        model.addAttribute("pages", postSevice.getPostList(page, size));
+        model.addAttribute("pageCount", postSevice.getPostPage(size));
         model.addAttribute("currentPage", page);
         return "/layout/post/board";
     }
@@ -38,9 +46,12 @@ public class PostPageController {
     public String getPostSearch(
             @RequestParam(value = "keyword") String keyword,
             @RequestParam(value = "page", defaultValue = "1") int page,
+            @CookieValue(name = "postSize", required = false) Integer postSize,
             Model model){
 
-            model.addAttribute("pages", postSevice.findSearchPosts(keyword, page));
+        int size = (postSize != null && postSize > 0) ? postSize : 12;
+
+            model.addAttribute("pages", postSevice.findSearchPosts(keyword, page, size));
             model.addAttribute("pageCount", postSevice.getSearchedPostCount(keyword));
             model.addAttribute("currentPage", page);
 
@@ -61,7 +72,7 @@ public class PostPageController {
             @RequestParam(value = "id")Long id,
             Model model){
 
-
+        model.addAttribute("now", java.time.LocalDateTime.now());
         model.addAttribute("page", postSevice.getPostDetailResponse(id));
         model.addAttribute("categories", PostCategory.values());
         return "/layout/post/detail";

@@ -92,8 +92,8 @@ public class PostConverter {
         dto.setViews(postDetailDBDTO.getViews());
         dto.setWriterNickname(postDetailDBDTO.getNickname());
         dto.setWriter(nickname.equals(postDetailDBDTO.getNickname()));
-        dto.setCreatedAt(dto.getCreatedAt());
-        dto.setModifiedAt(dto.getModifiedAt());
+        dto.setCreatedAt(postDetailDBDTO.getCreatedAt());
+        dto.setModifiedAt(postDetailDBDTO.getModifiedAt());
 
         return dto;
     }
