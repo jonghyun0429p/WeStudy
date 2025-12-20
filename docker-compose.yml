@@ -12,6 +12,10 @@ services:
     restart: always
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      APP_ADMIN_BOOTSTRAP_ENABLED: "true"
+      APP_ADMIN_USERNAME: "adminuser"
+      APP_ADMIN_PASSWORD: "${APP_ADMIN_PASSWORD}"
+      APP_ADMIN_EMAIL: "adminuser@naver.com"
       DB_HOST: westudy-mariadb
       DB_PORT: 3306
       DB_USER: westudy
