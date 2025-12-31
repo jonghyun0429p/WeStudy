@@ -34,6 +34,9 @@ CREATE TABLE IF NOT EXISTS post (
                                     category VARCHAR(30) NOT NULL,
                                     title VARCHAR(100),
                                     summary VARCHAR(100),
+                                    address VARCHAR(255) NULL,
+                                    latitude DOUBLE NULL,
+                                    longitude DOUBLE NULL,
                                     create_at DATETIME DEFAULT  CURRENT_TIMESTAMP,
                                     modified_at DATETIME,
                                     delete_at DATETIME,
@@ -82,16 +85,16 @@ CREATE TABLE IF NOT EXISTS study_participant (
 );
 
 CREATE TABLE IF NOT EXISTS comment (
-                                id      BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                user_id BIGINT NOT NULL,
-                                post_id BIGINT NOT NULL,
-                                content VARCHAR(100) NOT NULL,
-                                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                modified_at DATETIME,
-                                delete_at DATETIME,
+                                    id      BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                    user_id BIGINT NOT NULL,
+                                    post_id BIGINT NOT NULL,
+                                    content VARCHAR(100) NOT NULL,
+                                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                    modified_at DATETIME,
+                                    delete_at DATETIME,
 
-                                CONSTRAINT fk_comment_user FOREIGN KEY (user_id) REFERENCES user(id),
-                                CONSTRAINT fk_comment_post FOREIGN KEY (post_id) REFERENCES post(id)
+                                    CONSTRAINT fk_comment_user FOREIGN KEY (user_id) REFERENCES user(id),
+                                    CONSTRAINT fk_comment_post FOREIGN KEY (post_id) REFERENCES post(id)
 );
 
 CREATE TABLE IF NOT EXISTS likes (
@@ -120,4 +123,16 @@ CREATE TABLE IF NOT EXISTS like_count (
 
                                         UNIQUE KEY ux_cnt_post (post_id),
                                         UNIQUE KEY ux_cnt_comment (comment_id)
+);
+
+CREATE TABLE IF NOT EXISTS bookmark (
+                                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                    post_id BIGINT NULL,
+                                    user_id BIGINT NOT NULL,
+
+                                    CONSTRAINT fk_bookmark_post FOREIGN KEY (post_id) REFERENCES post(id),
+                                    CONSTRAINT fk_bookmark_user FOREIGN KEY (user_id) REFERENCES user(id),
+
+                                    UNIQUE KEY uk_bookmark_post_user (post_id, user_id),
+                                    KEY uk_bookmark_post (post_id)
 )
