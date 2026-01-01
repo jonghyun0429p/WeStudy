@@ -1,274 +1,266 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
 <head>
     <!-- 공통 head (메타태그, Tailwind, 폰트 등) -->
     <th:block th:replace="~{layout/layout :: head}"></th:block>
     <title>Westudy - 함께하는 스터디의 시작</title>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark font-display text-text-light-primary dark:text-text-dark-primary">
-<!-- layout.html의 layout(fragment) 구조 그대로 사용 -->
-<div th:replace="~{layout/layout :: layout(~{::content})}">
-    <div th:fragment="content">
+<body>
+    <!-- layout.html의 layout(fragment) 구조 그대로 사용 -->
+    <div th:replace="~{layout/layout :: layout(~{::content})}">
+        <div th:fragment="content">
 
-        <!-- Hero Section -->
-        <section class="py-16 px-4 @container md:py-24">
-            <div class="flex flex-col-reverse items-center gap-12 @[864px]:flex-row">
-                <div
-                        class="flex w-full flex-col items-center gap-6 text-center @[864px]:w-1/2 @[864px]:items-start @[864px]:text-left">
-                    <div class="flex flex-col gap-2">
-                        <h1
-                                class="text-4xl font-black leading-tight tracking-[-0.033em] text-text-light-primary dark:text-text-dark-primary @[480px]:text-4xl">
-                            함께라서 더 즐거운 스터디, Westudy에서 시작하세요!
-                        </h1>
-                        <h2
-                                class="text-sm font-normal leading-normal text-text-light-secondary dark:text-text-dark-secondary @[480px]:text-base">
-                            Westudy는 당신에게 꼭 맞는 스터디 그룹을 찾아 목표 달성을 돕는 최고의 커뮤니티입니다.
-                        </h2>
-                    </div>
-                    <button
-                            class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-primary px-4 text-text-light-primary h-10 text-sm font-bold leading-normal tracking-[0.015em] @[480px]:h-12 @[480px]:px-5 @[480px]:text-base">
-                        <span class="truncate">지금 바로 스터디 찾기</span>
-                    </button>
-                </div>
-                <div class="w-full @[864px]:w-1/2">
+            <!-- Hero Section -->
+            <section class="py-8 px-4 @container md:py-12">
+                <div class="flex flex-col-reverse items-center gap-12 @[864px]:flex-row">
                     <div
-                            class="aspect-square w-full rounded-xl bg-cover bg-center bg-no-repeat"
+                        class="flex w-full flex-col items-center gap-6 text-center @[864px]:w-1/2 @[864px]:items-start @[864px]:text-left">
+                        <div class="flex flex-col gap-2">
+                            <h1
+                                class="text-4xl font-black leading-tight tracking-[-0.033em] text-text-light-primary dark:text-text-dark-primary @[480px]:text-4xl">
+                                함께라서 더 즐거운 스터디, Westudy에서 시작하세요!
+                            </h1>
+                            <h2
+                                class="text-sm font-normal leading-normal text-text-light-secondary dark:text-text-dark-secondary @[480px]:text-base">
+                                Westudy는 당신에게 꼭 맞는 스터디 그룹을 찾아 목표 달성을 돕는 최고의 커뮤니티입니다.
+                            </h2>
+                        </div>
+                        <button
+                            class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-primary px-4 text-text-light-primary h-10 text-sm font-bold leading-normal tracking-[0.015em] @[480px]:h-12 @[480px]:px-5 @[480px]:text-base">
+                            <span class="truncate">지금 바로 스터디 찾기</span>
+                        </button>
+                    </div>
+                    <div class="w-full @[864px]:w-1/2">
+                        <div class="aspect-square w-full rounded-xl bg-cover bg-center bg-no-repeat"
                             data-alt="A diverse group of people studying together around a table with laptops and books, in a friendly and collaborative atmosphere."
                             style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCdvOUl5O1S6UUpVO7__suWiQT8JgpmOUPrCsxOY6Lk2ZpesI6vS8HVTbpVvi_kZBQ1bxD5AATQkMIzxxKpofauIgqlWMh_Mp64V5UTIQUg5MkNMd3U6-s1kgoVtoappbqZGhBOEcvsH6SyEWe7Qg8ZT1odltfaNRUNyJSo8ul1eF81xehZ2ZQ-DeRkbU4hPt8QoKhFdCX3k7_8g-WlS3OasDvck0uBm2vfP4JGpjvr2lsMT91sBecsMFqswzstMg9MkEdZJCsOLiI");'>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Problem/Solution Section -->
-        <section class="py-16 px-4 md:py-20">
-            <div class="flex flex-col items-center gap-12">
-                <div class="flex flex-col items-center gap-2 text-center">
-                    <h2
+            <!-- Problem/Solution Section -->
+            <section class="py-16 px-4 md:py-20">
+                <div class="flex flex-col items-center gap-12">
+                    <div class="flex flex-col items-center gap-2 text-center">
+                        <h2
                             class="text-[22px] font-bold leading-tight tracking-[-0.015em] text-text-light-primary dark:text-text-dark-primary">
-                        혼자 공부하기 힘드셨나요?
-                    </h2>
-                    <p class="max-w-xl text-text-light-secondary dark:text-text-dark-secondary">
-                        Westudy가 당신의 스터디 여정에 든든한 동반자가 되어 드립니다. 더 이상 외롭게 공부하지
-                        마세요.
-                    </p>
+                            혼자 공부하기 힘드셨나요?
+                        </h2>
+                        <p class="max-w-xl text-text-light-secondary dark:text-text-dark-secondary">
+                            Westudy가 당신의 스터디 여정에 든든한 동반자가 되어 드립니다. 더 이상 외롭게 공부하지
+                            마세요.
+                        </p>
+                    </div>
+                    <div class="grid w-full grid-cols-1 gap-6 md:grid-cols-3">
+                        <div
+                            class="flex flex-col items-center gap-4 rounded-lg bg-card-light dark:bg-card-dark p-6 text-center shadow-sm">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
+                                <span class="material-symbols-outlined !text-3xl">mood_bad</span>
+                            </div>
+                            <h3 class="text-lg font-bold">의지 부족</h3>
+                            <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">
+                                혼자서는 쉽게 포기하게 되지만, 함께하면 서로를 이끌어줄 수 있습니다.
+                            </p>
+                        </div>
+                        <div
+                            class="flex flex-col items-center gap-4 rounded-lg bg-card-light dark:bg-card-dark p-6 text-center shadow-sm">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
+                                <span class="material-symbols-outlined !text-3xl">help_outline</span>
+                            </div>
+                            <h3 class="text-lg font-bold">정보의 홍수</h3>
+                            <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">
+                                어떤 정보가 중요한지 막막할 때, 팀원들과 효율적으로 정보를 공유하세요.
+                            </p>
+                        </div>
+                        <div
+                            class="flex flex-col items-center gap-4 rounded-lg bg-card-light dark:bg-card-dark p-6 text-center shadow-sm">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
+                                <span class="material-symbols-outlined !text-3xl">hourglass_empty</span>
+                            </div>
+                            <h3 class="text-lg font-bold">불확실한 계획</h3>
+                            <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">
+                                체계적인 목표 설정과 관리가 어려울 때, 스터디 그룹이 방향을 잡아줍니다.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div class="grid w-full grid-cols-1 gap-6 md:grid-cols-3">
-                    <div
-                            class="flex flex-col items-center gap-4 rounded-lg bg-card-light dark:bg-card-dark p-6 text-center shadow-sm">
-                        <div
-                                class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
-                            <span class="material-symbols-outlined !text-3xl">mood_bad</span>
-                        </div>
-                        <h3 class="text-lg font-bold">의지 부족</h3>
-                        <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                            혼자서는 쉽게 포기하게 되지만, 함께하면 서로를 이끌어줄 수 있습니다.
-                        </p>
-                    </div>
-                    <div
-                            class="flex flex-col items-center gap-4 rounded-lg bg-card-light dark:bg-card-dark p-6 text-center shadow-sm">
-                        <div
-                                class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
-                            <span class="material-symbols-outlined !text-3xl">help_outline</span>
-                        </div>
-                        <h3 class="text-lg font-bold">정보의 홍수</h3>
-                        <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                            어떤 정보가 중요한지 막막할 때, 팀원들과 효율적으로 정보를 공유하세요.
-                        </p>
-                    </div>
-                    <div
-                            class="flex flex-col items-center gap-4 rounded-lg bg-card-light dark:bg-card-dark p-6 text-center shadow-sm">
-                        <div
-                                class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
-                            <span class="material-symbols-outlined !text-3xl">hourglass_empty</span>
-                        </div>
-                        <h3 class="text-lg font-bold">불확실한 계획</h3>
-                        <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                            체계적인 목표 설정과 관리가 어려울 때, 스터디 그룹이 방향을 잡아줍니다.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- How It Works Section -->
-        <section class="py-16 px-4 md:py-20">
-            <div class="flex flex-col items-center gap-12">
-                <div class="flex flex-col items-center gap-2 text-center">
-                    <h2
+            <!-- How It Works Section -->
+            <section class="py-16 px-4 md:py-20">
+                <div class="flex flex-col items-center gap-12">
+                    <div class="flex flex-col items-center gap-2 text-center">
+                        <h2
                             class="text-[22px] font-bold leading-tight tracking-[-0.015em] text-text-light-primary dark:text-text-dark-primary">
-                        Westudy 이용 방법
-                    </h2>
-                    <p class="max-w-xl text-text-light-secondary dark:text-text-dark-secondary">
-                        단 3단계로 당신에게 꼭 맞는 스터디를 찾아보세요. 정말 간단합니다!
-                    </p>
+                            Westudy 이용 방법
+                        </h2>
+                        <p class="max-w-xl text-text-light-secondary dark:text-text-dark-secondary">
+                            단 3단계로 당신에게 꼭 맞는 스터디를 찾아보세요. 정말 간단합니다!
+                        </p>
+                    </div>
+                    <div class="grid w-full grid-cols-1 gap-8 md:grid-cols-3">
+                        <div class="flex flex-col items-center gap-4 text-center">
+                            <div
+                                class="flex h-16 w-16 items-center justify-center rounded-full border-2 border-primary bg-primary/10 text-xl font-bold text-primary">
+                                1
+                            </div>
+                            <h3 class="text-lg font-bold">스터디 탐색</h3>
+                            <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">
+                                관심 분야와 지역을 설정하고 원하는 스터디 그룹을 찾아보세요.
+                            </p>
+                        </div>
+                        <div class="flex flex-col items-center gap-4 text-center">
+                            <div
+                                class="flex h-16 w-16 items-center justify-center rounded-full border-2 border-primary bg-primary/10 text-xl font-bold text-primary">
+                                2
+                            </div>
+                            <h3 class="text-lg font-bold">지원 및 참여</h3>
+                            <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">
+                                마음에 드는 스터디에 지원하고, 스터디장의 승인을 받으면 참여 완료!
+                            </p>
+                        </div>
+                        <div class="flex flex-col items-center gap-4 text-center">
+                            <div
+                                class="flex h-16 w-16 items-center justify-center rounded-full border-2 border-primary bg-primary/10 text-xl font-bold text-primary">
+                                3
+                            </div>
+                            <h3 class="text-lg font-bold">함께 성장</h3>
+                            <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">
+                                팀원들과 함께 목표를 향해 나아가며 함께 성장하는 즐거움을 느껴보세요.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div class="grid w-full grid-cols-1 gap-8 md:grid-cols-3">
-                    <div class="flex flex-col items-center gap-4 text-center">
-                        <div
-                                class="flex h-16 w-16 items-center justify-center rounded-full border-2 border-primary bg-primary/10 text-xl font-bold text-primary">
-                            1
-                        </div>
-                        <h3 class="text-lg font-bold">스터디 탐색</h3>
-                        <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                            관심 분야와 지역을 설정하고 원하는 스터디 그룹을 찾아보세요.
-                        </p>
-                    </div>
-                    <div class="flex flex-col items-center gap-4 text-center">
-                        <div
-                                class="flex h-16 w-16 items-center justify-center rounded-full border-2 border-primary bg-primary/10 text-xl font-bold text-primary">
-                            2
-                        </div>
-                        <h3 class="text-lg font-bold">지원 및 참여</h3>
-                        <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                            마음에 드는 스터디에 지원하고, 스터디장의 승인을 받으면 참여 완료!
-                        </p>
-                    </div>
-                    <div class="flex flex-col items-center gap-4 text-center">
-                        <div
-                                class="flex h-16 w-16 items-center justify-center rounded-full border-2 border-primary bg-primary/10 text-xl font-bold text-primary">
-                            3
-                        </div>
-                        <h3 class="text-lg font-bold">함께 성장</h3>
-                        <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                            팀원들과 함께 목표를 향해 나아가며 함께 성장하는 즐거움을 느껴보세요.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Feature Section -->
-        <section class="py-16 px-4 md:py-20 @container">
-            <div class="flex flex-col gap-10">
-                <div class="flex flex-col gap-4">
-                    <h1
+            <!-- Feature Section -->
+            <section class="py-16 px-4 md:py-20 @container">
+                <div class="flex flex-col gap-10">
+                    <div class="flex flex-col gap-4">
+                        <h1
                             class="text-3xl font-bold leading-tight tracking-light text-text-light-primary dark:text-text-dark-primary @[480px]:text-4xl @[480px]:font-black">
-                        Westudy와 함께라면
-                    </h1>
-                    <p
+                            Westudy와 함께라면
+                        </h1>
+                        <p
                             class="max-w-[720px] text-base font-normal leading-normal text-text-light-secondary dark:text-text-dark-secondary">
-                        혼자서는 어려웠던 공부, 이제 Westudy의 체계적인 지원과 함께하세요. 동기 부여부터 정보 공유까지,
-                        스터디의 모든 것을 해결해 드립니다.
-                    </p>
-                </div>
-                <div
-                        class="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-4">
-                    <div
+                            혼자서는 어려웠던 공부, 이제 Westudy의 체계적인 지원과 함께하세요. 동기 부여부터 정보 공유까지,
+                            스터디의 모든 것을 해결해 드립니다.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-4">
+                        <div
                             class="flex flex-1 flex-col gap-3 rounded-lg border border-border-light bg-card-light p-4 dark:border-border-dark dark:bg-card-dark">
-                        <span
+                            <span
                                 class="material-symbols-outlined !text-2xl text-text-light-primary dark:text-text-dark-primary">groups</span>
-                        <div class="flex flex-col gap-1">
-                            <h2
-                                    class="text-base font-bold text-text-light-primary dark:text-text-dark-primary">
-                                강력한 동기 부여
-                            </h2>
-                            <p
+                            <div class="flex flex-col gap-1">
+                                <h2 class="text-base font-bold text-text-light-primary dark:text-text-dark-primary">
+                                    강력한 동기 부여
+                                </h2>
+                                <p
                                     class="text-sm font-normal leading-normal text-text-light-secondary dark:text-text-dark-secondary">
-                                같은 목표를 가진 팀원들과 함께하며 서로에게 긍정적인 자극을 주세요.
-                            </p>
+                                    같은 목표를 가진 팀원들과 함께하며 서로에게 긍정적인 자극을 주세요.
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                    <div
+                        <div
                             class="flex flex-1 flex-col gap-3 rounded-lg border border-border-light bg-card-light p-4 dark:border-border-dark dark:bg-card-dark">
-                        <span
+                            <span
                                 class="material-symbols-outlined !text-2xl text-text-light-primary dark:text-text-dark-primary">share</span>
-                        <div class="flex flex-col gap-1">
-                            <h2
-                                    class="text-base font-bold text-text-light-primary dark:text-text-dark-primary">
-                                효율적인 정보 공유
-                            </h2>
-                            <p
+                            <div class="flex flex-col gap-1">
+                                <h2 class="text-base font-bold text-text-light-primary dark:text-text-dark-primary">
+                                    효율적인 정보 공유
+                                </h2>
+                                <p
                                     class="text-sm font-normal leading-normal text-text-light-secondary dark:text-text-dark-secondary">
-                                더 이상 혼자서 정보의 바다를 헤매지 마세요. 팀원들과 핵심 정보를 나누세요.
-                            </p>
+                                    더 이상 혼자서 정보의 바다를 헤매지 마세요. 팀원들과 핵심 정보를 나누세요.
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                    <div
+                        <div
                             class="flex flex-1 flex-col gap-3 rounded-lg border border-border-light bg-card-light p-4 dark:border-border-dark dark:bg-card-dark">
-                        <span
+                            <span
                                 class="material-symbols-outlined !text-2xl text-text-light-primary dark:text-text-dark-primary">task_alt</span>
-                        <div class="flex flex-col gap-1">
-                            <h2
-                                    class="text-base font-bold text-text-light-primary dark:text-text-dark-primary">
-                                체계적인 목표 관리
-                            </h2>
-                            <p
+                            <div class="flex flex-col gap-1">
+                                <h2 class="text-base font-bold text-text-light-primary dark:text-text-dark-primary">
+                                    체계적인 목표 관리
+                                </h2>
+                                <p
                                     class="text-sm font-normal leading-normal text-text-light-secondary dark:text-text-dark-secondary">
-                                체계적인 스터디 관리 기능으로 꾸준한 학습 습관을 만들어가세요.
-                            </p>
+                                    체계적인 스터디 관리 기능으로 꾸준한 학습 습관을 만들어가세요.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Testimonials Section -->
-        <section class="py-16 px-4 md:py-20">
-            <div class="flex flex-col items-center gap-12">
-                <div class="flex flex-col items-center gap-2 text-center">
-                    <h2
+            <!-- Testimonials Section -->
+            <section class="py-16 px-4 md:py-20">
+                <div class="flex flex-col items-center gap-12">
+                    <div class="flex flex-col items-center gap-2 text-center">
+                        <h2
                             class="text-[22px] font-bold leading-tight tracking-[-0.015em] text-text-light-primary dark:text-text-dark-primary">
-                        Westudy 사용자 후기
+                            Westudy 사용자 후기
+                        </h2>
+                        <p class="max-w-xl text-text-light-secondary dark:text-text-dark-secondary">
+                            Westudy를 통해 목표를 달성한 사용자들의 생생한 이야기를 들어보세요.
+                        </p>
+                    </div>
+                    <div class="grid w-full grid-cols-1 gap-6 md:grid-cols-2">
+                        <div class="flex flex-col gap-4 rounded-lg bg-card-light dark:bg-card-dark p-6 shadow-sm">
+                            <p class="text-text-light-primary dark:text-text-dark-primary">
+                                "혼자서 취업 준비를 하다가 너무 막막했는데, Westudy에서 좋은 스터디원들을 만나서 서로 의지하며
+                                성공적으로 취업할 수 있었어요! 정말 감사합니다."
+                            </p>
+                            <div class="flex items-center gap-3">
+                                <div class="h-10 w-10 rounded-full bg-cover bg-center" data-alt="User profile picture"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDS5kPQhdX1WLbquPyW6tw6V_i9kKh9B6yJ98eKE6U-kPk4NmiIkJHb7B6Cvyl75aMbZ3zpiJUJQsz-7kp2ydR_IRi8zYKyJ2hu2cp_ITH5IeLii73fU_bAc9tUbl9sdE81OkPfSnCWkq-_YwVrRECAlygg0iWBERWBcfF8fWMkHk7ZQzLKQDjB1MhUH--bSnwzd3T_jPesQonI-hDAgV1t2rVNhxd49i-XdakIzIR2c_A6qPhz1eyBPYXoLKsLgku4eQqktKmNn_k');">
+                                </div>
+                                <div class="font-bold">김민준님</div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-4 rounded-lg bg-card-light dark:bg-card-dark p-6 shadow-sm">
+                            <p class="text-text-light-primary dark:text-text-dark-primary">
+                                "자격증 시험 준비를 위해 스터디를 찾았는데, 저와 딱 맞는 수준의 스터디원들을 만날 수 있었어요.
+                                덕분에 단기간에 합격할 수 있었습니다!"
+                            </p>
+                            <div class="flex items-center gap-3">
+                                <div class="h-10 w-10 rounded-full bg-cover bg-center" data-alt="User profile picture"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB1qxIGHlJd7vl8VmDvawdRW-D2OBfJw7-vWobtAxjjAAiCr9HaGR6s_UlPR59jfrHBOJNiytjdicAe336TRHdKlI12VDAN7yqS-qPqIoXil0EWS7md4Kw5JBTp222FtXIxRUcdyF72YUfyv01I8mRtNvwtDKCjzRfFf_ceL6XtO14rARH1hFvr8HZzoH-KQEdX8g4AXAj5yZjJI3QpAZloiZy30yWvuQcmHpc6kCxZC7r4M7Iavre5bFb71quyF2i4YpfM2oXcfQo');">
+                                </div>
+                                <div class="font-bold">이서연님</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Final CTA Section -->
+            <section class="rounded-xl bg-primary/20 dark:bg-primary/10 my-16 mx-4 md:my-20"
+                th:if="${nickname == null}">
+                <div class="flex flex-col items-center gap-6 py-16 px-6 text-center">
+                    <h2 class="text-3xl font-extrabold text-text-light-primary dark:text-text-dark-primary">
+                        이제, 당신의 성공 스토리를 만들 차례입니다.
                     </h2>
-                    <p class="max-w-xl text-text-light-secondary dark:text-text-dark-secondary">
-                        Westudy를 통해 목표를 달성한 사용자들의 생생한 이야기를 들어보세요.
+                    <p class="max-w-lg text-text-light-secondary dark:text-text-dark-secondary">
+                        망설이지 마세요. Westudy의 문은 언제나 열려있습니다. 지금 바로 가입하고 최고의 스터디
+                        파트너를 만나보세요!
                     </p>
-                </div>
-                <div class="grid w-full grid-cols-1 gap-6 md:grid-cols-2">
-                    <div
-                            class="flex flex-col gap-4 rounded-lg bg-card-light dark:bg-card-dark p-6 shadow-sm">
-                        <p class="text-text-light-primary dark:text-text-dark-primary">
-                            "혼자서 취업 준비를 하다가 너무 막막했는데, Westudy에서 좋은 스터디원들을 만나서 서로 의지하며
-                            성공적으로 취업할 수 있었어요! 정말 감사합니다."
-                        </p>
-                        <div class="flex items-center gap-3">
-                            <div class="h-10 w-10 rounded-full bg-cover bg-center"
-                                 data-alt="User profile picture"
-                                 style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDS5kPQhdX1WLbquPyW6tw6V_i9kKh9B6yJ98eKE6U-kPk4NmiIkJHb7B6Cvyl75aMbZ3zpiJUJQsz-7kp2ydR_IRi8zYKyJ2hu2cp_ITH5IeLii73fU_bAc9tUbl9sdE81OkPfSnCWkq-_YwVrRECAlygg0iWBERWBcfF8fWMkHk7ZQzLKQDjB1MhUH--bSnwzd3T_jPesQonI-hDAgV1t2rVNhxd49i-XdakIzIR2c_A6qPhz1eyBPYXoLKsLgku4eQqktKmNn_k');">
-                            </div>
-                            <div class="font-bold">김민준님</div>
-                        </div>
-                    </div>
-                    <div
-                            class="flex flex-col gap-4 rounded-lg bg-card-light dark:bg-card-dark p-6 shadow-sm">
-                        <p class="text-text-light-primary dark:text-text-dark-primary">
-                            "자격증 시험 준비를 위해 스터디를 찾았는데, 저와 딱 맞는 수준의 스터디원들을 만날 수 있었어요.
-                            덕분에 단기간에 합격할 수 있었습니다!"
-                        </p>
-                        <div class="flex items-center gap-3">
-                            <div class="h-10 w-10 rounded-full bg-cover bg-center"
-                                 data-alt="User profile picture"
-                                 style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB1qxIGHlJd7vl8VmDvawdRW-D2OBfJw7-vWobtAxjjAAiCr9HaGR6s_UlPR59jfrHBOJNiytjdicAe336TRHdKlI12VDAN7yqS-qPqIoXil0EWS7md4Kw5JBTp222FtXIxRUcdyF72YUfyv01I8mRtNvwtDKCjzRfFf_ceL6XtO14rARH1hFvr8HZzoH-KQEdX8g4AXAj5yZjJI3QpAZloiZy30yWvuQcmHpc6kCxZC7r4M7Iavre5bFb71quyF2i4YpfM2oXcfQo');">
-                            </div>
-                            <div class="font-bold">이서연님</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Final CTA Section -->
-        <section class="rounded-xl bg-primary/20 dark:bg-primary/10 my-16 mx-4 md:my-20"
-                 th:if="${nickname == null}">
-            <div class="flex flex-col items-center gap-6 py-16 px-6 text-center">
-                <h2
-                        class="text-3xl font-extrabold text-text-light-primary dark:text-text-dark-primary">
-                    이제, 당신의 성공 스토리를 만들 차례입니다.
-                </h2>
-                <p class="max-w-lg text-text-light-secondary dark:text-text-dark-secondary">
-                    망설이지 마세요. Westudy의 문은 언제나 열려있습니다. 지금 바로 가입하고 최고의 스터디
-                    파트너를 만나보세요!
-                </p>
-                <button
+                    <button
                         class="flex h-12 min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-primary px-5 text-base font-bold leading-normal tracking-[0.015em] text-text-light-primary">
-                    <span class="truncate">무료로 회원가입</span>
-                </button>
-            </div>
-        </section>
+                        <span class="truncate">무료로 회원가입</span>
+                    </button>
+                </div>
+            </section>
 
+        </div>
     </div>
-</div>
 </body>
+
 </html>

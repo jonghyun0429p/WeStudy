@@ -1,28 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
 <head th:fragment="head">
   <meta charset="UTF-8">
   <title>WeStudy</title>
 
   <!-- Bootstrap (기존 페이지용) -->
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" th:href="@{/css/style.css}" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
   <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-          href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap"
-          rel="stylesheet"
-  />
-  <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-          rel="stylesheet"
-  />
+    href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+
+  <link rel="stylesheet" href="/css/common.css">
 
   <!-- Tailwind 커스텀 설정 -->
   <script>
@@ -41,7 +39,15 @@
             "border-light": "#f3eee7",
             "border-dark": "#3a3022",
             "card-light": "#ffffff",
-            "card-dark": "#2c2419"
+            "card-dark": "#2c2419",
+            "text-light": "#1b150e",
+            "text-dark": "#f3eee7",
+            "surface-light": "#f3eee7",
+            "surface-dark": "#2c241a",
+            "muted-text-light": "#97794e",
+            "muted-text-dark": "#a18a6a",
+            "muted-light": "#97794e",
+            "muted-dark": "#a18a6c"
           },
           fontFamily: {
             "display": ["Lexend", "Noto Sans KR", "sans-serif"]
@@ -56,53 +62,33 @@
       },
     }
   </script>
-
-  <style>
-    .material-symbols-outlined {
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-      font-size: 24px;
-    }
-
-    /* Bootstrap의 파란 bg-primary를 우리 주황색으로 덮어쓰기 */
-    .bg-primary {
-      background-color: #eba747 !important;
-    }
-
-    /* Bootstrap의 파란 text-primary를 우리 주황색으로 덮어쓰기 */
-    .text-primary {
-      color: #eba747 !important;
-    }
-
-    /* Bootstrap의 파란 border-primary를 우리 주황색으로 덮어쓰기 */
-    .border-primary {
-      border-color: #eba747 !important;
-    }
-  </style>
-
 </head>
 
-<body class="bg-background-light dark:bg-background-dark font-display text-text-light-primary dark:text-text-dark-primary">
+<body>
 
-<!-- 전체 레이아웃 fragment -->
-<div th:fragment="layout(content)">
-  <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
-    <div class="layout-container flex h-full grow flex-col">
+  <!-- 전체 레이아웃 fragment -->
+  <div th:fragment="layout(content)">
 
-      <!-- Tailwind 헤더 (레이아웃 공통) -->
+    <!-- ✅ 화면 전체 높이 유지 + (헤더/메인/푸터) flex로 자연스럽게 배치 -->
+    <div class="min-h-screen w-full flex flex-col overflow-x-hidden">
+
+      <!-- Header -->
       <header
-              class="sticky top-0 z-50 flex w-full justify-center border-b border-solid border-border-light dark:border-border-dark bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+        class="sticky top-0 z-50 flex w-full justify-center border-b border-solid border-border-light dark:border-border-dark bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
         <div class="flex w-full max-w-[960px] items-center justify-between whitespace-nowrap px-4 py-3">
+
           <!-- 로고 -->
           <div class="flex items-center gap-4">
             <a href="/" class="flex items-center gap-3">
               <div class="size-6 text-text-light-primary dark:text-text-dark-primary">
                 <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                   <path
-                          d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z"
-                          fill="currentColor"></path>
+                    d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z"
+                    fill="currentColor"></path>
                 </svg>
               </div>
-              <span class="text-lg font-bold leading-tight tracking-[-0.015em] text-text-light-primary dark:text-text-dark-primary">
+              <span
+                class="text-lg font-bold leading-tight tracking-[-0.015em] text-text-light-primary dark:text-text-dark-primary">
                 Westudy
               </span>
             </a>
@@ -112,33 +98,33 @@
           <div class="flex flex-1 items-center justify-end gap-6">
             <nav class="hidden items-center gap-8 md:flex">
               <a class="text-sm font-medium leading-normal text-text-light-primary dark:text-text-dark-primary"
-                 href="/page/post/">스터디 모집</a>
+                href="/page/post/">스터디 모집</a>
               <a class="text-sm font-medium leading-normal text-text-light-primary dark:text-text-dark-primary"
-                 href="/page/study/">스터디 현황</a>
+                href="/page/study/">스터디 현황</a>
 
               <!-- 로그인 상태에 따라 분기 -->
               <th:block th:if="${nickname != null}">
                 <a href="/page/user/info/data"
-                   class="text-sm font-medium leading-normal text-text-light-primary dark:text-text-dark-primary">
+                  class="text-sm font-medium leading-normal text-text-light-primary dark:text-text-dark-primary">
                   <span th:text="${nickname} + ' 님'">사용자 님</span>
                 </a>
                 <a href="/api/users/logout"
-                   class="text-sm font-medium leading-normal text-text-light-primary dark:text-text-dark-primary">
+                  class="text-sm font-medium leading-normal text-text-light-primary dark:text-text-dark-primary">
                   로그아웃
                 </a>
               </th:block>
               <th:block th:unless="${nickname != null}">
                 <a class="text-sm font-medium leading-normal text-text-light-primary dark:text-text-dark-primary"
-                   href="/page/user/login">로그인</a>
+                  href="/page/user/login">로그인</a>
                 <a class="text-sm font-medium leading-normal text-text-light-primary dark:text-text-dark-primary"
-                   href="/page/user/signup">회원가입</a>
+                  href="/page/user/signup">회원가입</a>
               </th:block>
             </nav>
 
             <!-- 다크모드 토글 -->
             <button
-                    class="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-border-light text-text-light-primary dark:bg-border-dark dark:text-text-dark-primary"
-                    id="theme-toggle-btn">
+              class="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-border-light text-text-light-primary dark:bg-border-dark dark:text-text-dark-primary"
+              id="theme-toggle-btn">
               <span class="material-symbols-outlined dark:hidden">dark_mode</span>
               <span class="material-symbols-outlined hidden dark:inline">light_mode</span>
             </button>
@@ -146,18 +132,20 @@
         </div>
       </header>
 
-      <!-- 메인 영역: 개별 페이지 content 들어가는 곳 -->
-      <main class="flex w-full flex-col items-center" th:classappend="${mainClass}">
-        <div class="flex w-full max-w-[960px] flex-col">
+      <!-- ✅ Main: 남는 공간만 차지 + 상하/좌우 중앙 정렬 -->
+      <!-- - flex-1 : 헤더/푸터 제외 남는 높이만 -->
+      <!-- - justify-center : 상하 중앙 -->
+      <!-- - items-center : 좌우 중앙 -->
+      <main class="flex-1 w-full flex flex-col items-center justify-center" th:classappend="${mainClass}">
+        <div class="w-full max-w-[960px] flex flex-col px-4 py-2">
           <th:block th:replace="${content}"></th:block>
         </div>
       </main>
 
-      <!-- Tailwind 푸터 (레이아웃 공통) -->
-      <footer
-              class="flex w-full justify-center border-t border-solid border-border-light dark:border-border-dark mt-8">
+      <!-- Footer: 고정 아님(문서 흐름) -->
+      <footer class="flex w-full justify-center border-t border-solid border-border-light dark:border-border-dark">
         <div
-                class="flex w-full max-w-[960px] flex-col items-center gap-2 py-4 px-2 text-center md:flex-row md:justify-between">
+          class="flex w-full max-w-[960px] flex-col items-center gap-2 py-4 px-2 text-center md:flex-row md:justify-between">
           <div class="text-sm text-text-light-secondary dark:text-text-dark-secondary">
             © 2025 WeStudy. All rights reserved.
           </div>
@@ -165,24 +153,25 @@
             <a class="text-text-light-secondary dark:text-text-dark-secondary" href="/about">소개</a>
             <a class="text-text-light-secondary dark:text-text-dark-secondary" href="/privacy">개인정보처리방침</a>
             <a class="text-text-light-secondary dark:text-text-dark-secondary"
-               href="mailto:bwhdgus0429@gmail.com">문의하기</a>
+              href="mailto:bwhdgus0429@gmail.com">문의하기</a>
           </div>
         </div>
       </footer>
 
     </div>
+
+    <!-- 다크모드 토글 스크립트 -->
+    <script>
+      const btn = document.getElementById('theme-toggle-btn');
+      if (btn) {
+        btn.addEventListener('click', () => {
+          document.documentElement.classList.toggle('dark');
+        });
+      }
+    </script>
+
   </div>
 
-  <!-- 다크모드 토글 스크립트 -->
-  <script>
-    const btn = document.getElementById('theme-toggle-btn');
-    if (btn) {
-      btn.addEventListener('click', () => {
-        document.documentElement.classList.toggle('dark');
-      });
-    }
-  </script>
-</div>
-
 </body>
+
 </html>
