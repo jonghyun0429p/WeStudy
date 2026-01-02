@@ -21,6 +21,9 @@ public class Post {
     private PostCategory category;
     private String title;
     private String summary;
+    private Double latitude;
+    private Double longitude;
+    private String address;
     private LocalDateTime createAt;
     private LocalDateTime deleteAt;
 }

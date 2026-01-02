@@ -6,6 +6,7 @@ import com.westudy.post.enums.PostCategory;
 import com.westudy.post.service.PostSevice;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -19,6 +20,9 @@ import java.util.Objects;
 @Controller
 @RequestMapping("/page/post")
 public class PostPageController {
+
+    @Value("${kakao.map.key}")
+    private String kakaoMapKey;
 
     private final PostSevice postSevice;
 
@@ -35,6 +39,7 @@ public class PostPageController {
 
         int size = (postSize != null && postSize > 0) ? postSize : 12;
 
+        model.addAttribute("kakaoJsKey", kakaoMapKey);
         model.addAttribute("pages", postSevice.getPostList(page, size));
         model.addAttribute("pageCount", postSevice.getPostPage(size));
         model.addAttribute("currentPage", page);

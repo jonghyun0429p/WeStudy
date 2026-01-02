@@ -1,182 +1,175 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
 <head>
     <th:block th:replace="~{layout/layout :: head}"></th:block>
 
-    <style>
-        .hover-effect {
-            transition: all .2s ease-in-out;
-        }
-        .hover-effect:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-        }
-    </style>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<body>
 
-<div th:replace="~{layout/layout :: layout(~{::content})}">
-    <div th:fragment="content" class="px-4 md:px-10 lg:px-20 xl:px-40">
+    <div th:replace="~{layout/layout :: layout(~{::content})}">
+        <div th:fragment="content" class="px-4 md:px-10 lg:px-20 xl:px-40">
 
-        <!-- 헤더 영역 -->
-        <div class="flex flex-wrap justify-between gap-2 p-2 mb-2 mt-6">
-            <div class="flex flex-col gap-2">
-                <p class="text-4xl font-black">📋 게시글 목록</p>
-                <p class="text-muted-light dark:text-muted-dark pl1">원하는 게시글을 찾아보세요.</p>
-            </div>
-        </div>
-
-        <!-- 검색창 -->
-        <form th:action="@{/page/post/search}" method="get" class="flex flex-col md:flex-row gap-4 p-4">
-            <div class="flex-grow">
-                <label class="flex flex-col w-full h-12">
-                    <div class="flex h-full items-stretch rounded-full">
-                        <div class="flex items-center justify-center px-4 bg-border-light dark:bg-border-dark text-muted-light dark:text-muted-dark rounded-l-full">
-                            <span class="material-symbols-outlined">search</span>
-                        </div>
-                        <input name="keyword" required
-                               class="flex-1 rounded-r-full bg-border-light dark:bg-border-dark px-4 text-base focus:outline-none"
-                               placeholder="게시글 검색"/>
-                    </div>
-                </label>
-            </div>
-        </form>
-
-        <!-- 게시글 목록 카드 그리드 -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
-
-            <div th:each="post : ${pages}"
-                 class="flex flex-col gap-3 rounded-xl bg-card-light dark:bg-card-dark shadow-sm overflow-hidden hover-effect cursor-pointer"
-                 th:onclick="'location.href=\'/page/post/detail?id=' + ${post.postId} + '\''">
-
-                <!-- 썸네일은 임시 색 배경 -->
-                <div class="w-full bg-center bg-no-repeat aspect-video bg-cover"
-                     style="background-image: url('https://picsum.photos/seed/card/600/400');">
-                </div>
-
-                <div class="p-4 flex flex-col gap-2">
-                    <p class="text-base font-bold truncate" th:text="${post.title}">제목</p>
-
-                    <div class="flex items-center gap-4 text-muted-light dark:text-muted-dark text-sm">
-                        <div class="flex items-center gap-1">
-                            <span class="material-symbols-outlined !text-base">category</span>
-                            <span th:text="${post.postCategory}">카테고리</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <span class="material-symbols-outlined !text-base">visibility</span>
-                            <span th:text="${post.views}">0</span>
-                        </div>
-                    </div>
-
-                    <p class="text-sm text-muted-light dark:text-muted-dark line-clamp-2" th:text="${post.summary}">
-                        요약 내용
-                    </p>
+            <!-- 헤더 영역 -->
+            <div class="flex flex-wrap justify-between gap-2 p-2 mb-2 mt-6">
+                <div class="flex flex-col gap-2">
+                    <p class="text-4xl font-black">📋 게시글 목록</p>
+                    <p class="text-muted-light dark:text-muted-dark pl1">원하는 게시글을 찾아보세요.</p>
                 </div>
             </div>
-        </div>
 
-        <!-- 페이지네이션 -->
-        <div class="flex justify-center p-4 mt-8">
-            <div class="flex items-center gap-2">
+            <!-- 검색창 -->
+            <form th:action="@{/page/post/search}" method="get" class="flex flex-col md:flex-row gap-4 p-4">
+                <div class="flex-grow">
+                    <label class="flex flex-col w-full h-12">
+                        <div class="flex h-full items-stretch rounded-full">
+                            <div
+                                class="flex items-center justify-center px-4 bg-border-light dark:bg-border-dark text-muted-light dark:text-muted-dark rounded-l-full">
+                                <span class="material-symbols-outlined">search</span>
+                            </div>
+                            <input name="keyword" required
+                                class="flex-1 rounded-r-full bg-border-light dark:bg-border-dark px-4 text-base focus:outline-none"
+                                placeholder="게시글 검색" />
+                        </div>
+                    </label>
+                </div>
+            </form>
 
-                <!-- 맨 처음 페이지 버튼 -->
-                <a th:href="@{/page/post(page=1)}"
-                   class="flex items-center justify-center h-10 w-10 rounded-full bg-border-light dark:bg-border-dark text-muted-light hover:bg-primary/20 transition"
-                   th:classappend="${currentPage == 1} ? ' opacity-40 pointer-events-none' : ''">
-                    <span class="material-symbols-outlined">first_page</span>
-                </a>
+            <!-- 게시글 목록 카드 그리드 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
 
-                <!-- 이전 페이지 버튼 -->
-                <a th:href="@{/page/post(page=${currentPage - 1 > 0 ? currentPage - 1 : 1})}"
-                   class="flex items-center justify-center h-10 w-10 rounded-full bg-border-light dark:bg-border-dark text-muted-light hover:bg-primary/20 transition"
-                   th:classappend="${currentPage == 1} ? ' opacity-40 pointer-events-none' : ''">
-                    <span class="material-symbols-outlined">chevron_left</span>
-                </a>
+                <div th:each="post : ${pages}"
+                    class="flex flex-col gap-3 rounded-xl bg-card-light dark:bg-card-dark shadow-sm overflow-hidden hover-effect cursor-pointer"
+                    th:onclick="'location.href=\'/page/post/detail?id=' + ${post.postId} + '\''">
 
-                <!-- 가운데 페이지 번호들 (현재 기준 좌우 최대 2개) -->
-                <div th:each="i : ${#numbers.sequence(1, pageCount)}"
-                     th:if="${i >= currentPage - 2} and ${i <= currentPage + 2}">
-                    <a th:href="@{/page/post(page=${i})}"
-                       th:text="${i}"
-                       class="flex items-center justify-center h-10 w-10 rounded-full text-sm font-medium transition"
-                       th:classappend="${i == currentPage} ?
+                    <!-- 썸네일은 임시 색 배경 -->
+                    <div class="w-full bg-center bg-no-repeat aspect-video bg-cover"
+                        style="background-image: url('https://picsum.photos/seed/card/600/400');">
+                    </div>
+
+                    <div class="p-4 flex flex-col gap-2">
+                        <p class="text-base font-bold truncate" th:text="${post.title}">제목</p>
+
+                        <div class="flex items-center gap-4 text-muted-light dark:text-muted-dark text-sm">
+                            <div class="flex items-center gap-1">
+                                <span class="material-symbols-outlined !text-base">category</span>
+                                <span th:text="${post.postCategory}">카테고리</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="material-symbols-outlined !text-base">visibility</span>
+                                <span th:text="${post.views}">0</span>
+                            </div>
+                        </div>
+
+                        <p class="text-sm text-muted-light dark:text-muted-dark line-clamp-2" th:text="${post.summary}">
+                            요약 내용
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 페이지네이션 -->
+            <div class="flex justify-center p-4 mt-8">
+                <div class="flex items-center gap-2">
+
+                    <!-- 맨 처음 페이지 버튼 -->
+                    <a th:href="@{/page/post(page=1)}"
+                        class="flex items-center justify-center h-10 w-10 rounded-full bg-border-light dark:bg-border-dark text-muted-light hover:bg-primary/20 transition"
+                        th:classappend="${currentPage == 1} ? ' opacity-40 pointer-events-none' : ''">
+                        <span class="material-symbols-outlined">first_page</span>
+                    </a>
+
+                    <!-- 이전 페이지 버튼 -->
+                    <a th:href="@{/page/post(page=${currentPage - 1 > 0 ? currentPage - 1 : 1})}"
+                        class="flex items-center justify-center h-10 w-10 rounded-full bg-border-light dark:bg-border-dark text-muted-light hover:bg-primary/20 transition"
+                        th:classappend="${currentPage == 1} ? ' opacity-40 pointer-events-none' : ''">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </a>
+
+                    <!-- 가운데 페이지 번호들 (현재 기준 좌우 최대 2개) -->
+                    <div th:each="i : ${#numbers.sequence(1, pageCount)}"
+                        th:if="${i >= currentPage - 2} and ${i <= currentPage + 2}">
+                        <a th:href="@{/page/post(page=${i})}" th:text="${i}"
+                            class="flex items-center justify-center h-10 w-10 rounded-full text-sm font-medium transition"
+                            th:classappend="${i == currentPage} ?
                    ' bg-primary text-text-light font-bold'
                    : ' bg-border-light dark:bg-border-dark text-muted-light hover:bg-primary/20'">
+                        </a>
+                    </div>
+
+                    <!-- 다음 페이지 버튼 -->
+                    <a th:href="@{/page/post(page=${currentPage + 1 < pageCount ? currentPage + 1 : pageCount})}"
+                        class="flex items-center justify-center h-10 w-10 rounded-full bg-border-light dark:bg-border-dark text-muted-light hover:bg-primary/20 transition"
+                        th:classappend="${currentPage == pageCount} ? ' opacity-40 pointer-events-none' : ''">
+                        <span class="material-symbols-outlined">chevron_right</span>
                     </a>
+
+                    <!-- 맨 마지막 페이지 버튼 -->
+                    <a th:href="@{/page/post(page=${pageCount})}"
+                        class="flex items-center justify-center h-10 w-10 rounded-full bg-border-light dark:bg-border-dark text-muted-light hover:bg-primary/20 transition"
+                        th:classappend="${currentPage == pageCount} ? ' opacity-40 pointer-events-none' : ''">
+                        <span class="material-symbols-outlined">last_page</span>
+                    </a>
+
                 </div>
-
-                <!-- 다음 페이지 버튼 -->
-                <a th:href="@{/page/post(page=${currentPage + 1 < pageCount ? currentPage + 1 : pageCount})}"
-                   class="flex items-center justify-center h-10 w-10 rounded-full bg-border-light dark:bg-border-dark text-muted-light hover:bg-primary/20 transition"
-                   th:classappend="${currentPage == pageCount} ? ' opacity-40 pointer-events-none' : ''">
-                    <span class="material-symbols-outlined">chevron_right</span>
-                </a>
-
-                <!-- 맨 마지막 페이지 버튼 -->
-                <a th:href="@{/page/post(page=${pageCount})}"
-                   class="flex items-center justify-center h-10 w-10 rounded-full bg-border-light dark:bg-border-dark text-muted-light hover:bg-primary/20 transition"
-                   th:classappend="${currentPage == pageCount} ? ' opacity-40 pointer-events-none' : ''">
-                    <span class="material-symbols-outlined">last_page</span>
-                </a>
-
             </div>
+
+
+
+            <!-- 글 작성 버튼 -->
+            <th:block th:if="${nickname != null}">
+                <a href="/page/post/write"
+                    class="fixed bottom-10 right-8 flex items-center justify-center h-16 w-16 rounded-full bg-primary text-text-light shadow-lg hover:opacity-90 transition">
+                    <span class="material-symbols-outlined !text-3xl">add</span>
+                </a>
+            </th:block>
+
         </div>
-
-
-
-        <!-- 글 작성 버튼 -->
-        <th:block th:if="${nickname != null}">
-            <a href="/page/post/write"
-               class="fixed bottom-10 right-8 flex items-center justify-center h-16 w-16 rounded-full bg-primary text-text-light shadow-lg hover:opacity-90 transition">
-                <span class="material-symbols-outlined !text-3xl">add</span>
-            </a>
-        </th:block>
-
     </div>
-</div>
-<script>
-    (function () {
-        // 쿠키에서 postSize 읽기
-        const cookieMatch = document.cookie.match(/(?:^|;\s*)postSize=(\d+)/);
-        const currentSize = cookieMatch ? parseInt(cookieMatch[1], 10) : 0;
+    <script>
+        (function () {
+            // 쿠키에서 postSize 읽기
+            const cookieMatch = document.cookie.match(/(?:^|;\s*)postSize=(\d+)/);
+            const currentSize = cookieMatch ? parseInt(cookieMatch[1], 10) : 0;
 
-        // 화면 가로 길이 기준으로 열 개수 계산
-        const width = window.innerWidth;
-        let cols;
-        if (width < 640) {          // 모바일
-            cols = 1;
-        } else if (width < 1024) {  // 작은 태블릿 / 작은 화면
-            cols = 2;
-        } else if (width < 1280) {  // 일반 노트북
-            cols = 3;
-        } else {                    // 큰 데스크탑
-            cols = 4;
-        }
+            // 화면 가로 길이 기준으로 열 개수 계산
+            const width = window.innerWidth;
+            let cols;
+            if (width < 640) {          // 모바일
+                cols = 1;
+            } else if (width < 1024) {  // 작은 태블릿 / 작은 화면
+                cols = 2;
+            } else if (width < 1280) {  // 일반 노트북
+                cols = 3;
+            } else {                    // 큰 데스크탑
+                cols = 4;
+            }
 
-        const rows = 3; // 항상 3줄
-        const desiredSize = cols * rows;
+            const rows = 3; // 항상 3줄
+            const desiredSize = cols * rows;
 
-        // 이미 원하는 size로 로드되어 있으면 아무것도 안 함
-        if (currentSize === desiredSize) {
-            return;
-        }
+            // 이미 원하는 size로 로드되어 있으면 아무것도 안 함
+            if (currentSize === desiredSize) {
+                return;
+            }
 
-        // 쿠키에 저장 (30일 유지)
-        document.cookie = "postSize=" + desiredSize + "; path=/; max-age=2592000";
+            // 쿠키에 저장 (30일 유지)
+            document.cookie = "postSize=" + desiredSize + "; path=/; max-age=2592000";
 
-        // page 없으면 1로, 있으면 그대로
-        const params = new URLSearchParams(window.location.search);
-        if (!params.get("page")) {
-            params.set("page", "1");
-        }
+            // page 없으면 1로, 있으면 그대로
+            const params = new URLSearchParams(window.location.search);
+            if (!params.get("page")) {
+                params.set("page", "1");
+            }
 
-        // 쿼리스트링은 page만 유지한 채로 리로드 (size는 안 붙임)
-        const query = params.toString();
-        const baseUrl = window.location.pathname;
-        window.location.href = query ? baseUrl + "?" + query : baseUrl;
-    })();
-</script>
+            // 쿼리스트링은 page만 유지한 채로 리로드 (size는 안 붙임)
+            const query = params.toString();
+            const baseUrl = window.location.pathname;
+            window.location.href = query ? baseUrl + "?" + query : baseUrl;
+        })();
+    </script>
 
 </body>
+
 </html>
