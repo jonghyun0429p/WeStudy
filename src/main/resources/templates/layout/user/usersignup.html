@@ -3,7 +3,7 @@
 
 <style>
     /* signup 페이지만: main의 centered-main 상단 여백 제거 */
-    main.centered-main{
+    main.centered-main {
         padding-top: 0 !important;
         margin-top: 0 !important;
     }
@@ -14,364 +14,247 @@
     <title>Westudy 회원가입</title>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark font-display text-text-light-primary dark:text-text-dark-primary">
+<body>
 
-<th:block th:with="mainClass='centered-main'">
-    <div th:replace="~{layout/layout :: layout(~{::content})}">
-        <div th:fragment="content">
+    <th:block th:with="mainClass='centered-main'">
+        <div th:replace="~{layout/layout :: layout(~{::content})}">
+            <div th:fragment="content">
 
-            <main class="flex-1 min-h-0 flex flex-col items-center justify-start pb-3 px-4 mt-6">
-                <div class="w-full max-w-md mx-auto">
-                    <h1 class="text-text-light-primary dark:text-text-dark-primary tracking-tight text-3xl sm:text-4xl font-bold text-center pb-4">
-                        Westudy 회원가입
-                    </h1>
-
-                    <div class="bg-card-light dark:bg-card-dark rounded-xl p-6 sm:p-8 space-y-6 shadow-lg">
-                        <div>
-                            <h2 class="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4 text-center">
-                                기본 회원가입
-                            </h2>
-
-                            <form id="signup-form" class="space-y-4">
-                                <!-- 이름 -->
-                                <div class="flex flex-col">
-                                    <label class="sr-only" for="username">이름</label>
-                                    <input
-                                            id="username"
-                                            name="username"
-                                            type="text"
-                                            required
-                                            placeholder="이름"
-                                            class="form-input w-full h-12 px-4 rounded-lg
-                           bg-background-light dark:bg-background-dark
-                           border border-border-light dark:border-border-dark
-                           focus:outline-0 focus:ring-2 focus:ring-primary
-                           focus:ring-offset-2 focus:ring-offset-background-light
-                           dark:focus:ring-offset-background-dark
-                           text-text-light-primary dark:text-text-dark-primary
-                           placeholder:text-text-light-secondary dark:placeholder:text-text-dark-secondary
-                           transition-shadow"
-                                    />
-                                </div>
-
-                                <!-- 이메일 -->
-                                <div class="flex flex-col">
-                                    <label class="sr-only" for="email">이메일</label>
-                                    <input
-                                            id="email"
-                                            name="email"
-                                            type="email"
-                                            required
-                                            placeholder="이메일"
-                                            class="form-input w-full h-12 px-4 rounded-lg
-                           bg-background-light dark:bg-background-dark
-                           border border-border-light dark:border-border-dark
-                           focus:outline-0 focus:ring-2 focus:ring-primary
-                           focus:ring-offset-2 focus:ring-offset-background-light
-                           dark:focus:ring-offset-background-dark
-                           text-text-light-primary dark:text-text-dark-primary
-                           placeholder:text-text-light-secondary dark:placeholder:text-text-dark-secondary
-                           transition-shadow"
-                                    />
-                                </div>
-
-                                <!-- 닉네임 -->
-                                <div class="flex flex-col">
-                                    <label class="sr-only" for="nickname">닉네임</label>
-                                    <input
-                                            id="nickname"
-                                            name="nickname"
-                                            type="text"
-                                            required
-                                            placeholder="닉네임"
-                                            class="form-input w-full h-12 px-4 rounded-lg
-                           bg-background-light dark:bg-background-dark
-                           border border-border-light dark:border-border-dark
-                           focus:outline-0 focus:ring-2 focus:ring-primary
-                           focus:ring-offset-2 focus:ring-offset-background-light
-                           dark:focus:ring-offset-background-dark
-                           text-text-light-primary dark:text-text-dark-primary
-                           placeholder:text-text-light-secondary dark:placeholder:text-text-dark-secondary
-                           transition-shadow"
-                                    />
-                                </div>
-
-                                <!-- 전화번호 -->
-                                <div class="flex flex-col">
-                                    <label class="sr-only" for="phoneNumber">전화번호</label>
-                                    <input
-                                            id="phoneNumber"
-                                            name="phoneNumber"
-                                            type="tel"
-                                            required
-                                            placeholder="전화번호"
-                                            class="form-input w-full h-12 px-4 rounded-lg
-                           bg-background-light dark:bg-background-dark
-                           border border-border-light dark:border-border-dark
-                           focus:outline-0 focus:ring-2 focus:ring-primary
-                           focus:ring-offset-2 focus:ring-offset-background-light
-                           dark:focus:ring-offset-background-dark
-                           text-text-light-primary dark:text-text-dark-primary
-                           placeholder:text-text-light-secondary dark:placeholder:text-text-dark-secondary
-                           transition-shadow"
-                                    />
-                                </div>
-
-                                <!-- 비밀번호 -->
-                                <div class="flex flex-col">
-                                    <label class="sr-only" for="password">비밀번호</label>
-                                    <div class="relative">
+                <main class="flex-1 min-h-0 flex flex-col items-center justify-start pb-3 px-4 mt-6">
+                    <div class="w-full max-w-md mx-auto">
+                        <h1
+                            class="text-text-light dark:text-text-dark tracking-tight text-3xl sm:text-4xl font-bold text-center pb-8">
+                            Westudy 회원가입
+                        </h1>
+                        <div class="bg-surface-light dark:bg-surface-dark rounded-xl p-6 sm:p-8 space-y-6">
+                            <div>
+                                <h2 class="text-lg font-semibold text-text-light dark:text-text-dark mb-4 text-center">
+                                    기본 회원가입</h2>
+                                <form id="signup-form" class="space-y-4">
+                                    <div>
+                                        <label class="sr-only" for="username">이름</label>
                                         <input
-                                                id="password"
-                                                name="password"
-                                                type="password"
-                                                required
-                                                placeholder="비밀번호"
-                                                class="form-input w-full h-12 px-4 pr-10 rounded-lg
-                             bg-background-light dark:bg-background-dark
-                             border border-border-light dark:border-border-dark
-                             focus:outline-0 focus:ring-2 focus:ring-primary
-                             focus:ring-offset-2 focus:ring-offset-background-light
-                             dark:focus:ring-offset-background-dark
-                             text-text-light-primary dark:text-text-dark-primary
-                             placeholder:text-text-light-secondary dark:placeholder:text-text-dark-secondary
-                             transition-shadow"
-                                        />
-                                        <button type="button"
-                                                id="toggle-password"
-                                                class="absolute inset-y-0 right-0 flex items-center pr-3 text-text-light-secondary dark:text-text-dark-secondary">
-                                            <span class="material-symbols-outlined text-xl">visibility_off</span>
-                                        </button>
+                                            class="w-full h-12 px-4 rounded-lg bg-background-light dark:bg-background-dark border border-surface-dark/20 dark:border-surface-light/20 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark"
+                                            id="username" name="username" placeholder="이름" type="text" />
                                     </div>
-                                </div>
-
-                                <!-- 비밀번호 확인 -->
-                                <div class="flex flex-col">
-                                    <label class="sr-only" for="passwordConfirm">비밀번호 확인</label>
-                                    <div class="relative">
+                                    <div>
+                                        <label class="sr-only" for="email">이메일</label>
                                         <input
-                                                id="passwordConfirm"
-                                                name="passwordConfirm"
-                                                type="password"
-                                                required
-                                                placeholder="비밀번호 확인"
-                                                class="form-input w-full h-12 px-4 pr-10 rounded-lg
-                             bg-background-light dark:bg-background-dark
-                             border border-border-light dark:border-border-dark
-                             focus:outline-0 focus:ring-2 focus:ring-primary
-                             focus:ring-offset-2 focus:ring-offset-background-light
-                             dark:focus:ring-offset-background-dark
-                             text-text-light-primary dark:text-text-dark-primary
-                             placeholder:text-text-light-secondary dark:placeholder:text-text-dark-secondary
-                             transition-shadow"
-                                        />
-                                        <button type="button"
-                                                id="toggle-password-confirm"
-                                                class="absolute inset-y-0 right-0 flex items-center pr-3 text-text-light-secondary dark:text-text-dark-secondary">
-                                            <span class="material-symbols-outlined text-xl">visibility_off</span>
-                                        </button>
+                                            class="w-full h-12 px-4 rounded-lg bg-background-light dark:bg-background-dark border border-surface-dark/20 dark:border-surface-light/20 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark"
+                                            id="email" name="email" placeholder="이메일" type="email" />
                                     </div>
+                                    <div>
+                                        <label class="sr-only" for="nickname">닉네임</label>
+                                        <input
+                                            class="w-full h-12 px-4 rounded-lg bg-background-light dark:bg-background-dark border border-surface-dark/20 dark:border-surface-light/20 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark"
+                                            id="nickname" name="nickname" placeholder="닉네임" type="text" />
+                                    </div>
+                                    <div>
+                                        <label class="sr-only" for="phoneNumber">전화번호</label>
+                                        <input
+                                            class="w-full h-12 px-4 rounded-lg bg-background-light dark:bg-background-dark border border-surface-dark/20 dark:border-surface-light/20 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark"
+                                            id="phoneNumber" name="phoneNumber" placeholder="전화번호" type="tel" />
+                                    </div>
+                                    <div>
+                                        <label class="sr-only" for="password">비밀번호</label>
+                                        <input
+                                            class="w-full h-12 px-4 rounded-lg bg-background-light dark:bg-background-dark border border-surface-dark/20 dark:border-surface-light/20 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark"
+                                            id="password" name="password" placeholder="비밀번호" type="password" />
+                                    </div>
+                                    <div>
+                                        <label class="sr-only" for="passwordConfirm">비밀번호 확인</label>
+                                        <input
+                                            class="w-full h-12 px-4 rounded-lg bg-background-light dark:bg-background-dark border border-surface-dark/20 dark:border-surface-light/20 focus:ring-primary focus:border-primary text-text-light dark:text-text-dark"
+                                            id="passwordConfirm" name="passwordConfirm" placeholder="비밀번호 확인"
+                                            type="password" />
+                                    </div>
+
+                                    <p id="signup-error" class="text-red-500 text-sm mt-1 px-1 hidden"></p>
+
+                                    <button type="button" id="signup-button"
+                                        class="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white text-base font-bold transition-transform hover:scale-[1.02]">
+                                        <span class="truncate">가입하기</span>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="flex items-center gap-3 w-full">
+                                <div class="h-px flex-1 bg-gray-300 dark:bg-gray-600"></div>
+                                <span
+                                    class="text-sm text-text-light-secondary dark:text-text-dark-secondary font-medium shrink-0">또는</span>
+                                <div class="h-px flex-1 bg-gray-300 dark:bg-gray-600"></div>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-semibold text-text-light dark:text-text-dark mb-4 text-center">
+                                    소셜 회원가입</h2>
+                                <div class="flex flex-col gap-3 w-full">
+                                    <button id="kakao-signup"
+                                        class="group flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-[#FEE500] text-[#3C1E1E] text-base font-bold transition-transform hover:scale-[1.02]">
+                                        <div class="flex items-center justify-center gap-3">
+                                            <svg class="w-5 h-5" fill="none" viewBox="0 0 18 17"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path clip-rule="evenodd"
+                                                    d="M9 17C13.9706 17 18 13.1944 18 8.5C18 3.80558 13.9706 0 9 0C4.02944 0 0 3.80558 0 8.5C0 10.9333 1.09581 13.102 2.83984 14.5447C2.93663 14.621 2.99933 14.7351 3.01103 14.8596L3.10935 15.8234C3.15344 16.2573 3.63342 16.5162 4.02325 16.3013L5.27967 15.6027C5.39418 15.541 5.52622 15.5186 5.65584 15.5391C6.69234 15.7042 7.81153 15.7955 9 15.7955C9.03315 15.7955 9.06626 15.7952 9.09933 15.7947C9 17 9 17 9 17Z"
+                                                    fill="#3C1E1E" fill-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="truncate">카카오로 시작하기</span>
+                                        </div>
+                                    </button>
+                                    <button id="google-signup"
+                                        class="group flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-white text-[#4A4A4A] text-base font-bold border border-gray-300 transition-transform hover:scale-[1.02]">
+                                        <div class="flex items-center justify-center gap-3">
+                                            <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                                    fill="#4285F4"></path>
+                                                <path
+                                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                                    fill="#34A853"></path>
+                                                <path
+                                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
+                                                    fill="#FBBC05"></path>
+                                                <path
+                                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                                    fill="#EA4335"></path>
+                                                <path d="M1 1h22v22H1z" fill="none"></path>
+                                            </svg>
+                                            <span class="truncate">구글로 시작하기</span>
+                                        </div>
+                                    </button>
                                 </div>
-
-                                <!-- 에러 메시지 -->
-                                <p id="signup-error" class="text-red-500 text-sm mt-1 px-1 hidden"></p>
-
-                                <!-- 가입 버튼 -->
-                                <button
-                                        type="button"
-                                        id="signup-button"
-                                        class="flex w-full h-12 cursor-pointer items-center justify-center overflow-hidden rounded-lg
-                         bg-primary text-white text-base font-bold transition-transform hover:scale-[1.02]"
-                                >
-                                    <span class="truncate">가입하기</span>
-                                </button>
-                            </form>
-                        </div>
-
-                        <!-- 구분선 (또는: 세로 깨짐 방지) -->
-                        <div class="flex items-center gap-3">
-                            <hr class="w-full border-border-light/60 dark:border-border-dark/60"/>
-                            <span class="shrink-0 whitespace-nowrap px-2 text-sm text-text-light-secondary dark:text-text-dark-secondary font-medium">
-                또는
-              </span>
-                            <hr class="w-full border-border-light/60 dark:border-border-dark/60"/>
-                        </div>
-
-                        <!-- 소셜 회원가입 -->
-                        <div>
-                            <h2 class="text-lg font-semibold text-text-light-primary dark:text-text-dark-primary mb-4 text-center">
-                                소셜 회원가입
-                            </h2>
-
-                            <div class="flex flex-col gap-3 w-full">
-                                <!-- 카카오: 이미지 아이콘 사용 (static/img/kakao-talk.png 필요) -->
-                                <button
-                                        type="button"
-                                        id="kakao-signup"
-                                        class="group flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5
-                         bg-[#FEE500] text-[#3C1E1E] text-base font-bold transition-transform hover:scale-[1.02]"
-                                >
-                                    <div class="flex items-center justify-center gap-3">
-                                        <img th:src="@{/images/kakaotalk_btn.png}" alt="KakaoTalk" class="w-5 h-5"/>
-                                        <span class="truncate">카카오로 시작하기</span>
-                                    </div>
-                                </button>
-
-                                <!-- 구글 -->
-                                <button
-                                        type="button"
-                                        id="google-signup"
-                                        class="group flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5
-                         bg-white text-[#4A4A4A] text-base font-bold border border-gray-300
-                         transition-transform hover:scale-[1.02]"
-                                >
-                                    <div class="flex items-center justify-center gap-3">
-                                        <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-                                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                                            <path d="M1 1h22v22H1z" fill="none"/>
-                                        </svg>
-                                        <span class="truncate">구글로 시작하기</span>
-                                    </div>
-                                </button>
                             </div>
                         </div>
+                        <p
+                            class="text-muted-light dark:text-muted-dark text-xs sm:text-sm font-normal leading-normal pt-6 px-4 text-center">
+                            가입 시 <a class="underline hover:text-primary" href="#">서비스 이용약관</a> 및 <a
+                                class="underline hover:text-primary" href="#">개인정보처리방침</a>에 동의하는 것으로 간주됩니다.
+                        </p>
+
+                        <div class="pt-4 text-center">
+                            <button type="button" id="go-login"
+                                class="text-sm font-medium text-text-light dark:text-text-dark hover:text-primary transition-colors">
+                                이미 계정이 있으신가요? 로그인
+                            </button>
+                        </div>
+
                     </div>
+                </main>
 
-                    <p class="text-text-light-secondary dark:text-text-dark-secondary text-xs sm:text-sm font-normal leading-normal pt-6 px-4 text-center">
-                        가입 시 <a class="underline hover:text-primary" href="#">서비스 이용약관</a> 및
-                        <a class="underline hover:text-primary" href="#">개인정보처리방침</a>에 동의하는 것으로 간주됩니다.
-                    </p>
-
-                    <!-- 로그인 이동 -->
-                    <div class="pt-4 text-center">
-                        <button type="button"
-                                id="go-login"
-                                class="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-primary transition-colors">
-                            이미 계정이 있으신가요? 로그인
-                        </button>
-                    </div>
-
-                </div>
-            </main>
-
+            </div>
         </div>
-    </div>
-</th:block>
+    </th:block>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const signupBtn = document.getElementById('signup-button');
-        const errorEl = document.getElementById('signup-error');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const signupBtn = document.getElementById('signup-button');
+            const errorEl = document.getElementById('signup-error');
 
-        const usernameEl = document.getElementById('username');
-        const emailEl = document.getElementById('email');
-        const nicknameEl = document.getElementById('nickname');
-        const phoneEl = document.getElementById('phoneNumber');
-        const passwordEl = document.getElementById('password');
-        const passwordConfirmEl = document.getElementById('passwordConfirm');
+            const usernameEl = document.getElementById('username');
+            const emailEl = document.getElementById('email');
+            const nicknameEl = document.getElementById('nickname');
+            const phoneEl = document.getElementById('phoneNumber');
+            const passwordEl = document.getElementById('password');
+            const passwordConfirmEl = document.getElementById('passwordConfirm');
 
-        const showError = (msg) => {
-            if (!errorEl) return;
-            errorEl.textContent = msg;
-            errorEl.classList.remove('hidden');
-        };
+            const showError = (msg) => {
+                if (!errorEl) return;
+                errorEl.textContent = msg;
+                errorEl.classList.remove('hidden');
+            };
 
-        const hideError = () => {
-            if (!errorEl) return;
-            errorEl.textContent = '';
-            errorEl.classList.add('hidden');
-        };
+            const hideError = () => {
+                if (!errorEl) return;
+                errorEl.textContent = '';
+                errorEl.classList.add('hidden');
+            };
 
-        // 비밀번호 보기 토글(2개)
-        const togglePassword = (toggleBtnId, inputId) => {
-            const btn = document.getElementById(toggleBtnId);
-            const input = document.getElementById(inputId);
-            if (!btn || !input) return;
+            // 비밀번호 보기 토글(2개)
+            const togglePassword = (toggleBtnId, inputId) => {
+                const btn = document.getElementById(toggleBtnId);
+                const input = document.getElementById(inputId);
+                if (!btn || !input) return;
 
-            btn.addEventListener('click', () => {
-                const isPw = input.type === 'password';
-                input.type = isPw ? 'text' : 'password';
-                const icon = btn.querySelector('.material-symbols-outlined');
-                if (icon) icon.textContent = isPw ? 'visibility' : 'visibility_off';
-            });
-        };
+                btn.addEventListener('click', () => {
+                    const isPw = input.type === 'password';
+                    input.type = isPw ? 'text' : 'password';
+                    const icon = btn.querySelector('.material-symbols-outlined');
+                    if (icon) icon.textContent = isPw ? 'visibility' : 'visibility_off';
+                });
+            };
 
-        togglePassword('toggle-password', 'password');
-        togglePassword('toggle-password-confirm', 'passwordConfirm');
+            togglePassword('toggle-password', 'password');
+            togglePassword('toggle-password-confirm', 'passwordConfirm');
 
-        if (signupBtn) {
-            signupBtn.addEventListener('click', () => {
-                hideError();
+            if (signupBtn) {
+                signupBtn.addEventListener('click', () => {
+                    hideError();
 
-                const username = (usernameEl?.value || '').trim();
-                const email = (emailEl?.value || '').trim();
-                const nickname = (nicknameEl?.value || '').trim();
-                const phoneNumber = (phoneEl?.value || '').trim();
-                const password = (passwordEl?.value || '').trim();
-                const passwordConfirm = (passwordConfirmEl?.value || '').trim();
+                    const username = (usernameEl?.value || '').trim();
+                    const email = (emailEl?.value || '').trim();
+                    const nickname = (nicknameEl?.value || '').trim();
+                    const phoneNumber = (phoneEl?.value || '').trim();
+                    const password = (passwordEl?.value || '').trim();
+                    const passwordConfirm = (passwordConfirmEl?.value || '').trim();
 
-                if (!username || !email || !nickname || !phoneNumber || !password || !passwordConfirm) {
-                    showError('모든 항목을 입력해주세요.');
-                    return;
-                }
+                    if (!username || !email || !nickname || !phoneNumber || !password || !passwordConfirm) {
+                        showError('모든 항목을 입력해주세요.');
+                        return;
+                    }
 
-                if (password !== passwordConfirm) {
-                    showError('비밀번호가 일치하지 않습니다.');
-                    return;
-                }
+                    if (password !== passwordConfirm) {
+                        showError('비밀번호가 일치하지 않습니다.');
+                        return;
+                    }
 
-                fetch('/api/users/signup', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, email, nickname, phoneNumber, password }),
-                    credentials: 'include'
-                })
-                    .then(res => res.ok ? res.json() : Promise.reject(res))
-                    .then(data => {
-                        alert('회원가입이 완료되었습니다!');
-                        window.location.assign(data.redirect_url || '/page/user/login');
+                    fetch('/api/users/signup', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, email, nickname, phoneNumber, password }),
+                        credentials: 'include'
                     })
-                    .catch(async (err) => {
-                        try {
-                            const body = await err.json();
-                            showError(body.message || '회원가입에 실패했습니다.');
-                        } catch (e) {
-                            showError('회원가입에 실패했습니다.');
-                        }
-                        console.error('[signup] error:', err);
-                    });
-            });
-        }
+                        .then(res => res.ok ? res.json() : Promise.reject(res))
+                        .then(data => {
+                            alert('회원가입이 완료되었습니다!');
+                            window.location.assign(data.redirect_url || '/page/user/login');
+                        })
+                        .catch(async (err) => {
+                            try {
+                                const body = await err.json();
+                                showError(body.message || '회원가입에 실패했습니다.');
+                            } catch (e) {
+                                showError('회원가입에 실패했습니다.');
+                            }
+                            console.error('[signup] error:', err);
+                        });
+                });
+            }
 
-        // 로그인 이동
-        const goLogin = document.getElementById('go-login');
-        if (goLogin) {
-            goLogin.addEventListener('click', () => {
-                window.location.href = '/page/user/login';
-            });
-        }
+            // 로그인 이동
+            const goLogin = document.getElementById('go-login');
+            if (goLogin) {
+                goLogin.addEventListener('click', () => {
+                    window.location.href = '/page/user/login';
+                });
+            }
 
-        // 소셜 버튼(연동 경로만 교체)
-        const kakaoBtn = document.getElementById('kakao-signup');
-        if (kakaoBtn) {
-            kakaoBtn.addEventListener('click', () => {
-                // 예: window.location.href = '/oauth2/authorization/kakao';
-                alert('카카오 회원가입 연동 경로를 설정해주세요.');
-            });
-        }
+            // 소셜 버튼(연동 경로만 교체)
+            const kakaoBtn = document.getElementById('kakao-signup');
+            if (kakaoBtn) {
+                kakaoBtn.addEventListener('click', () => {
+                    // 예: window.location.href = '/oauth2/authorization/kakao';
+                    alert('카카오 회원가입 연동 경로를 설정해주세요.');
+                });
+            }
 
-        const googleBtn = document.getElementById('google-signup');
-        if (googleBtn) {
-            googleBtn.addEventListener('click', () => {
-                // 예: window.location.href = '/oauth2/authorization/google';
-                alert('구글 회원가입 연동 경로를 설정해주세요.');
-            });
-        }
-    });
-</script>
+            const googleBtn = document.getElementById('google-signup');
+            if (googleBtn) {
+                googleBtn.addEventListener('click', () => {
+                    // 예: window.location.href = '/oauth2/authorization/google';
+                    alert('구글 회원가입 연동 경로를 설정해주세요.');
+                });
+            }
+        });
+    </script>
 
 </body>
+
 </html>

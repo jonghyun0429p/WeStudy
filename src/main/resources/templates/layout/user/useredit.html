@@ -1,91 +1,91 @@
 <!-- 유저 정보 수정 페이지 -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
 <head>
     <th:block th:replace="~{layout/layout :: head}"></th:block>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
-    <link rel="stylesheet" th:href="@{/css/user.css}" />
     <title>유저 정보 수정</title>
 </head>
+
 <body>
-<div th:replace="~{layout/layout :: layout(~{::content})}" th:with="mainClass='centered-main'">
-    <div th:fragment="content">
-        <h1>유저 정보 수정</h1>
+    <div th:replace="~{layout/layout :: layout(~{::content})}" th:with="mainClass='centered-main'">
+        <div th:fragment="content" class="w-full max-w-md mx-auto py-8">
+            <h1 class="text-2xl font-bold mb-6 text-center">유저 정보 수정</h1>
 
-        <form th:action="@{/api/users/update}" th:object="${user}" method="post" id="editForm">
-            <table class="user-info-table">
-                <tbody>
-                <tr>
-                    <th>이름</th>
-                    <td><input type="text" th:field="*{username}" required /></td>
-                </tr>
-                <tr>
-                    <th>비밀번호</th>
-                    <td><input type="password" id="password" th:field="*{password}" /></td>
-                </tr>
-                <tr>
-                    <th>비밀번호 확인</th>
-                    <td>
-                        <input type="password" id="passwordConfirm" name="passwordConfirm" disabled />
-                        <span id="pwMatchMessage" class="pw-message"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <th>이메일</th>
-                    <td><input type="email" th:field="*{email}" required /></td>
-                </tr>
-                <tr>
-                    <th>전화번호</th>
-                    <td><input type="text" th:field="*{phoneNumber}" required /></td>
-                </tr>
-                </tbody>
-            </table>
+            <form th:action="@{/api/users/update}" th:object="${user}" method="post" id="editForm"
+                class="flex flex-col gap-5">
+                <div>
+                    <label class="block text-sm font-medium mb-1">이름</label>
+                    <input type="text" th:field="*{username}" required class="std-input" />
+                </div>
 
-            <div style="margin-top: 20px;">
-                <button type="submit" class="btn">수정</button>
-            </div>
-        </form>
+                <div>
+                    <label class="block text-sm font-medium mb-1">비밀번호</label>
+                    <input type="password" id="password" th:field="*{password}" class="std-input" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1">비밀번호 확인</label>
+                    <input type="password" id="passwordConfirm" name="passwordConfirm" disabled class="std-input" />
+                    <span id="pwMatchMessage" class="text-sm mt-1 block h-5"></span>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1">이메일</label>
+                    <input type="email" th:field="*{email}" required class="std-input" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1">전화번호</label>
+                    <input type="text" th:field="*{phoneNumber}" required class="std-input" />
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="std-btn std-btn-primary w-full">수정</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<script>
-    const form = document.getElementById('editForm');
-    const pw = document.getElementById('password');
-    const pwConfirm = document.getElementById('passwordConfirm');
-    const pwMsg = document.getElementById('pwMatchMessage');
+    <script>
+        const form = document.getElementById('editForm');
+        const pw = document.getElementById('password');
+        const pwConfirm = document.getElementById('passwordConfirm');
+        const pwMsg = document.getElementById('pwMatchMessage');
 
-    pw.addEventListener('input', () => {
-        const hasPassword = pw.value.trim() !== '';
-        pwConfirm.disabled = !hasPassword;
-        if (!hasPassword) {
-            pwConfirm.value = '';
-            pwMsg.textContent = '';
-        }
-        checkPasswordMatch();
-    });
-
-    pwConfirm.addEventListener('input', checkPasswordMatch);
-
-    function checkPasswordMatch() {
-        if (pw.value && pwConfirm.value) {
-            if (pw.value === pwConfirm.value) {
-                pwMsg.textContent = '일치합니다';
-                pwMsg.style.color = 'green';
-            } else {
-                pwMsg.textContent = '비밀번호가 다릅니다';
-                pwMsg.style.color = 'red';
+        pw.addEventListener('input', () => {
+            const hasPassword = pw.value.trim() !== '';
+            pwConfirm.disabled = !hasPassword;
+            if (!hasPassword) {
+                pwConfirm.value = '';
+                pwMsg.textContent = '';
             }
-        } else {
-            pwMsg.textContent = '';
-        }
-    }
+            checkPasswordMatch();
+        });
 
-    form.addEventListener('submit', function (e) {
-        if (!pwConfirm.disabled && pw.value !== pwConfirm.value) {
-            alert("비밀번호가 일치하지 않습니다.");
-            e.preventDefault();
+        pwConfirm.addEventListener('input', checkPasswordMatch);
+
+        function checkPasswordMatch() {
+            if (pw.value && pwConfirm.value) {
+                if (pw.value === pwConfirm.value) {
+                    pwMsg.textContent = '일치합니다';
+                    pwMsg.style.color = 'green';
+                } else {
+                    pwMsg.textContent = '비밀번호가 다릅니다';
+                    pwMsg.style.color = 'red';
+                }
+            } else {
+                pwMsg.textContent = '';
+            }
         }
-    });
-</script>
+
+        form.addEventListener('submit', function (e) {
+            if (!pwConfirm.disabled && pw.value !== pwConfirm.value) {
+                alert("비밀번호가 일치하지 않습니다.");
+                e.preventDefault();
+            }
+        });
+    </script>
 </body>
+
 </html>
