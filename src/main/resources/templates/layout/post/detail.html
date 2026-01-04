@@ -1,67 +1,511 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
 <head>
     <th:block th:replace="~{layout/layout :: head}"></th:block>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
-    <link rel="stylesheet" th:href="@{/css/board.css}" />
+    <title th:text="'Westudy - ' + ${page.title}">Westudy - 게시글 상세</title>
+
+    <!-- 카카오맵 JS SDK (appkey는 서버에서 주입 권장) -->
+    <!-- 예: model.addAttribute("kakaoJsKey", "..."); -->
+    <script th:if="${kakaoJsKey != null}"
+        th:src="'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoJsKey} + '&autoload=false'"></script>
+
+    <!-- 카카오 공유 SDK (원하면 사용) -->
+    <!-- 예: model.addAttribute("kakaoShareJsKey", "..."); -->
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
+        integrity="sha384-8dS0m6qj8m8v1oE0l8nqvQ9fJtXk0xW3u0mV9qv8Qm6b2mG3o8c4f2e6c5b0b7a4"
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
-<div th:replace="~{layout/layout :: layout(~{::content})}"
-     th:with="mainClass='default-main'">
-    <div th:fragment="content" class="post-detail">
 
-        <h2 th:text="${page.title}" class="mb-3">게시글 제목</h2>
+    <div th:replace="~{layout/layout :: layout(~{::content})}" th:with="mainClass='default-main'">
 
-        <div class="post-meta mb-3 text-muted">
-            <span>작성자: <strong th:text="${page.writerNickname}">닉네임</strong></span> |
-            <span>작성자: <strong th:text="${page.isWriter()}">작성자일치여부</strong></span> |
-            <span>카테고리: <strong th:text="${page.category}">카테고리</strong></span> |
-            <span>조회수: <strong th:text="${page.views}">0</strong></span> |
-            <span>작성일: <strong th:text="${#temporals.format(page.createdAt, 'yyyy-MM-dd HH:mm')}">날짜</strong></span>
+        <div th:fragment="content" class="w-full">
+            <main class="flex flex-col gap-8 p-4 md:p-6 lg:p-2">
+
+                <!-- ================= 제목/메타 ================= -->
+                <section class="flex flex-col gap-3 border-b border-border-light dark:border-border-dark pb-2">
+                    <div class="flex flex-wrap justify-between gap-3">
+                        <h1 class="text-text-light-primary dark:text-text-dark-primary text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em] min-w-72"
+                            th:text="${page.title}">
+                            게시글 제목
+                        </h1>
+
+                        <!-- 작성자일 때만 액션 버튼 -->
+                        <div class="flex gap-2 items-center" th:if="${page.isWriter}">
+                            <a th:href="@{'/page/post/detail/edit?id=' + ${page.postId}}"
+                                class="flex min-w-[96px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-primary text-text-light-primary text-sm font-bold leading-normal tracking-[0.015em]">
+                                수정
+                            </a>
+                            <button type="button"
+                                class="flex min-w-[96px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary text-sm font-bold leading-normal tracking-[0.015em] border border-border-light dark:border-border-dark"
+                                th:attr="data-post-id=${page.postId}" onclick="deletePost(this)">
+                                삭제
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4 justify-between flex-wrap">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div
+                                class="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full h-10 w-10 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-primary">person</span>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-text-light-primary dark:text-text-dark-primary text-base font-medium leading-normal truncate"
+                                    th:text="${page.writerNickname}">
+                                    작성자 닉네임
+                                </p>
+                                <p
+                                    class="text-text-light-secondary dark:text-text-dark-secondary text-xs leading-normal">
+                                    <span th:text="${page.category}">카테고리</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="shrink-0">
+                            <p
+                                class="text-text-light-secondary dark:text-text-dark-secondary text-sm font-normal leading-normal">
+                                <!-- ✅ 날짜 표기 규칙: 당일=시간만 / 7일이내=날짜+시간 / 7일이후=날짜 -->
+                                <span th:block th:with="
+                    created=${page.createdAt},
+                    now=${now},
+                    today=${now.toLocalDate()},
+                    createdDate=${created.toLocalDate()},
+                    days=${T(java.time.temporal.ChronoUnit).DAYS.between(createdDate, today)}
+                  ">
+                                    <span th:if="${days == 0}"
+                                        th:text="${#temporals.format(created, 'HH:mm')}">12:34</span>
+
+                                    <span th:if="${days > 0 and days < 7}"
+                                        th:text="${#temporals.format(created, 'yyyy. MM. dd HH:mm')}">2025. 01. 01
+                                        12:34</span>
+
+                                    <span th:if="${days >= 7}"
+                                        th:text="${#temporals.format(created, 'yyyy. MM. dd')}">2025. 01. 01</span>
+                                </span>
+
+                                <span class="mx-1">|</span>
+                                조회수 <span th:text="${page.views}">0</span>
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= 요약 카드 4칸 + 우측 CTA ================= -->
+                <section class="flex flex-col md:flex-row gap-4">
+                    <div
+                        class="grid grid-cols-2 md:grid-cols-4 gap-px bg-border-light dark:bg-border-dark rounded-lg overflow-hidden border border-border-light dark:border-border-dark flex-1">
+
+                        <div
+                            class="flex flex-col items-center text-center gap-0.5 bg-background-light dark:bg-background-dark p-3">
+                            <span class="material-symbols-outlined text-primary text-3xl">category</span>
+                            <p class="text-text-light-secondary dark:text-text-dark-secondary text-sm">카테고리</p>
+                            <p class="text-text-light-primary dark:text-text-dark-primary text-base font-bold"
+                                th:text="${page.category}">카테고리</p>
+                        </div>
+
+                        <div
+                            class="flex flex-col items-center text-center gap-0.5 bg-background-light dark:bg-background-dark p-3">
+                            <span class="material-symbols-outlined text-primary text-3xl">badge</span>
+                            <p class="text-text-light-secondary dark:text-text-dark-secondary text-sm">작성자</p>
+                            <p class="text-text-light-primary dark:text-text-dark-primary text-base font-bold"
+                                th:text="${page.writerNickname}">닉네임</p>
+                        </div>
+
+                        <div
+                            class="flex flex-col items-center text-center gap-0.5 bg-background-light dark:bg-background-dark p-3">
+                            <span class="material-symbols-outlined text-primary text-3xl">visibility</span>
+                            <p class="text-text-light-secondary dark:text-text-dark-secondary text-sm">조회수</p>
+                            <p class="text-text-light-primary dark:text-text-dark-primary text-base font-bold"
+                                th:text="${page.views}">0</p>
+                        </div>
+
+                        <div
+                            class="flex flex-col items-center text-center gap-0.5 bg-background-light dark:bg-background-dark p-3">
+                            <span class="material-symbols-outlined text-primary text-3xl">event</span>
+                            <p class="text-text-light-secondary dark:text-text-dark-secondary text-sm">작성일</p>
+                            <p class="text-text-light-primary dark:text-text-dark-primary text-base font-bold"
+                                th:text="${#temporals.format(page.createdAt, 'yyyy-MM-dd HH:mm')}">2025-01-01 12:00</p>
+                        </div>
+
+                    </div>
+
+                    <div class="flex items-center justify-center">
+                        <a href="/page/post/"
+                            class="flex w-full md:w-auto min-w-[160px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-16 px-6 bg-primary text-text-light-primary text-lg font-bold tracking-[0.015em] gap-2">
+                            <span class="material-symbols-outlined">list</span>
+                            <span class="truncate">목록으로</span>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- ================= 본문 ================= -->
+                <section class="flex flex-col gap-3">
+                    <h2 class="text-text-light-primary dark:text-text-dark-primary text-[22px] font-bold">내용</h2>
+
+                    <div
+                        class="rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark p-5 md:p-6">
+                        <p class="text-text-light-primary dark:text-text-dark-primary text-base leading-relaxed whitespace-pre-wrap"
+                            th:text="${page.content}">
+                            게시글 본문
+                        </p>
+                    </div>
+                </section>
+
+                <!-- ================= 지도 ================= -->
+                <section class="flex flex-col gap-4 pt-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <h2 class="text-text-light-primary dark:text-text-dark-primary text-[22px] font-bold">스터디 희망 위치
+                        </h2>
+                        <p class="text-text-light-secondary dark:text-text-dark-secondary text-sm truncate"
+                            th:text="${page.address != null ? page.address : '주소 정보 없음'}">주소</p>
+                    </div>
+
+                    <div
+                        class="w-full rounded-lg overflow-hidden bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark">
+                        <!-- 카카오맵이 로드되면 이 div 안에 그려짐 -->
+                        <div id="kakao-map" class="w-full" style="aspect-ratio: 16 / 9;"></div>
+                    </div>
+
+                    <!-- 지도 데이터 (서버에서 내려주는 값) -->
+                    <input type="hidden" id="post-id" th:value="${page.postId}">
+                    <input type="hidden" id="map-lat" th:value="${page.latitude != null ? page.latitude : 37.5665}">
+                    <input type="hidden" id="map-lng" th:value="${page.longitude != null ? page.longitude : 126.9780}">
+                    <input type="hidden" id="map-title" th:value="${page.title}">
+                    <input type="hidden" id="map-address" th:value="${page.address != null ? page.address : ''}">
+                </section>
+
+                <!-- ================= 북마크 / 공유 ================= -->
+                <section class="flex gap-2 justify-center py-2">
+                    <!-- 북마크: 초기 상태는 서버에서 isBookmarked 내려주면 반영 -->
+                    <button id="btn-bookmark" type="button"
+                        th:attr="data-bookmarked=${isBookmarked != null ? isBookmarked : false}"
+                        class="flex min-w-[120px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-6 bg-primary text-text-light-primary text-base font-bold gap-2">
+                        <span id="bookmark-icon" class="material-symbols-outlined">favorite</span>
+                        <span id="bookmark-text">북마크</span>
+                    </button>
+
+                    <button id="btn-share" type="button"
+                        class="flex min-w-[120px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-6 bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary text-base font-bold gap-2 border border-border-light dark:border-border-dark">
+                        <span class="material-symbols-outlined">share</span>
+                        공유
+                    </button>
+
+                    <button id="btn-kakao-share" type="button" th:if="${kakaoShareJsKey != null}"
+                        class="flex min-w-[120px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-6 bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary text-base font-bold gap-2 border border-border-light dark:border-border-dark">
+                        <span class="material-symbols-outlined">chat</span>
+                        카카오 공유
+                    </button>
+                </section>
+
+                <div class="border-t border-border-light dark:border-border-dark my-2"></div>
+
+                <!-- ================= 댓글 ================= -->
+                <section class="flex flex-col gap-6">
+                    <h2 class="text-text-light-primary dark:text-text-dark-primary text-[22px] font-bold">댓글</h2>
+
+                    <!-- 댓글 입력 -->
+                    <div class="flex flex-col gap-2">
+                        <textarea id="comment-content"
+                            class="w-full min-h-[100px] p-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary focus:ring-primary focus:border-primary"
+                            placeholder="댓글을 입력하세요..."></textarea>
+
+                        <div class="flex justify-end">
+                            <button id="btn-comment-submit" type="button"
+                                class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-primary text-text-light-primary text-sm font-bold">
+                                등록
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 댓글 목록 -->
+                    <div id="comment-list" class="flex flex-col gap-4">
+                        <!-- 서버 렌더링 버전 -->
+                        <div th:each="c : ${comments}"
+                            class="flex flex-col gap-3 p-4 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark">
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div
+                                        class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-8 w-8 bg-border-light dark:bg-border-dark flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-primary"
+                                            style="font-size:18px;">person</span>
+                                    </div>
+                                    <div class="flex flex-col min-w-0">
+                                        <p class="text-text-light-primary dark:text-text-dark-primary text-sm font-bold leading-normal truncate"
+                                            th:text="${c.writerNickname}">작성자</p>
+                                        <p class="text-text-light-secondary dark:text-text-dark-secondary text-xs"
+                                            th:text="${#temporals.format(c.createdAt, 'yyyy. MM. dd')}">날짜</p>
+                                    </div>
+                                </div>
+
+                                <button th:if="${c.isWriter}" type="button"
+                                    class="flex items-center gap-1 text-sm px-3 h-9 rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark"
+                                    th:attr="data-comment-id=${c.commentId}" onclick="deleteComment(this)">
+                                    <span class="material-symbols-outlined" style="font-size:18px;">delete</span>
+                                    삭제
+                                </button>
+                            </div>
+
+                            <p class="text-text-light-primary dark:text-text-dark-primary text-sm leading-relaxed whitespace-pre-wrap"
+                                th:text="${c.content}">
+                                댓글 내용
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= 하단 액션 ================= -->
+                <section class="flex flex-wrap gap-2 justify-center pt-2">
+                    <a href="/page/post/"
+                        class="flex min-w-[120px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-6 bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary text-base font-bold gap-2 border border-border-light dark:border-border-dark">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                        목록
+                    </a>
+
+                    <a th:if="${page.isWriter}" th:href="@{'/page/post/detail/edit?id=' + ${page.postId}}"
+                        class="flex min-w-[120px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-6 bg-primary text-text-light-primary text-base font-bold gap-2">
+                        <span class="material-symbols-outlined">edit</span>
+                        수정
+                    </a>
+
+                    <button th:if="${page.isWriter}" type="button"
+                        class="flex min-w-[120px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-6 bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary text-base font-bold gap-2 border border-border-light dark:border-border-dark"
+                        th:attr="data-post-id=${page.postId}" onclick="deletePost(this)">
+                        <span class="material-symbols-outlined">delete</span>
+                        삭제
+                    </button>
+                </section>
+
+            </main>
         </div>
-
-        <div class="post-content border rounded p-3" th:text="${page.content}">
-            게시글 본문
-        </div>
-
-        <div class="mt-4 d-flex justify-content-end" th:if="${page.isWriter}">
-            <div class="mt-4 d-flex justify-content-end" th:if="${page.isWriter}">
-                <a th:href="@{'/page/post/detail/edit?id=' + ${page.postId}}" class="btn btn-primary me-2">수정</a>
-                <button class="btn btn-danger" data-post-id="[[${page.postId}]]" onclick="deletePost(this)">삭제</button>
-            </div>
-        </div>
-
     </div>
-</div>
-</body>
 
-<script>
-    function deletePost(button) {
-        const postId = button.getAttribute("data-post-id");
+    <script th:inline="javascript">
+        // ===== 공통 =====
+        const postId = document.getElementById('post-id')?.value;
 
-        if (!confirm("정말 삭제하시겠습니까?")) return;
+        function toast(msg) {
+            alert(msg); // 필요하면 커스텀 토스트로 바꿔도 됨
+        }
 
-        fetch('/api/post/delete', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            body: JSON.stringify({ id: postId })
-        })
-            .then(response => {
+        // ===== 게시글 삭제 (기존 유지) =====
+        function deletePost(button) {
+            const id = button.getAttribute("data-post-id");
+            if (!confirm("정말 삭제하시겠습니까?")) return;
+
+            fetch('/api/post/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ id })
+            }).then(response => {
                 if (response.redirected) {
                     window.location.href = response.url;
                 } else {
-                    return response.json();
+                    toast('삭제 처리 결과를 확인해주세요.');
                 }
-            })
-            .catch(err => {
-                console.error('삭제 실패:', err);
-                alert('삭제 중 오류가 발생했습니다.');
+            }).catch(() => toast('삭제 중 오류가 발생했습니다.'));
+        }
+
+        // ===== 지도(카카오맵) =====
+        (function initKakaoMap() {
+            const mapEl = document.getElementById('kakao-map');
+            if (!mapEl) return;
+
+            // kakao SDK가 없으면(키 미주입) 안내만
+            if (typeof kakao === 'undefined' || !kakao.maps) {
+                mapEl.innerHTML = '<div style="padding:16px;">카카오맵 키(kakaoJsKey)가 설정되지 않아 지도를 표시할 수 없습니다.</div>';
+                return;
+            }
+
+            const lat = parseFloat(document.getElementById('map-lat')?.value || '37.5665');
+            const lng = parseFloat(document.getElementById('map-lng')?.value || '126.9780');
+            const title = document.getElementById('map-title')?.value || '위치';
+            const address = document.getElementById('map-address')?.value || '';
+
+            kakao.maps.load(() => {
+                const center = new kakao.maps.LatLng(lat, lng);
+                const map = new kakao.maps.Map(mapEl, { center, level: 3 });
+
+                const marker = new kakao.maps.Marker({ position: center });
+                marker.setMap(map);
+
+                const infoHtml = `
+        <div style="padding:8px 10px; font-size:12px;">
+          <div style="font-weight:700; margin-bottom:2px;">${title}</div>
+          ${address ? `<div style="color:#666;">${address}</div>` : ''}
+        </div>
+      `;
+                const infowindow = new kakao.maps.InfoWindow({ content: infoHtml });
+                infowindow.open(map, marker);
+
+                // 리사이즈 대응
+                setTimeout(() => {
+                    map.relayout();
+                    map.setCenter(center);
+                }, 150);
             });
-    }
-</script>
+        })();
+
+        // ===== 북마크 토글 =====
+        function syncBookmarkUI(bookmarked) {
+            const btn = document.getElementById('btn-bookmark');
+            const icon = document.getElementById('bookmark-icon');
+            const text = document.getElementById('bookmark-text');
+            if (!btn || !icon || !text) return;
+
+            btn.dataset.bookmarked = String(bookmarked);
+
+            // 상태에 따라 문구/아이콘 느낌 변경 (Material은 fill 제어가 어려워 텍스트로만 처리)
+            text.textContent = bookmarked ? '북마크됨' : '북마크';
+        }
+
+        (function initBookmark() {
+            const btn = document.getElementById('btn-bookmark');
+            if (!btn || !postId) return;
+
+            // 초기 상태 서버에서 isBookmarked 제공하면 그걸 사용
+            const initial = (btn.dataset.bookmarked === 'true');
+            syncBookmarkUI(initial);
+
+            btn.addEventListener('click', async () => {
+                const current = (btn.dataset.bookmarked === 'true');
+                // UX: 먼저 반영(낙관적 업데이트)
+                syncBookmarkUI(!current);
+
+                try {
+                    // ✅ 너 백엔드에 맞게 엔드포인트만 바꾸면 됨
+                    const res = await fetch('/api/bookmarks/toggle', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ postId: Number(postId) })
+                    });
+
+                    if (!res.ok) throw new Error('toggle failed');
+                    const data = await res.json(); // {bookmarked: true/false} 기대
+                    if (typeof data.bookmarked === 'boolean') {
+                        syncBookmarkUI(data.bookmarked);
+                    }
+                } catch (e) {
+                    // 실패 시 롤백
+                    syncBookmarkUI(current);
+                    toast('북마크 처리 중 오류가 발생했습니다.');
+                }
+            });
+        })();
+
+        // ===== 공유(링크 복사) =====
+        (function initShare() {
+            const btn = document.getElementById('btn-share');
+            if (!btn) return;
+
+            btn.addEventListener('click', async () => {
+                const url = window.location.href;
+                try {
+                    await navigator.clipboard.writeText(url);
+                    toast('링크를 복사했습니다.');
+                } catch {
+                    // fallback
+                    const t = document.createElement('textarea');
+                    t.value = url;
+                    document.body.appendChild(t);
+                    t.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(t);
+                    toast('링크를 복사했습니다.');
+                }
+            });
+        })();
+
+        // ===== 카카오 공유 =====
+        (function initKakaoShare() {
+            const btn = document.getElementById('btn-kakao-share');
+            if (!btn) return;
+
+            const kakaoKey = /*[[${kakaoShareJsKey}]]*/ null;
+            if (!kakaoKey || typeof Kakao === 'undefined') return;
+
+            if (!Kakao.isInitialized()) {
+                Kakao.init(kakaoKey);
+            }
+
+            btn.addEventListener('click', () => {
+                const title = document.getElementById('map-title')?.value || 'Westudy';
+                const desc = '게시글을 확인해보세요.';
+                const url = window.location.href;
+
+                Kakao.Share.sendDefault({
+                    objectType: 'feed',
+                    content: {
+                        title,
+                        description: desc,
+                        imageUrl: 'https://dummyimage.com/800x420/eba747/ffffff&text=WeStudy', // 원하면 썸네일로 교체
+                        link: { mobileWebUrl: url, webUrl: url }
+                    },
+                    buttons: [
+                        { title: '자세히 보기', link: { mobileWebUrl: url, webUrl: url } }
+                    ]
+                });
+            });
+        })();
+
+        // ===== 댓글 등록 =====
+        (function initCommentCreate() {
+            const btn = document.getElementById('btn-comment-submit');
+            const input = document.getElementById('comment-content');
+            if (!btn || !input || !postId) return;
+
+            btn.addEventListener('click', async () => {
+                const content = input.value.trim();
+                if (!content) return toast('댓글을 입력해주세요.');
+
+                btn.disabled = true;
+                try {
+                    // ✅ 너 백엔드에 맞게 엔드포인트만 바꾸면 됨
+                    const res = await fetch('/api/comments/create', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ postId: Number(postId), content })
+                    });
+                    if (!res.ok) throw new Error('create failed');
+
+                    // 가장 단순: 성공하면 새로고침
+                    // (원하면 아래를 "DOM에 즉시 추가" 방식으로 바꿔줄게)
+                    location.reload();
+                } catch {
+                    toast('댓글 등록 중 오류가 발생했습니다.');
+                } finally {
+                    btn.disabled = false;
+                }
+            });
+        })();
+
+        // ===== 댓글 삭제 =====
+        async function deleteComment(button) {
+            const commentId = button.getAttribute('data-comment-id');
+            if (!commentId) return;
+            if (!confirm('댓글을 삭제하시겠습니까?')) return;
+
+            try {
+                // ✅ 너 백엔드에 맞게 엔드포인트만 바꾸면 됨
+                const res = await fetch('/api/comments/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ commentId: Number(commentId) })
+                });
+                if (!res.ok) throw new Error('delete failed');
+                location.reload();
+            } catch {
+                toast('댓글 삭제 중 오류가 발생했습니다.');
+            }
+        }
+    </script>
+
+</body>
 
 </html>

@@ -1,75 +1,179 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
 <head>
     <th:block th:replace="~{layout/layout :: head}"></th:block>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/board.css}" />
 </head>
+
 <body>
-<div th:replace="~{layout/layout :: layout(~{::content})}" th:with="mainClass='default-main'">
-    <div th:fragment="content" class="post-edit">
-        <h2 class="mb-4">✏️ 게시글 수정</h2>
-        <form id="editForm">
-            <input type="hidden" id="postId" th:value="${page.postId}" />
-            <div class="mb-3">
-                <label for="title" class="form-label">제목</label>
-                <input type="text" id="title" class="form-control" th:value="${page.title}" required />
+    <div th:replace="~{layout/layout :: layout(~{::content})}" th:with="mainClass='default-main'">
+        <div th:fragment="content" class="w-full max-w-[960px] mx-auto flex flex-col gap-8 py-8">
+            <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-2 text-primary text-sm font-medium mb-1">
+                    <span class="material-symbols-outlined text-sm">arrow_back</span>
+                    <a th:href="@{'/page/post/detail?id=' + ${page.postId}}" class="hover:underline">게시글로 돌아가기</a>
+                </div>
+                <h1
+                    class="text-text-light-primary dark:text-text-dark-primary text-3xl md:text-4xl font-black tracking-tight leading-tight">
+                    게시글 수정
+                </h1>
+                <p class="text-text-light-secondary dark:text-text-dark-secondary text-base font-normal">
+                    기존 게시글 정보를 업데이트하여 팀원들에게 정확한 정보를 제공하세요.
+                </p>
             </div>
-            <div class="mb-3">
-                <label for="postCategory" class="form-label">카테고리</label>
-                <select id="postCategory" class="form-select" required>
-                    <option disabled selected value="">-- 선택하세요 --</option>
-                    <option value="FREE">자유</option>
-                    <option value="STUDY">스터디</option>
-                    <option value="QNA">질문</option>
-                    <option value="NOTICE">공지사항</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="content" class="form-label">내용</label>
-                <textarea id="content" class="form-control" rows="10" required th:text="${page.content}"></textarea>
-            </div>
-            <div class="d-flex justify-content-end">
-                <a th:href="@{'/page/post/detail?id=' + ${page.postId}}" class="btn btn-secondary me-2">취소</a>
-                <button type="submit" class="btn btn-primary">수정 완료</button>
-            </div>
-        </form>
-        <script th:inline="javascript">
-            document.addEventListener("DOMContentLoaded", function () {
-                // 서버에서 전달된 현재 카테고리 값 (예: "FREE", "STUDY")
-                const currentCategory = /*[[${page.category}]]*/ "FREE";
-                document.getElementById("postCategory").value = currentCategory;
+            <form id="editForm"
+                class="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-sm border border-border-light dark:border-border-dark p-6 md:p-10 flex flex-col gap-8">
+                <input type="hidden" id="postId" th:value="${page.postId}" />
+                <div class="flex flex-col gap-6">
+                    <div class="flex items-center gap-2 pb-2 border-b border-border-light dark:border-border-dark">
+                        <span class="material-symbols-outlined text-primary">edit_square</span>
+                        <h3 class="text-lg font-bold text-text-light-primary dark:text-text-dark-primary">기본 정보</h3>
+                    </div>
+                    <div class="grid grid-cols-1 gap-6">
+                        <label class="flex flex-col gap-2 group">
+                            <span
+                                class="text-text-light-primary dark:text-text-dark-primary text-sm font-bold">제목</span>
+                            <div class="relative">
+                                <input id="title" th:value="${page.title}"
+                                    class="w-full bg-background-light dark:bg-background-dark text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark rounded-xl h-14 px-4 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-text-light-secondary/50"
+                                    placeholder="제목을 입력하세요" type="text" required />
+                                <span
+                                    class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-text-light-secondary/50 pointer-events-none">title</span>
+                            </div>
+                        </label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <label class="flex flex-col gap-2">
+                                <span
+                                    class="text-text-light-primary dark:text-text-dark-primary text-sm font-bold">카테고리</span>
+                                <div class="relative">
+                                    <select id="postCategory"
+                                        class="w-full appearance-none bg-background-light dark:bg-background-dark text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark rounded-xl h-14 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all cursor-pointer">
+                                        <option disabled value="">-- 선택하세요 --</option>
+                                        <option value="FREE">자유</option>
+                                        <option value="STUDY">스터디</option>
+                                        <option value="QNA">질문</option>
+                                        <option value="NOTICE">공지사항</option>
+                                    </select>
+                                    <span
+                                        class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-text-light-secondary pointer-events-none">expand_more</span>
+                                </div>
+                            </label>
+                            <!-- 상세 분야 (UI Only) -->
+                            <label class="flex flex-col gap-2 opacity-50 cursor-not-allowed" title="준비 중인 기능입니다">
+                                <span class="text-text-light-primary dark:text-text-dark-primary text-sm font-bold">상세
+                                    분야 (준비중)</span>
+                                <div class="relative">
+                                    <input disabled
+                                        class="w-full bg-background-light dark:bg-background-dark text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark rounded-xl h-14 px-4 focus:outline-none transition-all placeholder:text-text-light-secondary/50"
+                                        placeholder="예: Python, TOEIC" type="text" />
+                                    <span
+                                        class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-text-light-secondary/50 pointer-events-none">label</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
 
-                // submit 이벤트 핸들러 등록
-                document.getElementById("editForm").addEventListener("submit", async function (e) {
-                    e.preventDefault();
-                    const data = {
-                        postId: document.getElementById("postId").value,
-                        title: document.getElementById("title").value,
-                        postCategory: document.getElementById("postCategory").value,
-                        content: document.getElementById("content").value,
-                        isNotice: false
-                    };
-                    try {
-                        const res = await fetch("/api/post/update", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(data)
-                        });
-                        if (res.ok) {
-                            window.location.href = "/page/post/detail?id=" + data.postId;
-                        } else {
-                            alert("게시글 수정에 실패했습니다.");
-                        }
-                    } catch (err) {
-                        console.error(err);
-                        alert("에러가 발생했습니다.");
+                <!-- 운영 방식 및 장소 (UI Only / Placeholder for future) -->
+                <div class="flex flex-col gap-6 opacity-60">
+                    <div class="flex items-center gap-2 pb-2 border-b border-border-light dark:border-border-dark">
+                        <span class="material-symbols-outlined text-primary">groups</span>
+                        <h3 class="text-lg font-bold text-text-light-primary dark:text-text-dark-primary">운영 방식 (추후 지원)
+                        </h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <label class="flex flex-col gap-2">
+                            <span class="text-text-light-primary dark:text-text-dark-primary text-sm font-bold">진행 방식 /
+                                장소명</span>
+                            <div class="relative">
+                                <input disabled
+                                    class="w-full bg-background-light dark:bg-background-dark text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark rounded-xl h-14 px-4 focus:outline-none transition-all placeholder:text-text-light-secondary/50"
+                                    placeholder="예: 강남역, 온라인(Zoom)" type="text" />
+                            </div>
+                        </label>
+                        <label class="flex flex-col gap-2">
+                            <span class="text-text-light-primary dark:text-text-dark-primary text-sm font-bold">최대 모집
+                                인원</span>
+                            <div class="relative">
+                                <input disabled
+                                    class="w-full bg-background-light dark:bg-background-dark text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark rounded-xl h-14 px-4 focus:outline-none transition-all placeholder:text-text-light-secondary/50"
+                                    max="50" min="2" type="number" />
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <label class="flex flex-col gap-2">
+                    <span class="text-text-light-primary dark:text-text-dark-primary text-sm font-bold">내용</span>
+                    <textarea id="content" th:text="${page.content}"
+                        class="w-full min-h-[300px] resize-y bg-background-light dark:bg-background-dark text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-text-light-secondary/50 leading-relaxed"
+                        placeholder="내용을 입력하세요." required></textarea>
+                </label>
+
+                <!-- 버튼 영역 -->
+                <div
+                    class="flex flex-col-reverse sm:flex-row items-center justify-between gap-4 pt-4 border-t border-border-light dark:border-border-dark">
+                    <button
+                        class="w-full sm:w-auto text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 px-6 py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+                        type="button" onclick="alert('삭제 기능은 상세 페이지나 관리자 메뉴를 이용해주세요.')">
+                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                        게시글 삭제
+                    </button>
+                    <div class="flex w-full sm:w-auto flex-col sm:flex-row gap-3">
+                        <a th:href="@{'/page/post/detail?id=' + ${page.postId}}"
+                            class="w-full sm:w-auto px-6 py-3 rounded-xl border border-border-light dark:border-border-dark text-text-light-primary dark:text-text-dark-primary font-bold hover:bg-background-light dark:hover:bg-white/5 transition-colors flex items-center justify-center">
+                            취소
+                        </a>
+                        <button
+                            class="w-full sm:w-auto px-8 py-3 rounded-xl bg-primary hover:bg-primary/90 text-text-light-primary font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                            type="submit">
+                            <span class="material-symbols-outlined text-[20px]">check</span>
+                            수정 완료
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <script th:inline="javascript">
+                document.addEventListener("DOMContentLoaded", function () {
+                    // 서버에서 전달된 현재 카테고리 값
+                    const currentCategory = /*[[${page.category}]]*/ "FREE";
+                    const categorySelect = document.getElementById("postCategory");
+                    if (categorySelect) {
+                        categorySelect.value = currentCategory;
                     }
-                });
-            });
-        </script>
 
+                    // submit 이벤트 핸들러 등록
+                    document.getElementById("editForm").addEventListener("submit", async function (e) {
+                        e.preventDefault();
+                        const data = {
+                            postId: document.getElementById("postId").value,
+                            title: document.getElementById("title").value,
+                            postCategory: document.getElementById("postCategory").value,
+                            content: document.getElementById("content").value,
+                            isNotice: false
+                        };
+                        try {
+                            const res = await fetch("/api/post/update", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(data)
+                            });
+                            if (res.ok) {
+                                window.location.href = "/page/post/detail?id=" + data.postId;
+                            } else {
+                                alert("게시글 수정에 실패했습니다.");
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            alert("에러가 발생했습니다.");
+                        }
+                    });
+                });
+            </script>
+        </div>
     </div>
-</div>
 </body>
+
 </html>
