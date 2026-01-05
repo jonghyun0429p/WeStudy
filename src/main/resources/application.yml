@@ -12,6 +12,11 @@ spring:
 
 app:
   env: ${SPRING_PROFILES_ACTIVE:local}
+  admin:
+    bootstrap-enabled: ${APP_ADMIN_BOOTSTRAP_ENABLED:false}
+    username: ${APP_ADMIN_USERNAME:admin}
+    password: ${APP_ADMIN_PASSWORD:adminpassword}
+    email: ${APP_ADMIN_EMAIL:admin@admin.com}
 
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml
@@ -32,3 +37,7 @@ logging:
 
 jwt:
   secret: "WasnnJKWdwnmad8423nJLnD928319023123SAjsnaJ124584u9450SLmLWAjo123"
+
+kakao:
+  map:
+    key: "a531b3cf1e3b8bfe2fdcccfe23ebb9c3"
