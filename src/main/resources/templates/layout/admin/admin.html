@@ -3,14 +3,261 @@
 
 <head>
     <th:block th:replace="~{layout/layout :: head}"></th:block>
-    <title>관리자 페이지</title>
+    <title>관리자 페이지 - Q&A 관리</title>
 </head>
 
 <body>
-    <div th:replace="~{layout/layout :: layout(~{::content})}">
+    <div th:replace="~{layout/layout :: layout(~{::content}, contentMaxWidthClass='max-w-[1200px]')}"
+        th:with="mainClass='bg-background-light dark:bg-background-dark'">
         <div th:fragment="content">
-            <h2>관리자 페이지</h2>
-            <p th:text="'안녕하세요, ' + ${nickname} + '님! 관리자 기능을 확인하세요.'"></p>
+
+            <!-- Page Header -->
+            <div class="mb-8 mt-4">
+                <h1 class="text-3xl font-black tracking-tight text-text-light-primary dark:text-text-dark-primary">관리자
+                    대시보드</h1>
+                <p class="text-text-light-secondary dark:text-text-dark-secondary mt-2">사이트 콘텐츠 및 회원을 관리하세요.</p>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="mb-8 border-b border-border-light dark:border-border-dark">
+                <nav class="flex gap-8" aria-label="Tabs">
+                    <a href="/page/admin/qa"
+                        class="border-primary text-primary border-b-2 py-4 px-1 text-sm font-bold flex items-center gap-2">
+                        <span class="material-symbols-outlined">help</span>
+                        Q&A 관리
+                    </a>
+                    <a href="/page/admin/user"
+                        class="border-transparent text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium flex items-center gap-2 transition-colors">
+                        <span class="material-symbols-outlined">group</span>
+                        유저 관리
+                    </a>
+                    <a href="/page/admin/post"
+                        class="border-transparent text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium flex items-center gap-2 transition-colors">
+                        <span class="material-symbols-outlined">article</span>
+                        게시글 관리
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Q&A Section -->
+            <section class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <h2
+                        class="text-xl font-bold text-text-light-primary dark:text-text-dark-primary flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">forum</span>
+                        질문 게시판 관리
+                    </h2>
+                    <div class="flex gap-2">
+                        <select class="std-input h-10 py-1 text-sm w-32">
+                            <option>전체</option>
+                            <option>답변 대기</option>
+                            <option>답변 완료</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Q&A Table -->
+                <div
+                    class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark overflow-hidden shadow-sm">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead
+                                class="bg-primary/5 text-text-light-primary dark:text-text-dark-primary font-bold border-b border-border-light dark:border-border-dark">
+                                <tr>
+                                    <th class="px-6 py-4 w-20">No</th>
+                                    <th class="px-6 py-4">제목</th>
+                                    <th class="px-6 py-4 w-32">작성자</th>
+                                    <th class="px-6 py-4 w-32">작성일</th>
+                                    <th class="px-6 py-4 w-24 text-center">상태</th>
+                                    <th class="px-6 py-4 w-24 text-center">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-border-light dark:divide-border-dark">
+                                <!-- Item 1 (답변 대기) -->
+                                <tr class="hover:bg-primary/5 transition-colors">
+                                    <td class="px-6 py-4 text-text-light-secondary dark:text-text-dark-secondary">1024
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="font-medium text-text-light-primary dark:text-text-dark-primary cursor-pointer hover:text-primary hover:underline"
+                                            onclick="openQaModal(1024, '스터디 개설 시 승인 절차가 어떻게 되나요?', '스터디를 개설했는데 아직 목록에 보이지 않습니다. 별도의 승인 절차가 있는 건가요? 있다면 얼마나 걸리는지 궁금합니다.')">
+                                            스터디 개설 시 승인 절차가 어떻게 되나요?
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-text-light-secondary dark:text-text-dark-secondary">
+                                        user123</td>
+                                    <td class="px-6 py-4 text-text-light-secondary dark:text-text-dark-secondary">
+                                        2024.01.20</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
+                                            대기중
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <button
+                                            class="text-primary hover:text-primary/80 font-medium text-xs border border-primary px-3 py-1 rounded transition-colors"
+                                            onclick="openQaModal(1024, '스터디 개설 시 승인 절차가 어떻게 되나요?', '스터디를 개설했는데 아직 목록에 보이지 않습니다. 별도의 승인 절차가 있는 건가요? 있다면 얼마나 걸리는지 궁금합니다.')">
+                                            답변하기
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Item 2 (답변 완료) -->
+                                <tr class="hover:bg-primary/5 transition-colors">
+                                    <td class="px-6 py-4 text-text-light-secondary dark:text-text-dark-secondary">1023
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="font-medium text-text-light-primary dark:text-text-dark-primary cursor-pointer hover:text-primary hover:underline"
+                                            onclick="alert('이미 답변이 완료된 게시글입니다.')">
+                                            회원 탈퇴는 어디서 하나요?
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-text-light-secondary dark:text-text-dark-secondary">
+                                        gildong</td>
+                                    <td class="px-6 py-4 text-text-light-secondary dark:text-text-dark-secondary">
+                                        2024.01.19</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                            완료
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <button
+                                            class="text-text-light-secondary dark:text-text-dark-secondary font-medium text-xs border border-border-light dark:border-border-dark px-3 py-1 rounded cursor-not-allowed opacity-50"
+                                            disabled>
+                                            완료됨
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination -->
+                    <div
+                        class="px-6 py-4 border-t border-border-light dark:border-border-dark flex items-center justify-center gap-2">
+                        <button
+                            class="p-1 rounded hover:bg-primary/10 text-text-light-secondary dark:text-text-dark-secondary disabled:opacity-30"
+                            disabled>
+                            <span class="material-symbols-outlined text-lg">chevron_left</span>
+                        </button>
+                        <button
+                            class="w-8 h-8 rounded-lg bg-primary text-white font-bold text-sm flex items-center justify-center">1</button>
+                        <button
+                            class="w-8 h-8 rounded-lg hover:bg-primary/10 text-text-light-secondary dark:text-text-dark-secondary font-medium text-sm flex items-center justify-center">2</button>
+                        <button
+                            class="w-8 h-8 rounded-lg hover:bg-primary/10 text-text-light-secondary dark:text-text-dark-secondary font-medium text-sm flex items-center justify-center">3</button>
+                        <button
+                            class="p-1 rounded hover:bg-primary/10 text-text-light-secondary dark:text-text-dark-secondary">
+                            <span class="material-symbols-outlined text-lg">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Answer Modal -->
+            <div id="qaModal" class="fixed inset-0 z-[100] hidden">
+                <!-- Backdrop -->
+                <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="closeQaModal()">
+                </div>
+                <!-- Modal Content -->
+                <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-surface-light dark:bg-surface-dark rounded-xl shadow-2xl border border-border-light dark:border-border-dark p-6 animate-fade-in-up">
+                    <div class="flex justify-between items-start mb-6">
+                        <h3
+                            class="text-xl font-bold text-text-light-primary dark:text-text-dark-primary flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">edit_note</span>
+                            답변 작성
+                        </h3>
+                        <button onclick="closeQaModal()"
+                            class="text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+
+                    <div class="space-y-6">
+                        <!-- Question Info -->
+                        <div class="bg-background-light dark:bg-background-dark p-4 rounded-lg">
+                            <h4 id="modalQaTitle"
+                                class="font-bold text-lg mb-2 text-text-light-primary dark:text-text-dark-primary">질문 제목
+                            </h4>
+                            <p id="modalQaContent"
+                                class="text-sm text-text-light-secondary dark:text-text-dark-secondary whitespace-pre-wrap">
+                                질문 내용...</p>
+                        </div>
+
+                        <!-- Answer Form -->
+                        <div>
+                            <label
+                                class="block text-sm font-bold mb-2 text-text-light-primary dark:text-text-dark-primary">관리자
+                                답변</label>
+                            <textarea id="answerInput" class="std-input h-32 py-3 resize-none"
+                                placeholder="답변 내용을 친절하게 작성해주세요."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 mt-8">
+                        <button onclick="closeQaModal()"
+                            class="px-4 py-2 rounded-lg font-bold text-text-light-secondary dark:text-text-dark-secondary hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                            취소
+                        </button>
+                        <button onclick="submitAnswer()" class="std-btn std-btn-primary px-6">
+                            답변 등록
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                let currentPostId = null;
+
+                function openQaModal(id, title, content) {
+                    currentPostId = id;
+                    document.getElementById('modalQaTitle').textContent = title;
+                    document.getElementById('modalQaContent').textContent = content;
+                    document.getElementById('answerInput').value = '';
+                    document.getElementById('qaModal').classList.remove('hidden');
+                }
+
+                function closeQaModal() {
+                    document.getElementById('qaModal').classList.add('hidden');
+                    currentPostId = null;
+                }
+
+                async function submitAnswer() {
+                    const answer = document.getElementById('answerInput').value;
+                    if (!answer.trim()) {
+                        alert('답변 내용을 입력해주세요.');
+                        return;
+                    }
+
+                    if (!confirm('답변을 등록하시겠습니까?')) return;
+
+                    try {
+                        // Mock API Call
+                        console.log(`[API REQUEST] POST /api/admin/qa/${currentPostId}/answer`, { answer });
+
+                        // Simulate Server Delay
+                        // await new Promise(r => setTimeout(r, 500));
+
+                        /* 실제 API 호출 코드 예시
+                        const response = await fetch(`/api/admin/qa/${currentPostId}/answer`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ answer })
+                        });
+                        if (!response.ok) throw new Error('Failed to submit answer');
+                        */
+
+                        alert('답변이 성공적으로 등록되었습니다.');
+                        closeQaModal();
+                        // location.reload(); // 실제 환경에서는 새로고침하여 상태 반영
+                    } catch (error) {
+                        console.error(error);
+                        alert('답변 등록 중 오류가 발생했습니다.');
+                    }
+                }
+            </script>
+
         </div>
     </div>
 </body>
