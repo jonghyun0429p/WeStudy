@@ -1,42 +1,237 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
 <head>
   <th:block th:replace="~{layout/layout :: head}"></th:block>
-  <link rel="stylesheet" th:href="@{/css/style.css}" />
   <link rel="stylesheet" th:href="@{/css/user.css}" />
   <title>유저 정보 페이지</title>
 </head>
 
 <body>
-<div th:replace="~{layout/layout :: layout(~{::content})}" th:with="mainClass='centered-main'">
-  <div th:fragment="content">
-    <h1>유저 정보 수정</h1>
+  <div th:replace="~{layout/layout :: layout(~{::content}, contentMaxWidthClass='max-w-[1200px]')}"
+    th:with="mainClass='centered-main'">
+    <div th:fragment="content">
 
-    <table class="user-info-table">
-      <tbody>
-      <tr>
-        <th>이름</th>
-        <td th:text="${user.username}">홍길동</td>
-      </tr>
-      <tr>
-        <th>닉네임</th>
-        <td th:text="${user.nickname}">길동이</td>
-      </tr>
-      <tr>
-        <th>이메일</th>
-        <td th:text="${user.email}">gildong@example.com</td>
-      </tr>
-      <tr>
-        <th>전화번호</th>
-        <td th:text="${user.phoneNumber}">010-1234-5678</td>
-      </tr>
-      </tbody>
-    </table>
+      <!-- Page Heading -->
+      <div class="mb-10 animate-fade-in">
+        <h2 class="text-3xl md:text-4xl font-black mb-2 tracking-tight">마이 페이지</h2>
+        <p class="text-text-sub-light dark:text-text-sub-dark text-lg">나의 활동 내역과 프로필을 관리해보세요.</p>
+      </div>
 
-    <div style="margin-top: 20px;">
-      <a th:href="@{/page/user/info/edit}" class="btn">수정하기</a>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Left Column: Profile Card -->
+        <aside class="lg:col-span-4 xl:col-span-3 space-y-6">
+          <!-- std-card 적용 -->
+          <div
+            class="std-card bg-surface-light dark:bg-surface-dark rounded-xl p-6 shadow-sm border border-border-light dark:border-border-dark flex flex-col items-center text-center">
+            <div class="relative group cursor-pointer">
+              <div
+                class="w-32 h-32 rounded-full bg-primary/20 mb-4 overflow-hidden ring-4 ring-primary/10 dark:ring-primary/5"
+                data-alt="User profile avatar illustration">
+                <img alt="Profile" class="w-full h-full object-cover"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzus-eXC5m8dOTA-OsA9trbsH7CkhYwnYdG3YdVjjV3HdG_WRsSrWVZ3etCprg8D1k7c-W8mDABcx4QcCF9FWDpU61F3l2GkwpZPre17_3LSa1GwEDroKyi9cU7OUtux1J3plj-LecqUIH6XlvMz6WBnU84fK5tL6h3zFNkM4yjyRVwKWQ7Z244jQIfvc_HfW-fb0pd4w4iFcNmljzO1hAwXYJ2c0iLBdh0tKf35UgpNaCkY9-paCjIwSaEtBEneS_7LhClR7K4Z0" />
+              </div>
+              <div
+                class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <span class="material-symbols-outlined text-white">edit</span>
+              </div>
+            </div>
+            <h3 class="text-xl font-bold mb-1" th:text="${user.nickname}">김스터디</h3>
+            <p class="text-text-sub-light dark:text-text-sub-dark text-sm mb-6">열정적인 프론트엔드 개발자</p>
+
+            <!-- std-btn, std-btn-primary 적용 -->
+            <a th:href="@{/page/user/info/edit}"
+              class="std-btn std-btn-primary w-full py-2.5 px-4 rounded-lg font-medium hover:bg-primary/90 transition-all shadow-sm shadow-primary/30 flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-[18px]">edit_square</span>
+              프로필 수정
+            </a>
+          </div>
+
+          <!-- Info Grid -->
+          <!-- std-card 적용 -->
+          <div
+            class="std-card bg-surface-light dark:bg-surface-dark rounded-xl p-6 shadow-sm border border-border-light dark:border-border-dark">
+            <h4 class="font-bold text-lg mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary">person</span>
+              기본 정보
+            </h4>
+            <div class="space-y-4">
+              <div
+                class="flex flex-col gap-1 pb-4 border-b border-border-light dark:border-border-dark last:border-0 last:pb-0">
+                <span class="text-xs font-semibold text-text-sub-light dark:text-text-sub-dark">아이디</span>
+                <span class="text-sm font-medium" th:text="${user.username}">user123</span>
+              </div>
+              <div
+                class="flex flex-col gap-1 pb-4 border-b border-border-light dark:border-border-dark last:border-0 last:pb-0">
+                <span class="text-xs font-semibold text-text-sub-light dark:text-text-sub-dark">이메일</span>
+                <span class="text-sm font-medium" th:text="${user.email}">user123@westudy.com</span>
+              </div>
+              <div
+                class="flex flex-col gap-1 pb-4 border-b border-border-light dark:border-border-dark last:border-0 last:pb-0">
+                <span class="text-xs font-semibold text-text-sub-light dark:text-text-sub-dark">전화번호</span>
+                <span class="text-sm font-medium" th:text="${user.phoneNumber}">010-1234-5678</span>
+              </div>
+              <div class="flex flex-col gap-1">
+                <span class="text-xs font-semibold text-text-sub-light dark:text-text-sub-dark">가입일</span>
+                <span class="text-sm font-medium">2023. 10. 24.</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Right Column: Activity Dashboard -->
+        <section class="lg:col-span-8 xl:col-span-9">
+          <!-- Tabs -->
+          <div class="mb-6 border-b border-border-light dark:border-border-dark">
+            <div class="flex gap-8">
+              <button
+                class="relative pb-3 text-primary font-bold text-sm sm:text-base border-b-2 border-primary transition-colors flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">group</span>
+                참여 중인 스터디
+                <span
+                  class="bg-primary/20 text-text-main-light dark:text-primary px-2 py-0.5 rounded-full text-xs">3</span>
+              </button>
+              <button
+                class="relative pb-3 text-text-sub-light dark:text-text-sub-dark font-medium text-sm sm:text-base hover:text-text-main-light dark:hover:text-text-main-dark transition-colors flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">campaign</span>
+                개설한 스터디
+                <span
+                  class="bg-border-light dark:bg-border-dark text-text-sub-light dark:text-text-sub-dark px-2 py-0.5 rounded-full text-xs">1</span>
+              </button>
+              <button
+                class="relative pb-3 text-text-sub-light dark:text-text-sub-dark font-medium text-sm sm:text-base hover:text-text-main-light dark:hover:text-text-main-dark transition-colors flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">favorite</span>
+                관심 스터디
+              </button>
+            </div>
+          </div>
+
+          <!-- Study Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Card 1 -->
+            <!-- std-card 적용 (hover 효과는 유지) -->
+            <article
+              class="std-card bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark p-5 hover:shadow-md hover:border-primary/50 transition-all group flex flex-col h-full">
+              <div class="flex justify-between items-start mb-3">
+                <div class="flex gap-2">
+                  <span
+                    class="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-2 py-1 rounded text-xs font-bold">진행중</span>
+                  <span
+                    class="bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 px-2 py-1 rounded text-xs font-medium">IT/개발</span>
+                </div>
+                <button class="text-text-sub-light dark:text-text-sub-dark hover:text-primary">
+                  <span class="material-symbols-outlined">more_horiz</span>
+                </button>
+              </div>
+              <h3 class="font-bold text-lg mb-2 group-hover:text-primary transition-colors line-clamp-1">프론트엔드 면접 스터디
+                (React 위주)</h3>
+              <p class="text-text-sub-light dark:text-text-sub-dark text-sm mb-4 line-clamp-2 flex-1">매주 화/목 오후 8시에 진행하는
+                프론트엔드 기술 면접 대비 스터디입니다. 함께 성장해요!</p>
+              <div
+                class="flex items-center justify-between pt-4 border-t border-border-light dark:border-border-dark mt-auto">
+                <div class="flex items-center -space-x-2">
+                  <div class="w-8 h-8 rounded-full border-2 border-surface-light dark:border-surface-dark bg-gray-200"
+                    data-alt="Member avatar"></div>
+                  <div class="w-8 h-8 rounded-full border-2 border-surface-light dark:border-surface-dark bg-gray-300"
+                    data-alt="Member avatar"></div>
+                  <div
+                    class="w-8 h-8 rounded-full border-2 border-surface-light dark:border-surface-dark bg-gray-400 flex items-center justify-center text-[10px] font-bold text-white">
+                    +3</div>
+                </div>
+                <div class="text-xs text-text-sub-light dark:text-text-sub-dark font-medium flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[16px]">schedule</span>
+                  D-Day 매주 화요일
+                </div>
+              </div>
+            </article>
+
+            <!-- Card 2 -->
+            <article
+              class="std-card bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark p-5 hover:shadow-md hover:border-primary/50 transition-all group flex flex-col h-full">
+              <div class="flex justify-between items-start mb-3">
+                <div class="flex gap-2">
+                  <span
+                    class="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-1 rounded text-xs font-bold">모집중</span>
+                  <span
+                    class="bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 px-2 py-1 rounded text-xs font-medium">어학/회화</span>
+                </div>
+                <button class="text-text-sub-light dark:text-text-sub-dark hover:text-primary">
+                  <span class="material-symbols-outlined">more_horiz</span>
+                </button>
+              </div>
+              <h3 class="font-bold text-lg mb-2 group-hover:text-primary transition-colors line-clamp-1">오픽(OPIc) IM2 목표
+                단기 완성반</h3>
+              <p class="text-text-sub-light dark:text-text-sub-dark text-sm mb-4 line-clamp-2 flex-1">2주 동안 빡세게 스크립트 외우고
+                모의고사 진행하실 분 구합니다.</p>
+              <div
+                class="flex items-center justify-between pt-4 border-t border-border-light dark:border-border-dark mt-auto">
+                <div class="flex items-center -space-x-2">
+                  <div class="w-8 h-8 rounded-full border-2 border-surface-light dark:border-surface-dark bg-gray-200"
+                    data-alt="Member avatar"></div>
+                  <div
+                    class="w-8 h-8 rounded-full border-2 border-surface-light dark:border-surface-dark bg-gray-400 flex items-center justify-center text-[10px] font-bold text-white">
+                    +1</div>
+                </div>
+                <div class="text-xs text-text-sub-light dark:text-text-sub-dark font-medium flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[16px]">person</span>
+                  2/4명 참여중
+                </div>
+              </div>
+            </article>
+
+            <!-- Card 3 -->
+            <article
+              class="std-card bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark p-5 hover:shadow-md hover:border-primary/50 transition-all group flex flex-col h-full">
+              <div class="flex justify-between items-start mb-3">
+                <div class="flex gap-2">
+                  <span
+                    class="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 px-2 py-1 rounded text-xs font-bold">휴식중</span>
+                  <span
+                    class="bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 px-2 py-1 rounded text-xs font-medium">취업/자격증</span>
+                </div>
+                <button class="text-text-sub-light dark:text-text-sub-dark hover:text-primary">
+                  <span class="material-symbols-outlined">more_horiz</span>
+                </button>
+              </div>
+              <h3 class="font-bold text-lg mb-2 group-hover:text-primary transition-colors line-clamp-1">정보처리기사 실기 뿌시기
+              </h3>
+              <p class="text-text-sub-light dark:text-text-sub-dark text-sm mb-4 line-clamp-2 flex-1">실기 시험 대비 기출문제 풀이 및
+                오답노트 공유 스터디입니다. 시험 끝날 때까지 화이팅!</p>
+              <div
+                class="flex items-center justify-between pt-4 border-t border-border-light dark:border-border-dark mt-auto">
+                <div class="flex items-center -space-x-2">
+                  <div class="w-8 h-8 rounded-full border-2 border-surface-light dark:border-surface-dark bg-gray-200"
+                    data-alt="Member avatar"></div>
+                  <div class="w-8 h-8 rounded-full border-2 border-surface-light dark:border-surface-dark bg-gray-300"
+                    data-alt="Member avatar"></div>
+                  <div class="w-8 h-8 rounded-full border-2 border-surface-light dark:border-surface-dark bg-gray-200"
+                    data-alt="Member avatar"></div>
+                  <div
+                    class="w-8 h-8 rounded-full border-2 border-surface-light dark:border-surface-dark bg-gray-400 flex items-center justify-center text-[10px] font-bold text-white">
+                    +5</div>
+                </div>
+                <div class="text-xs text-text-sub-light dark:text-text-sub-dark font-medium flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[16px]">calendar_month</span>
+                  2023.11.15 종료
+                </div>
+              </div>
+            </article>
+
+            <!-- Empty State Placeholder -->
+            <div
+              class="bg-surface-light/50 dark:bg-surface-dark/50 rounded-xl border border-dashed border-border-light dark:border-border-dark p-5 flex flex-col items-center justify-center text-center h-full min-h-[200px] group cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all">
+              <div
+                class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined">add</span>
+              </div>
+              <p class="font-bold text-text-main-light dark:text-text-main-dark mb-1">새로운 스터디 찾기</p>
+              <p class="text-xs text-text-sub-light dark:text-text-sub-dark">아직 참여 중인 다른 스터디가 없으신가요?</p>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   </div>
-</div>
 </body>
+
 </html>

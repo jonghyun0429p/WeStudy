@@ -29,25 +29,35 @@
       theme: {
         extend: {
           colors: {
-            "primary": "#eba747",
-            "background-light": "#fcfaf8",
+            // New Design Palette
+            "primary": "#e9b163",
+            "primary-light": "#fdf3e3",
+            "background-light": "#fbfaf8",
             "background-dark": "#211a11",
+            "surface-light": "#ffffff",
+            "surface-dark": "#2d2418",
+            "text-main-light": "#1b150e",
+            "text-main-dark": "#f3eee8",
+            "text-sub-light": "#957850",
+            "text-sub-dark": "#d1c4b0",
+            "border-light": "#f3eee8",
+            "border-dark": "#3e3223",
+
+            // Legacy Mappings (기존 호환성 유지)
             "text-light-primary": "#1b150e",
-            "text-light-secondary": "#97794e",
-            "text-dark-primary": "#f3eee7",
-            "text-dark-secondary": "#a89d8a",
-            "border-light": "#f3eee7",
-            "border-dark": "#3a3022",
+            "text-light-secondary": "#957850",
+            "text-dark-primary": "#f3eee8",
+            "text-dark-secondary": "#d1c4b0",
             "card-light": "#ffffff",
-            "card-dark": "#2c2419",
+            "card-dark": "#2d2418",
+
+            // 기타 기존 색상 유지 또는 매핑
             "text-light": "#1b150e",
-            "text-dark": "#f3eee7",
-            "surface-light": "#f3eee7",
-            "surface-dark": "#2c241a",
-            "muted-text-light": "#97794e",
-            "muted-text-dark": "#a18a6a",
-            "muted-light": "#97794e",
-            "muted-dark": "#a18a6c"
+            "text-dark": "#f3eee8",
+            "muted-text-light": "#957850",
+            "muted-text-dark": "#d1c4b0",
+            "muted-light": "#957850",
+            "muted-dark": "#d1c4b0"
           },
           fontFamily: {
             "display": ["Lexend", "Noto Sans KR", "sans-serif"]
@@ -137,7 +147,8 @@
       <!-- - justify-center : 상하 중앙 -->
       <!-- - items-center : 좌우 중앙 -->
       <main class="flex-1 w-full flex flex-col items-center justify-center" th:classappend="${mainClass}">
-        <div class="w-full max-w-[960px] flex flex-col px-4 py-2">
+        <div class="w-full flex flex-col px-4 py-2"
+          th:classappend="${contentMaxWidthClass != null ? contentMaxWidthClass : 'max-w-[960px]'}">
           <th:block th:replace="${content}"></th:block>
         </div>
       </main>
