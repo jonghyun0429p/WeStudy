@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+    <th:block th:replace="~{layout/layout :: head}"></th:block>
+    <title>관리자 페이지 - 유저 관리</title>
+</head>
+
+<body>
+    <div th:replace="~{layout/layout :: layout(~{::content}, contentMaxWidthClass='max-w-[1200px]')}"
+        th:with="mainClass='bg-background-light dark:bg-background-dark'">
+        <div th:fragment="content">
+
+            <!-- Page Header -->
+            <div class="mb-8 mt-4">
+                <h1 class="text-3xl font-black tracking-tight text-text-light-primary dark:text-text-dark-primary">관리자
+                    대시보드</h1>
+                <p class="text-text-light-secondary dark:text-text-dark-secondary mt-2">사이트 콘텐츠 및 회원을 관리하세요.</p>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="mb-8 border-b border-border-light dark:border-border-dark">
+                <nav class="flex gap-8" aria-label="Tabs">
+                    <a href="/page/admin/qa"
+                        class="border-transparent text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium flex items-center gap-2 transition-colors">
+                        <span class="material-symbols-outlined">help</span>
+                        Q&A 관리
+                    </a>
+                    <a href="/page/admin/user"
+                        class="border-primary text-primary border-b-2 py-4 px-1 text-sm font-bold flex items-center gap-2">
+                        <span class="material-symbols-outlined">group</span>
+                        유저 관리
+                    </a>
+                    <a href="/page/admin/post"
+                        class="border-transparent text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary hover:border-gray-300 border-b-2 py-4 px-1 text-sm font-medium flex items-center gap-2 transition-colors">
+                        <span class="material-symbols-outlined">article</span>
+                        게시글 관리
+                    </a>
+                </nav>
+            </div>
+
+            <!-- User Manage Section -->
+            <section class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <h2
+                        class="text-xl font-bold text-text-light-primary dark:text-text-dark-primary flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">manage_accounts</span>
+                        전체 회원 관리
+                    </h2>
+                    <div class="flex gap-2">
+                        <input type="text" placeholder="아이디 또는 닉네임 검색" class="std-input h-10 py-1 text-sm w-64">
+                        <button class="std-btn std-btn-primary h-10 px-4 text-sm">검색</button>
+                    </div>
+                </div>
+
+                <!-- User Table -->
+                <div
+                    class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark overflow-hidden shadow-sm">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead
+                                class="bg-primary/5 text-text-light-primary dark:text-text-dark-primary font-bold border-b border-border-light dark:border-border-dark">
+                                <tr>
+                                    <th class="px-6 py-4 w-20">No</th>
+                                    <th class="px-6 py-4">회원 정보</th>
+                                    <th class="px-6 py-4 w-32">가입일</th>
+                                    <th class="px-6 py-4 w-32">최근 접속</th>
+                                    <th class="px-6 py-4 w-24 text-center">상태</th>
+                                    <th class="px-6 py-4 w-48 text-center">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-border-light dark:divide-border-dark">
+                                <!-- User 1 -->
+                                <tr class="hover:bg-primary/5 transition-colors">
+                                    <td class="px-6 py-4 text-text-light-secondary dark:text-text-dark-secondary">234
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+                                            </div>
+                                            <div>
+                                                <div
+                                                    class="font-bold text-text-light-primary dark:text-text-dark-primary">
+                                                    악성유저1</div>
+                                                <div
+                                                    class="text-xs text-text-light-secondary dark:text-text-dark-secondary">
+                                                    baduser01</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-text-light-secondary dark:text-text-dark-secondary">
+                                        2023.11.01</td>
+                                    <td class="px-6 py-4 text-text-light-secondary dark:text-text-dark-secondary">방금 전
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                            정상
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex justify-center gap-2">
+                                            <button onclick="suspendUser(234, '악성유저1')"
+                                                class="px-3 py-1.5 text-xs font-bold text-orange-600 bg-orange-100 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:hover:bg-orange-900/50 rounded transition-colors">
+                                                정지
+                                            </button>
+                                            <button onclick="kickUser(234, '악성유저1')"
+                                                class="px-3 py-1.5 text-xs font-bold text-red-600 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 rounded transition-colors">
+                                                강퇴
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- User 2 (Suspended) -->
+                                <tr class="hover:bg-primary/5 transition-colors bg-gray-50 dark:bg-white/5">
+                                    <td class="px-6 py-4 text-text-light-secondary dark:text-text-dark-secondary">233
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+                                            </div>
+                                            <div>
+                                                <div
+                                                    class="font-bold text-text-light-primary dark:text-text-dark-primary">
+                                                    도배쟁이</div>
+                                                <div
+                                                    class="text-xs text-text-light-secondary dark:text-text-dark-secondary">
+                                                    spammer99</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-text-light-secondary dark:text-text-dark-secondary">
+                                        2023.10.28</td>
+                                    <td class="px-6 py-4 text-text-light-secondary dark:text-text-dark-secondary">3일 전
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300">
+                                            정지됨
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex justify-center gap-2">
+                                            <button
+                                                class="px-3 py-1.5 text-xs font-bold text-gray-400 bg-gray-100 cursor-not-allowed rounded"
+                                                disabled>
+                                                정지
+                                            </button>
+                                            <button onclick="kickUser(233, '도배쟁이')"
+                                                class="px-3 py-1.5 text-xs font-bold text-red-600 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 rounded transition-colors">
+                                                강퇴
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <script>
+                // 1. 유저 정지 (Suspend)
+                async function suspendUser(userId, nickname) {
+                    const days = prompt(`'${nickname}' 회원을 몇 일간 정지시키시겠습니까?\n숫자만 입력해주세요. (예: 7)`);
+
+                    if (days === null) return; // 취소
+
+                    const duration = parseInt(days);
+                    if (isNaN(duration) || duration <= 0) {
+                        alert('올바른 숫자를 입력해주세요.');
+                        return;
+                    }
+
+                    try {
+                        // Mock API Call
+                        console.log(`[API REQUEST] POST /api/admin/users/${userId}/suspend`, { duration });
+                        alert(`'${nickname}' 회원이 ${duration}일간 서비스 이용이 정지되었습니다.`);
+                        // location.reload();
+                    } catch (error) {
+                        console.error(error);
+                        alert('작업 중 오류가 발생했습니다.');
+                    }
+                }
+
+                // 2. 유저 강퇴 (Kick/Ban) - 강력한 경고 알림
+                async function kickUser(userId, nickname) {
+                    // 커스텀 Confirm보다 브라우저 기본 Confirm이 가장 확실한 경고 효과를 줌 (사용자 요구)
+                    // "유저 삭제나 게시글 삭제는 알람이 떠야하고."
+                    const isConfirmed = confirm(`[경고] 정말로 '${nickname}' 회원을 강제 탈퇴시키시겠습니까?\n\n이 작업은 되돌릴 수 없으며, 회원의 모든 정보 및 데이터가 삭제될 수 있습니다.`);
+
+                    if (!isConfirmed) return;
+
+                    try {
+                        // Mock API Call
+                        console.log(`[API REQUEST] DELETE /api/admin/users/${userId}`);
+                        alert(`'${nickname}' 회원이 성공적으로 강퇴 처리되었습니다.`);
+                        // location.reload();
+                    } catch (error) {
+                        console.error(error);
+                        alert('작업 중 오류가 발생했습니다.');
+                    }
+                }
+            </script>
+
+        </div>
+    </div>
+</body>
+
+</html>
