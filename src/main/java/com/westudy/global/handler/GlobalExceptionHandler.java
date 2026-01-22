@@ -1,7 +1,8 @@
-package com.westudy.global.exception;
+package com.westudy.global.handler;
 
 import com.westudy.global.dto.ErrorResponse;
 import com.westudy.global.enums.BaseErrorCode;
+import com.westudy.global.exception.BaseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
