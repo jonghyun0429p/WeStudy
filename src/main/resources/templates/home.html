@@ -13,22 +13,19 @@
         <div th:fragment="content">
 
             <!-- Hero Section -->
-            <section class="py-8 px-4 @container md:py-12">
-                <div class="flex flex-col-reverse items-center gap-12 @[864px]:flex-row">
+            <section class="py-std px-4 @container">
+                <div class="flex flex-col-reverse items-center gap-12 @[864px]:flex-row max-w-[960px] mx-auto">
                     <div
                         class="flex w-full flex-col items-center gap-6 text-center @[864px]:w-1/2 @[864px]:items-start @[864px]:text-left">
                         <div class="flex flex-col gap-2">
-                            <h1
-                                class="text-4xl font-black leading-tight tracking-[-0.033em] text-text-light-primary dark:text-text-dark-primary @[480px]:text-4xl">
+                            <h1 class="text-title-xl text-main">
                                 함께라서 더 즐거운 스터디, Westudy에서 시작하세요!
                             </h1>
-                            <h2
-                                class="text-sm font-normal leading-normal text-text-light-secondary dark:text-text-dark-secondary @[480px]:text-base">
+                            <h2 class="text-base font-normal leading-normal text-body-muted @[480px]:text-base">
                                 Westudy는 당신에게 꼭 맞는 스터디 그룹을 찾아 목표 달성을 돕는 최고의 커뮤니티입니다.
                             </h2>
                         </div>
-                        <button
-                            class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-primary px-4 text-text-light-primary h-10 text-sm font-bold leading-normal tracking-[0.015em] @[480px]:h-12 @[480px]:px-5 @[480px]:text-base">
+                        <button class="std-btn std-btn-primary h-10 @[480px]:h-12">
                             <span class="truncate">지금 바로 스터디 찾기</span>
                         </button>
                     </div>
@@ -42,16 +39,14 @@
             </section>
 
             <!-- Problem/Solution Section -->
-            <section class="py-16 px-4 md:py-20">
+            <section class="py-std section-container">
                 <div class="flex flex-col items-center gap-12">
                     <div class="flex flex-col items-center gap-2 text-center">
-                        <h2
-                            class="text-[22px] font-bold leading-tight tracking-[-0.015em] text-text-light-primary dark:text-text-dark-primary">
+                        <h2 class="text-title-lg text-main">
                             혼자 공부하기 힘드셨나요?
                         </h2>
-                        <p class="max-w-xl text-text-light-secondary dark:text-text-dark-secondary">
-                            Westudy가 당신의 스터디 여정에 든든한 동반자가 되어 드립니다. 더 이상 외롭게 공부하지
-                            마세요.
+                        <p class="max-w-xl text-body-muted">
+                            Westudy가 당신의 스터디 여정에 든든한 동반자가 되어 드립니다. 더 이상 외롭게 공부하지 마세요.
                         </p>
                     </div>
                     <div class="grid w-full grid-cols-1 gap-6 md:grid-cols-3">
@@ -93,14 +88,13 @@
             </section>
 
             <!-- How It Works Section -->
-            <section class="py-16 px-4 md:py-20">
+            <section class="py-std section-container">
                 <div class="flex flex-col items-center gap-12">
                     <div class="flex flex-col items-center gap-2 text-center">
-                        <h2
-                            class="text-[22px] font-bold leading-tight tracking-[-0.015em] text-text-light-primary dark:text-text-dark-primary">
+                        <h2 class="text-title-lg text-main">
                             Westudy 이용 방법
                         </h2>
-                        <p class="max-w-xl text-text-light-secondary dark:text-text-dark-secondary">
+                        <p class="max-w-xl text-body-muted">
                             단 3단계로 당신에게 꼭 맞는 스터디를 찾아보세요. 정말 간단합니다!
                         </p>
                     </div>
@@ -140,15 +134,13 @@
             </section>
 
             <!-- Feature Section -->
-            <section class="py-16 px-4 md:py-20 @container">
+            <section class="py-std section-container @container">
                 <div class="flex flex-col gap-10">
                     <div class="flex flex-col gap-4">
-                        <h1
-                            class="text-3xl font-bold leading-tight tracking-light text-text-light-primary dark:text-text-dark-primary @[480px]:text-4xl @[480px]:font-black">
+                        <h1 class="text-title-xl text-main @[480px]:font-black">
                             Westudy와 함께라면
                         </h1>
-                        <p
-                            class="max-w-[720px] text-base font-normal leading-normal text-text-light-secondary dark:text-text-dark-secondary">
+                        <p class="max-w-[720px] text-base font-normal leading-normal text-body-muted">
                             혼자서는 어려웠던 공부, 이제 Westudy의 체계적인 지원과 함께하세요. 동기 부여부터 정보 공유까지,
                             스터디의 모든 것을 해결해 드립니다.
                         </p>
@@ -201,14 +193,13 @@
             </section>
 
             <!-- Testimonials Section -->
-            <section class="py-16 px-4 md:py-20">
+            <section class="py-std section-container">
                 <div class="flex flex-col items-center gap-12">
                     <div class="flex flex-col items-center gap-2 text-center">
-                        <h2
-                            class="text-[22px] font-bold leading-tight tracking-[-0.015em] text-text-light-primary dark:text-text-dark-primary">
+                        <h2 class="text-title-lg text-main">
                             Westudy 사용자 후기
                         </h2>
-                        <p class="max-w-xl text-text-light-secondary dark:text-text-dark-secondary">
+                        <p class="max-w-xl text-body-muted">
                             Westudy를 통해 목표를 달성한 사용자들의 생생한 이야기를 들어보세요.
                         </p>
                     </div>

@@ -145,3 +145,72 @@ html.dark .std-card {
     background-color: #2c2419;
     /* card-dark */
 }
+
+/* ============================
+   Layout & Typography Standardization
+   ============================ */
+
+/* Standard Section Container */
+.section-container {
+    width: 100%;
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.py-std {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
+@media (min-width: 768px) {
+    .py-std {
+        padding-top: 5rem;
+        padding-bottom: 5rem;
+    }
+}
+
+/* Typography */
+.text-title-xl {
+    font-size: 2.25rem;
+    /* 36px */
+    line-height: 2.5rem;
+    font-weight: 900;
+    letter-spacing: -0.033em;
+}
+
+@media (min-width: 480px) {
+    .text-title-xl {
+        font-size: 2.25rem;
+    }
+}
+
+.text-title-lg {
+    font-size: 1.375rem;
+    /* 22px */
+    font-weight: 700;
+    line-height: 1.75rem;
+    letter-spacing: -0.015em;
+}
+
+.text-body-muted {
+    font-size: 0.875rem;
+    /* 14px */
+    color: #97794e;
+    /* text-light-secondary */
+}
+
+html.dark .text-body-muted {
+    color: #a89d8a;
+    /* text-dark-secondary */
+}
+
+.text-main {
+    color: #1b150e;
+}
+
+html.dark .text-main {
+    color: #f3eee7;
+}
