@@ -39,5 +39,5 @@ jwt:
   secret: "WasnnJKWdwnmad8423nJLnD928319023123SAjsnaJ124584u9450SLmLWAjo123"
 
 kakao:
-  map:
-    key: "a531b3cf1e3b8bfe2fdcccfe23ebb9c3"
+  rest-api-key: ${KAKAO_REST_API_KEY:default-rest-key}
+  js-api-key: ${KAKAO_JS_API_KEY:default-js-key}
