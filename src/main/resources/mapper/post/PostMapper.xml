@@ -45,13 +45,13 @@
     </select>
 
     <insert id="insertPost" parameterType="com.westudy.post.entity.Post" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO post (user_id, study_id, views, is_notice, category, title, summary, create_at)
-        VALUES (#{userId}, #{studyId}, 0, #{isNotice}, #{category}, #{title}, #{summary}, now())
+        INSERT INTO post (user_id, study_id, views, is_notice, category, title, summary, address, latitude, longitude, create_at)
+        VALUES (#{userId}, #{studyId}, 0, #{isNotice}, #{category}, #{title}, #{summary}, #{address}, #{latitude}, #{longitude}, now())
     </insert>
 
     <update id="updatePost" parameterType="com.westudy.post.entity.Post">
         UPDATE post
-        SET title = #{title}, summary = #{summary}, category = #{category}, modified_at = now()
+        SET title = #{title}, summary = #{summary}, category = #{category}, address = #{address}, latitude = #{latitude}, longitude = #{longitude}, modified_at = now()
         WHERE id = #{id}
     </update>
 

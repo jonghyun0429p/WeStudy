@@ -32,6 +32,9 @@ public class PostConverter {
                 .category(postInsertDTO.getPostCategory())
                 .title(postInsertDTO.getTitle())
                 .summary(summary)
+                .latitude(postInsertDTO.getLatitude())
+                .longitude(postInsertDTO.getLongitude())
+                .address(postInsertDTO.getAddress())
                 .createAt(LocalDateTime.now())
                 .deleteAt(null)
                 .build();
@@ -46,6 +49,9 @@ public class PostConverter {
                 .category(oldPost.getCategory())
                 .title(postUpdateDTO.getTitle())
                 .summary(summary)
+                .latitude(postUpdateDTO.getLatitude())
+                .longitude(postUpdateDTO.getLongitude())
+                .address(postUpdateDTO.getAddress())
                 .build();
     }
 
@@ -94,6 +100,9 @@ public class PostConverter {
         dto.setWriter(nickname.equals(postDetailDBDTO.getNickname()));
         dto.setCreatedAt(postDetailDBDTO.getCreatedAt());
         dto.setModifiedAt(postDetailDBDTO.getModifiedAt());
+        dto.setAddress(postDetailDBDTO.getAddress());
+        dto.setLatitude(postDetailDBDTO.getLatitude());
+        dto.setLongitude(postDetailDBDTO.getLongitude());
 
         return dto;
     }

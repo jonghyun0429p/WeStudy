@@ -11,4 +11,7 @@ public class PostUpdateDTO {
     private String title;
     private String content;
     private PostCategory category;
+    private String address;
+    private Double latitude;
+    private Double longitude;
 }

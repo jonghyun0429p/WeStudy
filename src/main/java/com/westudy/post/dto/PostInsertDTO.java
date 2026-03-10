@@ -11,4 +11,7 @@ public class PostInsertDTO {
     private boolean isNotice;
     private String title;
     private String content;
+    private String address;
+    private Double latitude;
+    private Double longitude;
 }
