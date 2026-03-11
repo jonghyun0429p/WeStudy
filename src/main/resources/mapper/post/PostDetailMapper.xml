@@ -14,6 +14,9 @@
         <result property="nickname" column="nickname"/>
         <result property="createdAt" column="create_at"/>
         <result property="modifiedAt" column="modify_at"/>
+        <result property="address" column="address"/>
+        <result property="latitude" column="latitude"/>
+        <result property="longitude" column="longitude"/>
     </resultMap>
 
     <select id="findPostDetailById" resultMap="PostDetailResultMap">
@@ -24,7 +27,10 @@
                p.views,
                u.nickname,
                p.create_at,
-               c.modified_at
+               c.modified_at,
+               p.address,
+               p.latitude,
+               p.longitude
         FROM post p
         JOIN post_content c on p.id = c.post_id
         JOIN westudy.user u on u.id = p.user_id

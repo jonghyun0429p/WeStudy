@@ -20,4 +20,7 @@ public class PostDetailDBDTO {
     private String nickname; // 작성자
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private String address;
+    private Double latitude;
+    private Double longitude;
 }
