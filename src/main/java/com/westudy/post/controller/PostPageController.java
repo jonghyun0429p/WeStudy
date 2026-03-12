@@ -21,7 +21,7 @@ import java.util.Objects;
 @RequestMapping("/page/post")
 public class PostPageController {
 
-    @Value("${kakao.map.key}")
+    @Value("${kakao.js-api-key}")
     private String kakaoMapKey;
 
     private final PostSevice postSevice;
