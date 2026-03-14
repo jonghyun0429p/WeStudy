@@ -76,32 +76,33 @@
                     </div>
                 </div>
 
-                <!-- 운영 방식 및 장소 (UI Only / Placeholder for future) -->
-                <div class="flex flex-col gap-6 opacity-60">
-                    <div class="flex items-center gap-2 pb-2 border-b border-border-light dark:border-border-dark">
-                        <span class="material-symbols-outlined text-primary">groups</span>
-                        <h3 class="text-lg font-bold text-text-light-primary dark:text-text-dark-primary">운영 방식 (추후 지원)
-                        </h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <label class="flex flex-col gap-2">
-                            <span class="text-text-light-primary dark:text-text-dark-primary text-sm font-bold">진행 방식 /
-                                장소명</span>
-                            <div class="relative">
-                                <input disabled
-                                    class="w-full bg-background-light dark:bg-background-dark text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark rounded-xl h-14 px-4 focus:outline-none transition-all placeholder:text-text-light-secondary/50"
-                                    placeholder="예: 강남역, 온라인(Zoom)" type="text" />
+                <!-- 지역 / 장소 선택 -->
+                <div class="flex flex-col gap-3">
+                    <label class="text-lg font-bold text-text-light-primary dark:text-text-dark-primary">지역 / 장소 수정</label>
+                    <div class="flex flex-col gap-4 p-4 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
+                        
+                        <!-- 숨김 필드: DB 전송용 -->
+                        <input type="hidden" id="address" name="address" th:value="${page.address}" />
+                        <input type="hidden" id="latitude" name="latitude" th:value="${page.latitude}" />
+                        <input type="hidden" id="longitude" name="longitude" th:value="${page.longitude}" />
+
+                        <div class="flex gap-2">
+                            <div class="relative flex-grow">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-light-secondary">search</span>
+                                <input id="keyword" class="w-full h-11 pl-10 pr-4 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:outline-none focus:border-primary transition-colors text-base text-text-light-primary dark:text-text-dark-primary" placeholder="예: 강남역 스터디룸" type="text" />
                             </div>
-                        </label>
-                        <label class="flex flex-col gap-2">
-                            <span class="text-text-light-primary dark:text-text-dark-primary text-sm font-bold">최대 모집
-                                인원</span>
-                            <div class="relative">
-                                <input disabled
-                                    class="w-full bg-background-light dark:bg-background-dark text-text-light-primary dark:text-text-dark-primary border border-border-light dark:border-border-dark rounded-xl h-14 px-4 focus:outline-none transition-all placeholder:text-text-light-secondary/50"
-                                    max="50" min="2" type="number" />
+                            <button id="searchBtn" class="px-5 h-11 rounded-lg bg-text-light-primary dark:bg-text-dark-primary text-surface-light dark:text-surface-dark font-medium hover:opacity-90 transition-opacity whitespace-nowrap" type="button">검색</button>
+                        </div>
+                        
+                        <!-- 카카오 지도가 표시될 영역 -->
+                        <div id="map" class="relative w-full h-80 rounded-lg overflow-hidden border border-border-light dark:border-border-dark z-0"></div>
+                        
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-background-light dark:bg-background-dark p-3 rounded-lg border border-border-light dark:border-border-dark">
+                            <div class="flex items-center gap-2 text-sm text-text-light-secondary dark:text-text-dark-secondary">
+                                <span class="material-symbols-outlined text-primary">my_location</span>
+                                <span>선택된 위치: <strong id="selectedAddressDisplay" class="text-text-light-primary dark:text-text-dark-primary ml-1" th:text="${page.address != null ? page.address : '아직 선택되지 않았습니다.'}">주소</strong></span>
                             </div>
-                        </label>
+                        </div>
                     </div>
                 </div>
 
@@ -135,6 +136,8 @@
                     </div>
                 </div>
             </form>
+            <!-- 카카오 지도 API 포함 -->
+            <script th:src="'//dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${@environment.getProperty('kakao.js-api-key')} + '&libraries=services'"></script>
             <script th:inline="javascript">
                 document.addEventListener("DOMContentLoaded", function () {
                     // 서버에서 전달된 현재 카테고리 값
@@ -144,15 +147,82 @@
                         categorySelect.value = currentCategory;
                     }
 
+                    // 카카오 지도 초기화
+                                        
+                    var initLat = document.getElementById('latitude').value;
+                    var initLng = document.getElementById('longitude').value;
+                    
+                    var centerLat = initLat ? parseFloat(initLat) : 37.566826;
+                    var centerLng = initLng ? parseFloat(initLng) : 126.978656;
+
+                    var mapContainer = document.getElementById('map'),
+                        mapOption = { 
+                            center: new kakao.maps.LatLng(centerLat, centerLng), 
+                            level: 3 
+                        };
+                    var map = new kakao.maps.Map(mapContainer, mapOption); 
+                    
+                    var marker = new kakao.maps.Marker({ position: map.getCenter() });
+                    if(initLat && initLng) marker.setMap(map);
+                    
+                    // 검색 이벤트 설정
+                    document.getElementById('searchBtn').addEventListener('click', function() {
+                        var keyword = document.getElementById('keyword').value;
+                        if (!keyword.trim()) { alert('검색어를 입력해주세요!'); return; }
+                        
+                        fetch('/api/location/search?keyword=' + encodeURIComponent(keyword))
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.documents && data.documents.length > 0) {
+                                    var item = data.documents[0];
+                                    var lat = item.y;
+                                    var lng = item.x;
+                                    var addr = item.place_name || item.address_name;
+                                    
+                                    var newPos = new kakao.maps.LatLng(lat, lng);
+                                    map.setCenter(newPos);
+                                    marker.setPosition(newPos);
+                                    marker.setMap(map);
+                                    
+                                    document.getElementById('latitude').value = lat;
+                                    document.getElementById('longitude').value = lng;
+                                    document.getElementById('address').value = addr;
+                                    document.getElementById('selectedAddressDisplay').textContent = addr;
+                                } else {
+                                    alert('검색 결과가 존재하지 않습니다.');
+                                }
+                            })
+                            .catch(err => console.error('검색 중 오류 발생:', err));
+                    });
+
+                    // 지도 클릭 시 마커 이동
+                    kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
+                        var latlng = mouseEvent.latLng; 
+                        marker.setPosition(latlng);
+                        marker.setMap(map);
+                        
+                        document.getElementById('latitude').value = latlng.getLat();
+                        document.getElementById('longitude').value = latlng.getLng();
+                        document.getElementById('selectedAddressDisplay').textContent = "직접 선택한 좌표 (" + latlng.getLat().toFixed(4) + ", " + latlng.getLng().toFixed(4) + ")";
+                    });
+
                     // submit 이벤트 핸들러 등록
                     document.getElementById("editForm").addEventListener("submit", async function (e) {
                         e.preventDefault();
+                        
+                        const lat = document.getElementById("latitude").value;
+                        const lng = document.getElementById("longitude").value;
+                        const address = document.getElementById("address").value;
+                        
                         const data = {
                             postId: document.getElementById("postId").value,
                             title: document.getElementById("title").value,
                             postCategory: document.getElementById("postCategory").value,
                             content: document.getElementById("content").value,
-                            isNotice: false
+                            isNotice: false,
+                            latitude: lat ? parseFloat(lat) : null,
+                            longitude: lng ? parseFloat(lng) : null,
+                            address: address || null
                         };
                         try {
                             const res = await fetch("/api/post/update", {
