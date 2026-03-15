@@ -5,10 +5,8 @@
     <th:block th:replace="~{layout/layout :: head}"></th:block>
     <title th:text="'Westudy - ' + ${page.title}">Westudy - 게시글 상세</title>
 
-    <!-- 카카오맵 JS SDK (appkey는 서버에서 주입 권장) -->
-    <!-- 예: model.addAttribute("kakaoJsKey", "..."); -->
-    <script th:if="${kakaoJsKey != null}"
-        th:src="'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoJsKey} + '&autoload=false'"></script>
+    <!-- 카카오맵 JS SDK -->
+    <script th:src="'//dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${@environment.getProperty('kakao.js-api-key')} + '&autoload=false'"></script>
 
     <!-- 카카오 공유 SDK (원하면 사용) -->
     <!-- 예: model.addAttribute("kakaoShareJsKey", "..."); -->
