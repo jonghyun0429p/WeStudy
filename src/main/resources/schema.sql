@@ -135,4 +135,16 @@ CREATE TABLE IF NOT EXISTS bookmark (
 
                                     UNIQUE KEY uk_bookmark_post_user (post_id, user_id),
                                     KEY uk_bookmark_post (post_id)
-)
+);
+
+-- 10. 채팅 테이블 생성
+CREATE TABLE IF NOT EXISTS chat_message (
+                                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                    study_id BIGINT NOT NULL,
+                                    sender_id BIGINT NOT NULL,
+                                    message VARCHAR(500) NOT NULL,
+                                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+                                    CONSTRAINT fk_chat_message_study FOREIGN KEY (study_id) REFERENCES study(id),
+                                    CONSTRAINT fk_chat_message_user FOREIGN KEY (sender_id) REFERENCES user(id)
+);
