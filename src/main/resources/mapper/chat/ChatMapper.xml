@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.westudy.chat.mapper.ChatMapper">
+
+    <insert id="insertMessage" parameterType="com.westudy.chat.entity.ChatMessage" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO chat_message (study_id, sender_id, message, created_at)
+        VALUES (#{studyId}, #{senderId}, #{message}, now())
+    </insert>
+
+    <select id="findMessagesByStudyId" resultType="com.westudy.chat.dto.ChatMessageResponseDTO" parameterType="long">
+        SELECT c.id, c.study_id, c.sender_id, u.nickname as senderNickname, c.message, c.created_at
+        FROM chat_message c
+        JOIN westudy.user u ON c.sender_id = u.id
+        WHERE c.study_id = #{studyId}
+        ORDER BY c.created_at ASC
+    </select>
+
+</mapper>
