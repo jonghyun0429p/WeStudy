@@ -23,4 +23,5 @@ public class PostDetailDBDTO {
     private String address;
     private Double latitude;
     private Double longitude;
+    private Long studyId;
 }
