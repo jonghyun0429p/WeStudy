@@ -21,7 +21,7 @@ public interface StudyMapper {
     void updateStudyState(StudyStates studyStates, long id);
     void deleteStudy(long id);
 
-    long findStudyWriter(long id);
+    long findUserIdByStudyId(long id);
 
 
 }

@@ -65,7 +65,7 @@
         WHERE delete_at IS NULL AND title LIKE CONCAT('%', #{keyword}, '%')
     </select>
 
-    <select id="findStudyWriter" resultType="java.lang.Long">
+    <select id="findUserIdByStudyId" resultType="java.lang.Long">
         SELECT user_id
         FROM study
         WHERE id = #{id}

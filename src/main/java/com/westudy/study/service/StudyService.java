@@ -83,7 +83,7 @@ public class StudyService {
 
     public void isWriter(long studyId){
         long userId = SecurityUtil.getCurrentUserId();
-        long studyUserId = studyMapper.findStudyWriter(studyId);
+        long studyUserId = studyMapper.findUserIdByStudyId(studyId);
         if(userId != studyUserId){
             throw new BaseException(StudyErrorCode.STUDY_NOT_WRITER);
         }
