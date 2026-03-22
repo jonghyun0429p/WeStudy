@@ -103,6 +103,7 @@ public class PostConverter {
         dto.setAddress(postDetailDBDTO.getAddress());
         dto.setLatitude(postDetailDBDTO.getLatitude());
         dto.setLongitude(postDetailDBDTO.getLongitude());
+        dto.setStudyId(postDetailDBDTO.getStudyId());
 
         return dto;
     }

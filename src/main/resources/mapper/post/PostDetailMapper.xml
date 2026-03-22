@@ -17,6 +17,7 @@
         <result property="address" column="address"/>
         <result property="latitude" column="latitude"/>
         <result property="longitude" column="longitude"/>
+        <result property="studyId" column="study_id"/>
     </resultMap>
 
     <select id="findPostDetailById" resultMap="PostDetailResultMap">
@@ -30,7 +31,8 @@
                c.modified_at,
                p.address,
                p.latitude,
-               p.longitude
+               p.longitude,
+               p.study_id
         FROM post p
         JOIN post_content c on p.id = c.post_id
         JOIN westudy.user u on u.id = p.user_id
