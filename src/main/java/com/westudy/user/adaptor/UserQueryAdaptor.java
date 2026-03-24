@@ -1,4 +1,4 @@
-package com.westudy.user.adapter;
+package com.westudy.user.adaptor;
 
 import com.westudy.global.exception.BaseException;
 import com.westudy.security.port.UserQueryPort;
@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class UserQueryAdapter implements UserQueryPort {
+public class UserQueryAdaptor implements UserQueryPort {
 
     private final UserMapper userMapper;
 
-    private User requireUser(User user){
-        if(user == null){
+    private User requireUser(User user) {
+        if (user == null) {
             throw new BaseException(UserErrorCode.USER_EMPTY);
         }
         return user;
@@ -34,7 +34,7 @@ public class UserQueryAdapter implements UserQueryPort {
     }
 
     @Override
-    public User getUserByUserId(long userId){
+    public User getUserByUserId(long userId) {
         return requireUser(userMapper.findByUserId(userId));
     }
 }
