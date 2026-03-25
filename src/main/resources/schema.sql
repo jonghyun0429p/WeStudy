@@ -148,3 +148,17 @@ CREATE TABLE IF NOT EXISTS chat_message (
                                     CONSTRAINT fk_chat_message_study FOREIGN KEY (study_id) REFERENCES study(id),
                                     CONSTRAINT fk_chat_message_user FOREIGN KEY (sender_id) REFERENCES user(id)
 );
+
+-- 알람 테이블
+CREATE TABLE IF NOT EXISTS `alarm` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `receiver_id` BIGINT NOT NULL COMMENT '수신자 ID',
+  `sender_id` BIGINT NOT NULL COMMENT '발신자 ID',
+  `type` VARCHAR(50) NOT NULL COMMENT '알람 타입 (COMMENT, STUDY_APPROVE, CHAT_MESSAGE 등)',
+  `content` TEXT NOT NULL COMMENT '알람 내용',
+  `target_url` VARCHAR(255) COMMENT '클릭 시 이동할 URL',
+  `is_read` BOOLEAN DEFAULT FALSE COMMENT '읽음 여부',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX `idx_receiver_id` (`receiver_id`),
+  FOREIGN KEY (`receiver_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
