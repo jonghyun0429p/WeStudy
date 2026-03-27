@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.westudy.alarm.mapper.AlarmMapper">
+
+    <insert id="insertAlarm" parameterType="com.westudy.alarm.entity.Alarm" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO alarm (receiver_id, sender_id, type, content, target_url, is_read, created_at)
+        VALUES (#{receiverId}, #{senderId}, #{type}, #{content}, #{targetUrl}, false, now())
+    </insert>
+
+    <select id="findByReceiverId" resultType="com.westudy.alarm.dto.AlarmResponseDTO">
+        SELECT id, type, content, target_url, is_read, created_at
+        FROM alarm
+        WHERE receiver_id = #{receiverId}
+        ORDER BY created_at DESC
+        LIMIT 50
+    </select>
+
+    <select id="countUnreadByReceiverId" resultType="int">
+        SELECT COUNT(*)
+        FROM alarm
+        WHERE receiver_id = #{receiverId} AND is_read = false
+    </select>
+
+    <update id="markAsRead">
+        UPDATE alarm SET is_read = true WHERE id = #{alarmId}
+    </update>
+
+    <update id="markAllAsRead">
+        UPDATE alarm SET is_read = true WHERE receiver_id = #{receiverId} AND is_read = false
+    </update>
+
+</mapper>
