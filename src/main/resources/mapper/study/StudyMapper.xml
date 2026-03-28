@@ -70,4 +70,10 @@
         FROM study
         WHERE id = #{id}
     </select>
+
+    <select id="findParticipantIds" resultType="java.lang.Long">
+        SELECT user_id
+        FROM study_participant
+        WHERE study_id = #{studyId} AND status = 'APPROVED'
+    </select>
 </mapper>

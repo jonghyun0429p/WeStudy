@@ -22,6 +22,5 @@ public interface StudyMapper {
     void deleteStudy(long id);
 
     long findUserIdByStudyId(long id);
-
-
+    List<Long> findParticipantIds(long studyId);
 }
