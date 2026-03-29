@@ -1,5 +1,7 @@
 package com.westudy.chat.service;
 
+import com.westudy.alarm.enums.AlarmType;
+import com.westudy.alarm.service.AlarmService;
 import com.westudy.chat.dto.ChatMessageRequestDTO;
 import com.westudy.chat.dto.ChatMessageResponseDTO;
 import com.westudy.chat.entity.ChatMessage;
@@ -12,6 +14,7 @@ import com.westudy.security.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,6 +26,7 @@ public class ChatService {
     private final ChatMapper chatMapper;
     private final StudyParticipantMapper studyParticipantMapper;
     private final StudyMapper studyMapper;
+    private final AlarmService alarmService;
 
     /**
      * 메세지 전송 전 권한 체크
@@ -44,6 +48,7 @@ public class ChatService {
         }
     }
 
+    @Transactional
     public ChatMessageResponseDTO saveMessage(ChatMessageRequestDTO requestDTO) {
         Long userId = SecurityUtil.getCurrentUserId();
         
@@ -58,9 +63,27 @@ public class ChatService {
 
         chatMapper.insertMessage(message);
 
-        // 저장 후 가장 최신의 작성자 닉네임을 포함한 데이터 반환 위해 다시 한번 DB 조회 시도 가능 (현재는 세션 또는 별도 조인 사용)
-        // 위 Mapper XML에서는 findMessagesByStudyId에서 조인해서 가져오고 있음.
         String nickname = SecurityUtil.getCurrentNickname();
+
+        // 실시간 알람 발송 (의도적 N+1 빌드업: 반복문 내 연산)
+        List<Long> participantIds = studyMapper.findParticipantIds(requestDTO.getStudyId());
+        // 방장도 포함해야 함 (목록에 없을 수 있음)
+        long leaderId = studyMapper.findUserIdByStudyId(requestDTO.getStudyId());
+        if (!participantIds.contains(leaderId)) {
+            participantIds.add(leaderId);
+        }
+
+        for (Long receiverId : participantIds) {
+            if (!receiverId.equals(userId)) {
+                alarmService.send(
+                        receiverId,
+                        userId,
+                        AlarmType.CHAT_MESSAGE,
+                        String.format("[%s] 새로운 메시지가 도착했습니다: %s", nickname, message.getMessage()),
+                        "/page/post/detail?id=" + requestDTO.getStudyId() // TODO: 실제 상세페이지/채팅방 URL로 연결
+                );
+            }
+        }
         
         return ChatMessageResponseDTO.builder()
                 .id(message.getId())
