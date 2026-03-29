@@ -1,5 +1,7 @@
 package com.westudy.study.service;
 
+import com.westudy.alarm.enums.AlarmType;
+import com.westudy.alarm.service.AlarmService;
 import com.westudy.global.exception.BaseException;
 import com.westudy.global.util.RequireHelper;
 import com.westudy.security.util.SecurityUtil;
@@ -10,6 +12,7 @@ import com.westudy.study.enums.StudyParticipantStatus;
 import com.westudy.study.enums.StudyStates;
 import com.westudy.study.mapper.StudyMapper;
 import com.westudy.study.mapper.StudyParticipantMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,30 +27,54 @@ public class StudyService {
     private final StudyMapper studyMapper;
     private final StudyConverter studyConverter;
     private final StudyParticipantMapper studyParticipantMapper;
+    private final AlarmService alarmService;
     private final Object lock = new Object();
 
-    public StudyService(StudyMapper studyMapper, StudyConverter studyConverter, StudyParticipantMapper studyParticipantMapper) {
+    public StudyService(StudyMapper studyMapper, StudyConverter studyConverter, StudyParticipantMapper studyParticipantMapper, AlarmService alarmService) {
         this.studyMapper = studyMapper;
         this.studyConverter = studyConverter;
         this.studyParticipantMapper = studyParticipantMapper;
+        this.alarmService = alarmService;
     }
 
 
     @Transactional
     public void applicationStudy(long studyId) {
         long userId = SecurityUtil.getCurrentUserId();
+        String nickname = SecurityUtil.getCurrentNickname();
         insertStudyParticipant(studyId);
+
+        // 스터디 방장에게 알람 전송
+        long leaderId = studyMapper.findUserIdByStudyId(studyId);
+        StudyResponseDTO study = findByStudyId(studyId);
+        alarmService.send(
+                leaderId,
+                userId,
+                AlarmType.STUDY_APPLICATION,
+                String.format("[%s]님이 '%s' 스터디에 신청하셨습니다.", nickname, study.getTitle()),
+                "/page/study/detail?id=" + studyId
+        );
     }
 
 
     public boolean approveAndCheckIfFull(long userId, long studyId){
-
+        long currentUserId = SecurityUtil.getCurrentUserId();
         synchronized (lock){
-            int maxMember = findByStudyId(studyId).getMaxMember();
+            StudyResponseDTO study = findByStudyId(studyId);
+            int maxMember = study.getMaxMember();
             int members = getStudyParticipantCount(studyId);
 
             if(maxMember > members){
                 updateStudyParticipant(new StudyParticipantUpdateDTO(userId, studyId, StudyParticipantStatus.APPROVED));
+                
+                // 신청자에게 승인 알람 전송
+                alarmService.send(
+                        userId,
+                        currentUserId,
+                        AlarmType.STUDY_APPROVE,
+                        String.format("'%s' 스터디 신청이 승인되었습니다!", study.getTitle()),
+                        "/page/post/detail?id=" + study.getPostId()
+                );
             }else{
                 throw new BaseException(StudyErrorCode.STUDY_FULL);
             }
@@ -61,7 +88,18 @@ public class StudyService {
     }
 
     public void requestReject(long userId, long studyId){
+        long currentUserId = SecurityUtil.getCurrentUserId();
         updateStudyParticipant(new StudyParticipantUpdateDTO(userId, studyId, StudyParticipantStatus.REJECTED));
+        
+        // 신청자에게 거절 알람 전송
+        StudyResponseDTO study = findByStudyId(studyId);
+        alarmService.send(
+                userId,
+                currentUserId,
+                AlarmType.STUDY_REJECT,
+                String.format("안타깝게도 '%s' 스터디 신청이 거절되었습니다.", study.getTitle()),
+                null
+        );
     }
 
     public void requestCancel(long studyId){
