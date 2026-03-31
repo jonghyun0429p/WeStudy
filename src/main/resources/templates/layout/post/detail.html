@@ -317,8 +317,10 @@
 
         <!-- 플로팅 버튼 -->
         <button id="chat-toggle-btn" type="button" onclick="toggleChat()"
-                class="w-14 h-14 bg-blue-600 text-white rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.3)] flex items-center justify-center hover:scale-105 transition-transform" style="pointer-events: auto;">
-            <span class="material-symbols-outlined text-3xl">forum</span>
+                class="relative transition-all active:scale-95 group w-14 h-14 bg-primary text-text-light-primary rounded-full shadow-lg flex items-center justify-center hover:scale-105" style="pointer-events: auto;">
+            <span class="material-symbols-outlined text-3xl transition-transform">forum</span>
+            <!-- ✅ 아이콘 우측 상단 빨간 원 + 흰색 숫자 -->
+            <span id="chat-unread-count" class="hidden absolute -top-1 -right-1 flex min-w-[20px] h-[20px] items-center justify-center rounded-full bg-red-500 text-[10px] text-white font-bold px-1 animate-bounce">0</span>
         </button>
     </div>
 
@@ -547,12 +549,20 @@
 
         // ===== 실시간 채팅 (STOMP) =====
         let stompClient = null;
+        let unreadChatCount = 0;
         let isChatOpen = false;
 
         function toggleChat() {
             const chatWindow = document.getElementById('chat-window');
+            const badge = document.getElementById('chat-unread-count');
+            
             isChatOpen = !isChatOpen;
             if (isChatOpen) {
+                // 열 때 숫자 초기화 및 숨김
+                unreadChatCount = 0;
+                badge.classList.add('hidden');
+                badge.classList.remove('animate-bounce');
+                
                 chatWindow.classList.remove('hidden');
                 chatWindow.classList.add('flex');
                 if (!stompClient) {
@@ -571,32 +581,36 @@
             if (!studyIdElement) return;
             const studyId = studyIdElement.textContent;
             
-            // 1. 이전 대화 내용 가져오기
             try {
                 const res = await fetch(`/api/chat/${studyId}/messages`, {credentials: 'include'});
-                if (!res.ok) {
-                    throw new Error('fetch error');
-                }
+                if (!res.ok) throw new Error('fetch error');
                 const messages = await res.json();
                 renderChatHistory(messages);
-                
-                // 조회 성공 시 소켓 연결
                 initStomp(studyId);
             } catch (err) {
                 console.error(err);
-                document.getElementById('chat-messages').innerHTML = '<div class="text-center text-red-500 text-xs py-5">스터디 참여자(승인완료) 거나 작성자만 채팅방에 접속할 수 있습니다.</div>';
+                document.getElementById('chat-messages').innerHTML = '<div class="text-center text-red-500 text-xs py-5 px-4 font-medium">참여자(승인이 완료된 회원)만 대화방을 이용할 수 있습니다.</div>';
             }
         }
 
         function initStomp(studyId) {
             const socket = new SockJS('/ws-stomp');
             stompClient = Stomp.over(socket);
-            stompClient.debug = null; // 로그 출력 제외
+            stompClient.debug = null;
             
             stompClient.connect({}, function (frame) {
                 stompClient.subscribe(`/topic/study/${studyId}`, function (message) {
                     const msg = JSON.parse(message.body);
                     appendAjaxMessage(msg);
+
+                    // 채팅창이 닫혀있으면 배지 업데이트
+                    if (!isChatOpen) {
+                        unreadChatCount++;
+                        const badge = document.getElementById('chat-unread-count');
+                        badge.textContent = unreadChatCount > 99 ? '99+' : unreadChatCount;
+                        badge.classList.remove('hidden');
+                        badge.classList.add('animate-bounce');
+                    }
                 });
             });
         }
