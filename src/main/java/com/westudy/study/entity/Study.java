@@ -19,6 +19,7 @@ public class Study {
     private String title;
     private String location;
     private int maxMember;
+    private LocalDateTime deadline;
     private StudyStates state;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;

@@ -61,6 +61,7 @@ CREATE TABLE IF NOT EXISTS study (
                                     title VARCHAR(100),
                                     location varchar(50),
                                     max_member BIGINT NOT NULL,
+                                    deadline DATETIME NULL,
                                     state varchar(20) DEFAULT  'RECRUITING',
                                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                                     modified_at DATETIME,
