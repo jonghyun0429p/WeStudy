@@ -5,8 +5,8 @@
 
 <mapper namespace="com.westudy.study.mapper.StudyMapper">
     <insert id="insertStudy" parameterType="com.westudy.study.entity.Study" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO study (user_id, post_id, title, location, max_member, state, created_at, delete_at)
-        VALUES (#{userId}, #{postId}, #{title}, #{location}, #{maxMember}, #{state}, now(), NULL)
+        INSERT INTO study (user_id, post_id, title, location, max_member, deadline, state, created_at, delete_at)
+        VALUES (#{userId}, #{postId}, #{title}, #{location}, #{maxMember}, #{deadline}, #{state}, now(), NULL)
     </insert>
 
     <update id="updateStudy" parameterType="com.westudy.study.dto.StudyUpdateDTO">
@@ -75,5 +75,16 @@
         SELECT user_id
         FROM study_participant
         WHERE study_id = #{studyId} AND status = 'APPROVED'
+    </select>
+
+    <update id="closeExpiredStudies">
+        UPDATE study
+        SET state = 'CLOSED', modified_at = now()
+        WHERE state = 'RECRUITING' AND deadline &lt; now() AND delete_at IS NULL
+    </update>
+
+    <select id="findExpiredStudyIds" resultType="java.lang.Long">
+        SELECT id FROM study
+        WHERE state = 'RECRUITING' AND deadline &lt; now() AND delete_at IS NULL
     </select>
 </mapper>

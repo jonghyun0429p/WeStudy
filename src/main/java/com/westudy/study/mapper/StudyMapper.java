@@ -23,4 +23,7 @@ public interface StudyMapper {
 
     long findUserIdByStudyId(long id);
     List<Long> findParticipantIds(long studyId);
+
+    void closeExpiredStudies();
+    List<Long> findExpiredStudyIds();
 }
