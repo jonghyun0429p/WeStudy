@@ -14,4 +14,8 @@ public class PostInsertDTO {
     private String address;
     private Double latitude;
     private Double longitude;
+
+    // Study 전용 필드
+    private Integer maxMember;
+    private java.time.LocalDateTime deadline;
 }
