@@ -26,12 +26,14 @@ public class PostSevice {
     private final PostContentMapper postContentMapper;
     private final PostDetailMapper postDetailMapper;
     private final PostConverter postConverter;
+    private final com.westudy.study.service.StudyService studyService;
 
-    public PostSevice(PostMapper postMapper, PostContentMapper postContentMapper, PostDetailMapper postDetailMapper, PostConverter postConverter) {
+    public PostSevice(PostMapper postMapper, PostContentMapper postContentMapper, PostDetailMapper postDetailMapper, PostConverter postConverter, com.westudy.study.service.StudyService studyService) {
         this.postMapper = postMapper;
         this.postContentMapper = postContentMapper;
         this.postDetailMapper = postDetailMapper;
         this.postConverter = postConverter;
+        this.studyService = studyService;
     }
 
     public List<PostResponseDTO> getPostList(int page, int postSize){
@@ -84,6 +86,20 @@ public class PostSevice {
         log.info("게시글 내용 데이터 변환 및 저장");
         PostContent postContent = postConverter.toPostContent(post, postInsertDTO);
         postContentMapper.insertContent(postContent);
+
+        // 스터디 데이터 저장 (카테고리가 STUDY 등 스터디일 경우)
+        // 화면에서 STUDY 카테고리가 아니더라도 작성 시 StudyInsertDTO 처리를 분기할 수 있음
+        if (postInsertDTO.getPostCategory() == com.westudy.post.enums.PostCategory.STUDY || 
+            postInsertDTO.getMaxMember() != null) {
+            com.westudy.study.dto.StudyInsertDTO studyDTO = new com.westudy.study.dto.StudyInsertDTO();
+            studyDTO.setPost_id(post.getId());
+            studyDTO.setTitle(post.getTitle());
+            studyDTO.setLocation(postInsertDTO.getAddress());
+            studyDTO.setMaxMember(postInsertDTO.getMaxMember() != null ? postInsertDTO.getMaxMember() : 1);
+            studyDTO.setDeadline(postInsertDTO.getDeadline());
+            studyDTO.setState(com.westudy.study.enums.StudyStates.RECRUITING);
+            studyService.insertStudy(studyDTO);
+        }
     }
 
     //Read
