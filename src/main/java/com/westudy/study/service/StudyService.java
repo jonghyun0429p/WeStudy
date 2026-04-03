@@ -137,6 +137,9 @@ public class StudyService {
     // create
     public void insertStudy(StudyInsertDTO studyInsertDTO){
         long userId = SecurityUtil.getCurrentUserId();
+        if (studyInsertDTO.getDeadline() == null) {
+            studyInsertDTO.setDeadline(java.time.LocalDateTime.now().plusDays(14)); // 미지정 시 14일 뒤로 설정
+        }
         studyMapper.insertStudy(studyConverter.toStudy(studyInsertDTO, userId));
     }
 

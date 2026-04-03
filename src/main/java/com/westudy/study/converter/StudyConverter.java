@@ -16,6 +16,7 @@ public class StudyConverter {
                 .title(studyInsertDTO.getTitle())
                 .location(studyInsertDTO.getLocation())
                 .maxMember(studyInsertDTO.getMaxMember())
+                .deadline(studyInsertDTO.getDeadline())
                 .state(StudyStates.RECRUITING)
                 .build();
     }
