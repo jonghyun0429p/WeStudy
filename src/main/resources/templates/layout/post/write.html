@@ -229,14 +229,28 @@
                     const lng = document.getElementById("longitude").value;
                     const address = document.getElementById("address").value;
 
+                    // 스터디 전용 메타데이터 (ID 추가 후 매핑)
+                    const maxMemberEl = document.querySelector('input[placeholder="최대 참여 인원"]');
+                    let deadlineVal = null;
+                    
+                    // placeholder 기반 대신 name 같은 거나 dom query selector 구조상
+                    // "모집 마감일" input 찾아오기 (현재 구조상 3번째 date input이 마감일)
+                    const dateInputs = document.querySelectorAll('input[type="date"]');
+                    if(dateInputs.length >= 2 && dateInputs[1].value) {
+                         // input="date" value is "YYYY-MM-DD". Add time "T23:59:59"
+                         deadlineVal = dateInputs[1].value + "T23:59:59";
+                    }
+
                     const data = {
                         title: titleEl.value,
-                        postCategory: 'STUDY',
+                        postCategory: categoryEl ? categoryEl.value : 'PROGRAMMING',
                         content: contentEl.value,
                         isNotice: false,
                         latitude: lat ? parseFloat(lat) : null,
                         longitude: lng ? parseFloat(lng) : null,
-                        address: address || null
+                        address: address || null,
+                        maxMember: maxMemberEl && maxMemberEl.value ? parseInt(maxMemberEl.value) : null,
+                        deadline: deadlineVal
                     };
 
                     try {
