@@ -17,4 +17,7 @@ public interface StudyParticipantMapper {
     void updateStudyParticipant(StudyParticipantUpdateDTO studyParticipantUpdateDTO);
     void deleteByUserId(long id);
     void deleteByStudyId(long id);
+
+
+    int countWaiters(long studyId);
 }

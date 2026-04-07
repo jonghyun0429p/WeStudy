@@ -40,4 +40,10 @@
         FROM study_participant
         WHERE user_id = #{userId} AND study_id = #{studyId}
     </select>
+
+    <select id="countWaiters" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM study_participant
+        WHERE study_id = #{studyId} AND status = 'WAITING'
+    </select>
 </mapper>

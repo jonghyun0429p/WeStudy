@@ -87,4 +87,11 @@
         SELECT id FROM study
         WHERE state = 'RECRUITING' AND deadline &lt; now() AND delete_at IS NULL
     </select>
+
+    <select id="findByIdForUpdate" resultType="com.westudy.study.entity.Study">
+        SELECT *
+        FROM study
+        WHERE id = #{id}
+        FOR UPDATE
+    </select>
 </mapper>

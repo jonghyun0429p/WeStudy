@@ -26,4 +26,7 @@ public interface StudyMapper {
 
     void closeExpiredStudies();
     List<Long> findExpiredStudyIds();
+
+
+    Study findByIdForUpdate(long id);
 }
