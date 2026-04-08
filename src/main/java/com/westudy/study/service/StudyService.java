@@ -9,6 +9,8 @@ import com.westudy.study.converter.StudyConverter;
 import com.westudy.study.dto.*;
 import com.westudy.study.enums.StudyErrorCode;
 import com.westudy.study.enums.StudyParticipantStatus;
+import com.westudy.study.entity.Study;
+import com.westudy.study.entity.StudyParticipant;
 import com.westudy.study.enums.StudyStates;
 import com.westudy.study.mapper.StudyMapper;
 import com.westudy.study.mapper.StudyParticipantMapper;
@@ -57,34 +59,38 @@ public class StudyService {
     }
 
 
+    @Transactional
     public boolean approveAndCheckIfFull(long userId, long studyId){
         long currentUserId = SecurityUtil.getCurrentUserId();
-        synchronized (lock){
-            StudyResponseDTO study = findByStudyId(studyId);
-            int maxMember = study.getMaxMember();
-            int members = getStudyParticipantCount(studyId);
+        
+        // 비관적 잠금 적용: 해당 스터디 로우에 락을 걸고 연산을 수행함
+        studyMapper.findByIdForUpdate(studyId);
+        
+        StudyResponseDTO study = findByStudyId(studyId);
+        int maxMember = study.getMaxMember();
+        int members = getStudyParticipantCount(studyId);
 
-            if(maxMember > members){
-                updateStudyParticipant(new StudyParticipantUpdateDTO(userId, studyId, StudyParticipantStatus.APPROVED));
-                
-                // 신청자에게 승인 알람 전송
-                alarmService.send(
-                        userId,
-                        currentUserId,
-                        AlarmType.STUDY_APPROVE,
-                        String.format("'%s' 스터디 신청이 승인되었습니다!", study.getTitle()),
-                        "/page/post/detail?id=" + study.getPostId()
-                );
-            }else{
-                throw new BaseException(StudyErrorCode.STUDY_FULL);
-            }
-
-            if(members+1 == maxMember){
+        if(maxMember > members){
+            updateStudyParticipant(new StudyParticipantUpdateDTO(userId, studyId, StudyParticipantStatus.APPROVED));
+            
+            // 신청자에게 승인 알람 전송
+            alarmService.send(
+                    userId,
+                    currentUserId,
+                    AlarmType.STUDY_APPROVE,
+                    String.format("'%s' 스터디 신청이 승인되었습니다!", study.getTitle()),
+                    "/page/post/detail?id=" + study.getPostId()
+            );
+            
+            // 승낙 후 가득 찼다면 상태 변경
+            if(getStudyParticipantCount(studyId) == maxMember){
                 studyMapper.updateStudyState(StudyStates.CLOSED, studyId);
                 return true;
             }
-            return  false;
+        }else{
+            throw new BaseException(StudyErrorCode.STUDY_FULL);
         }
+        return false;
     }
 
     public void requestReject(long userId, long studyId){
@@ -102,9 +108,45 @@ public class StudyService {
         );
     }
 
+    @Transactional
     public void requestCancel(long studyId){
         long userId = SecurityUtil.getCurrentUserId();
+        
+        // 비관적 잠금 적용하여 취소 및 후속 처리 진행
+        studyMapper.findByIdForUpdate(studyId);
+        
+        // 현재 상태 확인 (기존에 승인된 멤버였는지 확인하기 위함)
+        StudyParticipant participant = studyParticipantMapper.findByUserId(userId);
+        boolean wasApproved = (participant != null && participant.getStatus() == StudyParticipantStatus.APPROVED);
+
         studyParticipantMapper.updateStudyParticipant(new StudyParticipantUpdateDTO(userId, studyId, StudyParticipantStatus.CANCELLED));
+        
+        // 승인된 멤버가 취소하여 빈 자리가 생겼을 경우 후속 처리
+        if (wasApproved) {
+            notifyHostOfVacancy(studyId);
+        }
+    }
+
+    private void notifyHostOfVacancy(long studyId) {
+        StudyResponseDTO study = findByStudyId(studyId);
+        long hostId = studyMapper.findUserIdByStudyId(studyId);
+        
+        // 모집 완료 상태였다면 자리가 생겼으므로 다시 RECRUITING으로 변경
+        if (study.getState() == StudyStates.CLOSED) {
+            studyMapper.updateStudyState(StudyStates.RECRUITING, studyId);
+        }
+
+        // 대기자가 있는지 확인 후 방장에게 알림 발송
+        int waiterCount = studyParticipantMapper.countWaiters(studyId);
+        if (waiterCount > 0) {
+            alarmService.send(
+                    hostId,
+                    1L, // 시스템 알림 (ID 1 가정 또는 적절한 발신자 설정)
+                    AlarmType.STUDY_APPLICATION,
+                    String.format("'%s' 스터디에 빈 자리가 생겼습니다. 대기자 %d명을 확인하고 승인해 주세요!", study.getTitle(), waiterCount),
+                    "/page/study/detail?id=" + studyId
+            );
+        }
     }
 
     public boolean canApprove(long studyId){
