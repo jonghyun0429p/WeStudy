@@ -51,4 +51,5 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	systemProperty "file.encoding", "UTF-8"
 }
