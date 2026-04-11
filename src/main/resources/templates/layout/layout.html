@@ -72,7 +72,35 @@
       },
     }
   </script>
-</head>
+    <style>
+      /* 프리미엄 토스트 애니메이션 */
+      @keyframes slide-in-right {
+        0% { transform: translateX(100%); opacity: 0; }
+        100% { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes slide-out-right {
+        0% { transform: translateX(100%); opacity: 1; } /* 보정: 나갈 때는 오른쪽으로 */
+        100% { transform: translateX(110%); opacity: 0; }
+      }
+      @keyframes toast-progress {
+        0% { transform: scaleX(1); }
+        100% { transform: scaleX(0); }
+      }
+      
+      .animate-slide-in { animation: slide-in-right 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+      .animate-slide-out { animation: slide-out-right 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+      
+      /* 유리 질감 (Glassmorphism) */
+      .glass {
+        background: rgba(255, 255, 255, 0.8) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+      }
+      .dark .glass {
+        background: rgba(45, 36, 24, 0.8) !important;
+      }
+    </style>
+  </head>
 
 <body>
 
@@ -326,18 +354,32 @@
       function showToast(alarm) {
         const container = document.getElementById('toast-container');
         const toast = document.createElement('div');
-        toast.className = "bg-primary text-white p-4 rounded-lg shadow-2xl flex items-center gap-3 animate-bounce max-w-xs pointer-events-auto cursor-pointer";
+        
+        // 프리미엄 디자인 클래스 구성
+        toast.className = "glass relative border border-white/20 dark:border-white/10 text-text-light-primary dark:text-text-dark-primary p-4 rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] flex flex-col gap-2 animate-slide-in max-w-xs pointer-events-auto cursor-pointer overflow-hidden";
+        
         toast.innerHTML = `
-          <span class="material-symbols-outlined">notifications_active</span>
-          <div class="text-sm font-bold truncate">${alarm.content}</div>
+          <div class="flex items-center gap-3">
+            <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary">
+              <span class="material-symbols-outlined !text-[20px]">notifications_active</span>
+            </div>
+            <div class="flex flex-col gap-0.5 min-w-0">
+              <span class="text-[14px] font-bold leading-tight truncate">${alarm.content}</span>
+              <span class="text-[11px] opacity-60">방금 전</span>
+            </div>
+          </div>
+          <!-- 가로 프로그레스 바 -->
+          <div class="absolute bottom-0 left-0 h-[3px] w-full bg-primary/30 origin-left" style="animation: toast-progress 4s linear forwards;"></div>
         `;
-        toast.onclick = () => handleAlarmClick(alarm.id, alarm.targetUrl);
+        
+        toast.onclick = () => handleAlarmClick(null, alarm.id, alarm.targetUrl);
         container.appendChild(toast);
 
+        // 4초 후 퇴장 애니메이션 및 삭제
         setTimeout(() => {
-          toast.classList.remove('animate-bounce');
-          setTimeout(() => toast.remove(), 4000);
-        }, 1000);
+          toast.classList.replace('animate-slide-in', 'animate-slide-out');
+          setTimeout(() => toast.remove(), 500);
+        }, 4000);
       }
     </script>
 
