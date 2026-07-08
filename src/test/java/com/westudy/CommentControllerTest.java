@@ -1,6 +1,7 @@
 package com.westudy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.westudy.comment.dto.CommentDeleteRequest;
 import com.westudy.comment.dto.CommentInsertDTO;
 import com.westudy.comment.dto.CommentUpdateDTO;
 import com.westudy.user.dto.UserLoginDTO;
@@ -65,7 +66,7 @@ public class CommentControllerTest {
         dto.setPostId(TEST_POST_ID);
         dto.setContent("테스트 댓글입니다.");
 
-        MvcResult result = mockMvc.perform(post("/api/content/insert")
+        MvcResult result = mockMvc.perform(post("/api/comments/create")
                         .cookie(authCookies)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -84,7 +85,7 @@ public class CommentControllerTest {
     @Order(2)
     @DisplayName("댓글 조회")
     void findCommentByPostId() throws Exception {
-        mockMvc.perform(post("/api/content/post")
+        mockMvc.perform(post("/api/comments/post")
                         .cookie(authCookies)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(TEST_POST_ID)))
@@ -100,7 +101,7 @@ public class CommentControllerTest {
         dto.setPostId(TEST_POST_ID);
         dto.setContent("수정된 댓글 내용입니다.");
 
-        mockMvc.perform(post("/api/content/update")
+        mockMvc.perform(post("/api/comments/update")
                         .cookie(authCookies)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -113,10 +114,11 @@ public class CommentControllerTest {
     @Order(4)
     @DisplayName("댓글 삭제")
     void deleteComment() throws Exception {
-        mockMvc.perform(post("/api/content/delete")
+        CommentDeleteRequest deleteDto = new CommentDeleteRequest(savedCommentId);
+        mockMvc.perform(post("/api/comments/delete")
                         .cookie(authCookies)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(savedCommentId)))
+                        .content(objectMapper.writeValueAsString(deleteDto)))
                 .andExpect(status().isOk()) // ✅ 3xx → 200 변경
                 .andExpect(jsonPath("$.redirect_url").value("/post"));
     }
