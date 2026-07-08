@@ -2,6 +2,7 @@ package com.westudy.comment.controller;
 
 import com.westudy.comment.dto.CommentDeleteRequest;
 import com.westudy.comment.dto.CommentInsertDTO;
+import com.westudy.comment.dto.CommentResponseDTO;
 import com.westudy.comment.dto.CommentUpdateDTO;
 import com.westudy.comment.entity.Comment;
 import com.westudy.comment.service.CommentService;
@@ -37,8 +38,8 @@ public class CommentController {
 
     @PostMapping("/post")
     @Operation(summary = "댓글 읽어오기", description = "게시글에 들어가면 js가 댓글요청을 하고, 그 요청에 데이터를 제공")
-    public ResponseEntity<List<Comment>> findCommentBypostId(@RequestBody long postId){
-        List<Comment> comments = commentService.findCommentById(postId);
+    public ResponseEntity<List<CommentResponseDTO>> findCommentBypostId(@RequestBody long postId){
+        List<CommentResponseDTO> comments = commentService.getCommentsByPostId(postId);
         return ResponseEntity.ok(comments);
     }
 

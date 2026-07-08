@@ -1,6 +1,7 @@
 package com.westudy.comment.mapper;
 
 import com.westudy.comment.dto.CommentInsertDTO;
+import com.westudy.comment.dto.CommentResponseDTO;
 import com.westudy.comment.dto.CommentUpdateDTO;
 import com.westudy.comment.entity.Comment;
 import org.apache.ibatis.annotations.Mapper;
@@ -11,6 +12,7 @@ import java.util.List;
 public interface CommentMapper {
     void insertComment(CommentInsertDTO commentInsertDTO);
     List<Comment> findCommentById(long id);
+    List<CommentResponseDTO> findCommentsByPostId(long postId);
     long findUserIdByCommentId(long id);
     void updateComment(CommentUpdateDTO commentUpdateDTO);
     void deleteComment(long commentId);

@@ -14,6 +14,18 @@
         FROM comment
         WHERE id = #{id} AND delete_at IS NULL
     </select>
+    <select id="findCommentsByPostId" resultType="com.westudy.comment.dto.CommentResponseDTO">
+        SELECT 
+            c.id AS commentId,
+            c.user_id AS userId,
+            u.nickname AS writerNickname,
+            c.content AS content,
+            c.created_at AS createdAt
+        FROM comment c
+        JOIN user u ON c.user_id = u.id
+        WHERE c.post_id = #{postId} AND c.delete_at IS NULL
+        ORDER BY c.created_at ASC
+    </select>
     <select id="findUserIdByCommentId" resultType="java.lang.Long">
         SELECT user_id
         FROM comment

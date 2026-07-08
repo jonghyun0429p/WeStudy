@@ -1,6 +1,7 @@
 package com.westudy.comment.service;
 
 import com.westudy.comment.dto.CommentInsertDTO;
+import com.westudy.comment.dto.CommentResponseDTO;
 import com.westudy.comment.dto.CommentUpdateDTO;
 import com.westudy.comment.entity.Comment;
 import com.westudy.comment.enums.CommentErrorCode;
@@ -37,6 +38,15 @@ public class CommentService {
     //Read
     public List<Comment> findCommentById(long id){
         return commentMapper.findCommentById(id);
+    }
+
+    public List<CommentResponseDTO> getCommentsByPostId(long postId) {
+        Long currentUserId = SecurityUtil.resolveCurrentUserIdSafely();
+        List<CommentResponseDTO> comments = commentMapper.findCommentsByPostId(postId);
+        for (CommentResponseDTO comment : comments) {
+            comment.setWriter(currentUserId != null && currentUserId.equals(comment.getUserId()));
+        }
+        return comments;
     }
 
     //Update

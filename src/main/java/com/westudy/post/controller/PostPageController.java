@@ -25,9 +25,11 @@ public class PostPageController {
     private String kakaoMapKey;
 
     private final PostSevice postSevice;
+    private final com.westudy.comment.service.CommentService commentService;
 
-    public PostPageController(PostSevice postSevice) {
+    public PostPageController(PostSevice postSevice, com.westudy.comment.service.CommentService commentService) {
         this.postSevice = postSevice;
+        this.commentService = commentService;
     }
 
     @GetMapping({"/",""})
@@ -80,6 +82,7 @@ public class PostPageController {
         model.addAttribute("now", java.time.LocalDateTime.now());
         model.addAttribute("page", postSevice.getPostDetailResponse(id));
         model.addAttribute("categories", PostCategory.values());
+        model.addAttribute("comments", commentService.getCommentsByPostId(id));
         return "/layout/post/detail";
     }
 
