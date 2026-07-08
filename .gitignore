@@ -62,3 +62,6 @@ Thumbs.db
 # 기타 임시 파일
 *.swp
 *~
+
+# 스티치 이미지 파일 제외
+src/main/resources/static/images/stitch_westudy/
