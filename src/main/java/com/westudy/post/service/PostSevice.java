@@ -20,7 +20,7 @@ import java.util.List;
 @Service
 public class PostSevice {
 
-//    private final int POST_SIZE = 12;
+    // private final int POST_SIZE = 12;
 
     private final PostMapper postMapper;
     private final PostContentMapper postContentMapper;
@@ -28,7 +28,8 @@ public class PostSevice {
     private final PostConverter postConverter;
     private final com.westudy.study.service.StudyService studyService;
 
-    public PostSevice(PostMapper postMapper, PostContentMapper postContentMapper, PostDetailMapper postDetailMapper, PostConverter postConverter, com.westudy.study.service.StudyService studyService) {
+    public PostSevice(PostMapper postMapper, PostContentMapper postContentMapper, PostDetailMapper postDetailMapper,
+            PostConverter postConverter, com.westudy.study.service.StudyService studyService) {
         this.postMapper = postMapper;
         this.postContentMapper = postContentMapper;
         this.postDetailMapper = postDetailMapper;
@@ -36,50 +37,52 @@ public class PostSevice {
         this.studyService = studyService;
     }
 
-    public List<PostResponseDTO> getPostList(int page, int postSize){
+    public List<PostResponseDTO> getPostList(int page, int postSize) {
         List<Post> postList = findByNotice();
         postList.addAll(findByPost(page, postSize));
 
         return postConverter.toResponseDTOList(postList);
     }
 
-    public List<PostResponseDTO> getSearchPostList(String keyword, int page, int postSize){
+    public List<PostResponseDTO> getSearchPostList(String keyword, int page, int postSize) {
         List<PostResponseDTO> postList = postConverter.toResponseDTOList(findByNotice());
         postList.addAll(findSearchPosts(keyword, page, postSize));
 
         return postList;
     }
 
-    public PostDetailResponseDTO getPostDetailResponse(long postId){
+    public PostDetailResponseDTO getPostDetailResponse(long postId) {
         log.info("아이디로 추출 시도");
         PostDetailDBDTO postDetailDBDTO = getPostDetail(postId);
         log.info("생성일 확인.");
         log.info(postDetailDBDTO.getCreatedAt().toString());
-        String nickname = SecurityUtil.getCurrentNickname();
 
-        return postConverter.toDetailResponseDTO(postDetailDBDTO, nickname);
+        // JWT에서 닉네임을 꺼내는 대신 현재 사용자의 ID를 가져옴
+        Long currentUserId = SecurityUtil.resolveCurrentUserIdSafely();
+
+        return postConverter.toDetailResponseDTO(postDetailDBDTO, currentUserId);
     }
 
-    public long getPostPage(int postSize){
+    public long getPostPage(int postSize) {
         long count = getPostCount();
-        if(count % postSize == 0){
+        if (count % postSize == 0) {
             return getPostCount() / postSize;
-        }else {
+        } else {
             return getPostCount() / postSize + 1;
         }
 
     }
 
-    public void isWriter(long postId){
+    public void isWriter(long postId) {
         long id = SecurityUtil.getCurrentUserId();
         long postWriter = postMapper.findUserIdByPostId(postId);
-        if(id != postWriter){
+        if (id != postWriter) {
             throw new BaseException(PostErrorCode.POST_ID_NOT_SAME);
         }
     }
 
-    //Create
-    public void insertPost(Long userId, PostInsertDTO postInsertDTO){
+    // Create
+    public void insertPost(Long userId, PostInsertDTO postInsertDTO) {
         log.info("게시글 데이터 변환 및 저장");
         Post post = postConverter.toPost(userId, postInsertDTO);
         postMapper.insertPost(post);
@@ -102,46 +105,46 @@ public class PostSevice {
         }
     }
 
-    //Read
-    public Post findByPostId(long postId){
+    // Read
+    public Post findByPostId(long postId) {
         return RequireHelper.requireNonNull(
                 postMapper.findByPostId(postId), new BaseException(PostErrorCode.POST_NOT_FOUND));
     }
 
-    public List<Post> findByUserId(long userId){
+    public List<Post> findByUserId(long userId) {
         return RequireHelper.requireNonEmpty(
                 postMapper.findByUserId(userId), new BaseException(PostErrorCode.POST_NOT_FOUND));
     }
 
-    public List<Post> findByNotice(){
+    public List<Post> findByNotice() {
         return postMapper.findNotice();
     }
 
-    public List<Post> findByPost(int page, int postSize){
-        return postMapper.findPost(postSize, postSize*(page-1));
+    public List<Post> findByPost(int page, int postSize) {
+        return postMapper.findPost(postSize, postSize * (page - 1));
     }
 
-    public PostDetailDBDTO getPostDetail(long postId){
+    public PostDetailDBDTO getPostDetail(long postId) {
         return RequireHelper.requireNonNull(
                 postDetailMapper.findPostDetailById(postId), new BaseException(PostErrorCode.POST_NOT_FOUND));
     }
 
-    public List<PostResponseDTO> findSearchPosts(String keyword, int page, int postSize){
+    public List<PostResponseDTO> findSearchPosts(String keyword, int page, int postSize) {
         return RequireHelper.requireNonEmpty(
-                postDetailMapper.findSearchPosts(keyword, postSize, postSize*(page-1)),
+                postDetailMapper.findSearchPosts(keyword, postSize, postSize * (page - 1)),
                 new BaseException(PostErrorCode.POST_NOT_FOUND));
     }
 
-    public long getPostCount(){
+    public long getPostCount() {
         return postMapper.countPosts();
     }
 
-    public long getSearchedPostCount(String keyword){
+    public long getSearchedPostCount(String keyword) {
         return postDetailMapper.countSearchPosts(keyword);
     }
 
-    //Update
-    public void updatePost(PostUpdateDTO postUpdateDTO){
+    // Update
+    public void updatePost(PostUpdateDTO postUpdateDTO) {
         isWriter(postUpdateDTO.getPostId());
         Post oldPost = postMapper.findByPostId(postUpdateDTO.getPostId());
         Post newPost = postConverter.toUpdatePost(oldPost, postUpdateDTO);
@@ -149,8 +152,8 @@ public class PostSevice {
         postContentMapper.updateContent(postConverter.toPostContent(newPost, postUpdateDTO));
     }
 
-    //Delete
-    public void deletePost(long postId){
+    // Delete
+    public void deletePost(long postId) {
         isWriter(postId);
         postMapper.deleteByPostId(postId);
     }

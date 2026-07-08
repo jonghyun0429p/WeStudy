@@ -17,7 +17,8 @@ public class PostDetailDBDTO {
     private String content;
     private String category;
     private int views;
-    private String nickname; // 작성자
+    private Long authorId; // 작성자 식별자 추가
+    private String nickname; // 작성자 닉네임
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private String address;

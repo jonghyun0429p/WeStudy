@@ -11,17 +11,17 @@ import java.util.stream.Collectors;
 
 @Component
 public class PostConverter {
-//
-//    public PostInsertDTO toPostInsertDTO(Post post, String content){
-//        PostInsertDTO dto = new PostInsertDTO();
-//        dto.setPostCategory(post.getCategory());
-//        dto.setTitle(post.getTitle());
-//        dto.setContent(content);
-//
-//        return dto;
-//    }
+    //
+    // public PostInsertDTO toPostInsertDTO(Post post, String content){
+    // PostInsertDTO dto = new PostInsertDTO();
+    // dto.setPostCategory(post.getCategory());
+    // dto.setTitle(post.getTitle());
+    // dto.setContent(content);
+    //
+    // return dto;
+    // }
 
-    public Post toPost(long userId, PostInsertDTO postInsertDTO){
+    public Post toPost(long userId, PostInsertDTO postInsertDTO) {
         String content = postInsertDTO.getContent();
         String summary = content.substring(0, Math.min(content.length(), 20));
 
@@ -40,7 +40,7 @@ public class PostConverter {
                 .build();
     }
 
-    public Post toUpdatePost(Post oldPost, PostUpdateDTO postUpdateDTO){
+    public Post toUpdatePost(Post oldPost, PostUpdateDTO postUpdateDTO) {
         String content = postUpdateDTO.getContent();
         String summary = content.substring(0, Math.min(content.length(), 20));
 
@@ -55,7 +55,7 @@ public class PostConverter {
                 .build();
     }
 
-    public PostContent toPostContent(Post post, PostInsertDTO postInsertDTO){
+    public PostContent toPostContent(Post post, PostInsertDTO postInsertDTO) {
         return PostContent.builder()
                 .postId(post.getId())
                 .content(postInsertDTO.getContent())
@@ -63,7 +63,7 @@ public class PostConverter {
                 .build();
     }
 
-    public PostContent toPostContent(Post post, PostUpdateDTO postUpdateDTO){
+    public PostContent toPostContent(Post post, PostUpdateDTO postUpdateDTO) {
         return PostContent.builder()
                 .postId(post.getId())
                 .content(postUpdateDTO.getContent())
@@ -71,8 +71,7 @@ public class PostConverter {
                 .build();
     }
 
-
-    public PostResponseDTO toResponseDTO(Post post){
+    public PostResponseDTO toResponseDTO(Post post) {
         PostResponseDTO dto = new PostResponseDTO();
         dto.setPostId(post.getId());
         dto.setPostCategory(post.getCategory());
@@ -83,13 +82,13 @@ public class PostConverter {
         return dto;
     }
 
-    public List<PostResponseDTO> toResponseDTOList(List<Post> posts){
+    public List<PostResponseDTO> toResponseDTOList(List<Post> posts) {
         return posts.stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    public PostDetailResponseDTO toDetailResponseDTO(PostDetailDBDTO postDetailDBDTO, String nickname){
+    public PostDetailResponseDTO toDetailResponseDTO(PostDetailDBDTO postDetailDBDTO, Long currentUserId) {
         PostDetailResponseDTO dto = new PostDetailResponseDTO();
         dto.setPostId(postDetailDBDTO.getPostId());
         dto.setTitle(postDetailDBDTO.getTitle());
@@ -97,7 +96,10 @@ public class PostConverter {
         dto.setCategory(postDetailDBDTO.getCategory());
         dto.setViews(postDetailDBDTO.getViews());
         dto.setWriterNickname(postDetailDBDTO.getNickname());
-        dto.setWriter(nickname.equals(postDetailDBDTO.getNickname()));
+
+        // ID 기반 본인 확인 로직으로 변경 (기존: nickname 비교)
+        dto.setWriter(currentUserId != null && currentUserId.equals(postDetailDBDTO.getAuthorId()));
+
         dto.setCreatedAt(postDetailDBDTO.getCreatedAt());
         dto.setModifiedAt(postDetailDBDTO.getModifiedAt());
         dto.setAddress(postDetailDBDTO.getAddress());
