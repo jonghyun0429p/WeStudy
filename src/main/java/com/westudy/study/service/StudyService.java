@@ -71,7 +71,7 @@ public class StudyService {
         int members = getStudyParticipantCount(studyId);
 
         if(maxMember > members){
-            updateStudyParticipant(new StudyParticipantUpdateDTO(userId, studyId, StudyParticipantStatus.APPROVED));
+            studyParticipantMapper.updateStudyParticipant(new StudyParticipantUpdateDTO(userId, studyId, StudyParticipantStatus.APPROVED));
             
             // 신청자에게 승인 알람 전송
             alarmService.send(
@@ -95,7 +95,7 @@ public class StudyService {
 
     public void requestReject(long userId, long studyId){
         long currentUserId = SecurityUtil.getCurrentUserId();
-        updateStudyParticipant(new StudyParticipantUpdateDTO(userId, studyId, StudyParticipantStatus.REJECTED));
+        studyParticipantMapper.updateStudyParticipant(new StudyParticipantUpdateDTO(userId, studyId, StudyParticipantStatus.REJECTED));
         
         // 신청자에게 거절 알람 전송
         StudyResponseDTO study = findByStudyId(studyId);

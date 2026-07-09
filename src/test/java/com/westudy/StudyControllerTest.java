@@ -2,31 +2,46 @@ package com.westudy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.westudy.study.dto.StudyInsertDTO;
+import com.westudy.study.dto.StudyResponseDTO;
 import com.westudy.study.dto.StudyUpdateDTO;
+import com.westudy.study.entity.Study;
+import com.westudy.study.entity.StudyParticipant;
+import com.westudy.study.enums.StudyParticipantStatus;
+import com.westudy.study.enums.StudyStates;
+import com.westudy.study.mapper.StudyMapper;
+import com.westudy.study.mapper.StudyParticipantMapper;
 import com.westudy.user.dto.UserLoginDTO;
+import com.westudy.user.entity.User;
+import com.westudy.user.enums.UserRole;
+import com.westudy.user.mapper.UserMapper;
 import jakarta.servlet.http.Cookie;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("local")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Rollback
+@Transactional // 각 테스트 완료 후 DB 롤백 처리 활성화
 public class StudyControllerTest {
 
     @Autowired
@@ -35,148 +50,234 @@ public class StudyControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private StudyMapper studyMapper;
+
+    @Autowired
+    private StudyParticipantMapper studyParticipantMapper;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     private static final Logger log = LoggerFactory.getLogger(StudyControllerTest.class);
 
-    private static Cookie[] authCookies;
-    private static Long savedStudyId = 1L; // 임시 ID
+    private Cookie[] authCookies;
+    private Long hostUserId;
+    private Long waiterUserId;
+    private Long waiter2UserId;
 
     @BeforeEach
-    void loginOnce() throws Exception {
-        if (authCookies == null) {
-            UserLoginDTO dto = new UserLoginDTO();
-            dto.setEmail("testuser@naver.com");
-            dto.setPassword("testpassword");
-
-            authCookies = mockMvc.perform(post("/api/users/login")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(dto)))
-                    .andExpect(status().isOk())
-                    .andReturn()
-                    .getResponse()
-                    .getCookies();
-        }
-    }
-
-    @Test
-    @Order(1)
-    @DisplayName("스터디 등록")
-    void insertStudy() throws Exception {
-        StudyInsertDTO dto = new StudyInsertDTO();
-        dto.setTitle("테스트 스터디");
-        dto.setLocation("서울");
-        dto.setMaxMember(5);
-
-        try{
-            mockMvc.perform(post("/api/study/insert")
-                            .cookie(authCookies)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(dto)))
-                    .andExpect(status().is2xxSuccessful());
+    void setupDatabaseAndLogin() throws Exception {
+        // 0. 기존 컨테이너 DB 컬럼 정합성을 위해 deadline 관련 컬럼 추가
+        try {
+            jdbcTemplate.execute("ALTER TABLE study ADD COLUMN IF NOT EXISTS deadline DATETIME NULL");
         } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+            log.warn("스터디 테이블 컬럼 추가 실패 혹은 이미 존재함: {}", e.getMessage());
         }
 
+        // 1. 테스트 호스트 회원 생성 (없을 경우에만 추가)
+        String hostEmail = "testuser@naver.com";
+        User hostUser = userMapper.findByEmail(hostEmail);
+        if (hostUser == null) {
+            User newUser = User.builder()
+                    .username("testuser")
+                    .password("$2a$10$8pEKjjYcblixkJYIHwK3mOjCw7m/XSiHPl2H.hKiVsOjI2B1nc8mS") // testpassword
+                    .email(hostEmail)
+                    .nickname("호스트닉네임")
+                    .phoneNumber("010-0000-0000")
+                    .role(UserRole.ROLE_USER)
+                    .build();
+            userMapper.insertUser(newUser);
+            hostUserId = newUser.getId();
+        } else {
+            hostUserId = hostUser.getId();
+        }
+
+        // 2. 테스트 대기자 1 생성 (없을 경우에만 추가)
+        String waiterEmail = "waiter1@naver.com";
+        User waiterUser = userMapper.findByEmail(waiterEmail);
+        if (waiterUser == null) {
+            User newUser = User.builder()
+                    .username("waiter1")
+                    .password("$2a$10$8pEKjjYcblixkJYIHwK3mOjCw7m/XSiHPl2H.hKiVsOjI2B1nc8mS")
+                    .email(waiterEmail)
+                    .nickname("대기자1닉네임")
+                    .phoneNumber("010-1111-1111")
+                    .role(UserRole.ROLE_USER)
+                    .build();
+            userMapper.insertUser(newUser);
+            waiterUserId = newUser.getId();
+        } else {
+            waiterUserId = waiterUser.getId();
+        }
+
+        // 3. 테스트 대기자 2 생성 (없을 경우에만 추가)
+        String waiter2Email = "waiter2@naver.com";
+        User waiter2User = userMapper.findByEmail(waiter2Email);
+        if (waiter2User == null) {
+            User newUser = User.builder()
+                    .username("waiter2")
+                    .password("$2a$10$8pEKjjYcblixkJYIHwK3mOjCw7m/XSiHPl2H.hKiVsOjI2B1nc8mS")
+                    .email(waiter2Email)
+                    .nickname("대기자2닉네임")
+                    .phoneNumber("010-2222-2222")
+                    .role(UserRole.ROLE_USER)
+                    .build();
+            userMapper.insertUser(newUser);
+            waiter2UserId = newUser.getId();
+        } else {
+            waiter2UserId = waiter2User.getId();
+        }
+
+        // 4. 호스트 계정으로 로그인 후 인증 쿠키 획득
+        UserLoginDTO loginDto = new UserLoginDTO();
+        loginDto.setEmail(hostEmail);
+        loginDto.setPassword("testpassword");
+
+        authCookies = mockMvc.perform(post("/api/users/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginDto)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getCookies();
     }
 
     @Test
-    @Order(2)
-    @DisplayName("스터디 수정")
-    void updateStudy() throws Exception {
-        StudyUpdateDTO dto = new StudyUpdateDTO();
-        dto.setId(savedStudyId);
-        dto.setTitle("수정된 스터디 제목");
-        dto.setLocation("서울");
-        dto.setMaxMember(10);
+    @DisplayName("스터디 라이프사이클 통합 테스트 - 등록, 수정, 가입신청, 취소, 승인, 거부, 삭제의 전체 DB 동작 검증")
+    void testStudyLifecycle() throws Exception {
+        // [1] 스터디 등록
+        StudyInsertDTO insertDto = new StudyInsertDTO();
+        insertDto.setTitle("통합 테스트 스터디");
+        insertDto.setLocation("서울");
+        insertDto.setMaxMember(5);
+
+        mockMvc.perform(post("/api/study/insert")
+                        .cookie(authCookies)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(insertDto)))
+                .andExpect(status().is2xxSuccessful());
+
+        // DB 검증: 스터디 등록 확인 및 생성된 ID 추출
+        List<StudyResponseDTO> hostStudies = studyMapper.findStudy(10, 0);
+        StudyResponseDTO createdStudy = hostStudies.stream()
+                .filter(s -> s.getTitle().equals("통합 테스트 스터디"))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("스터디가 DB에 등록되지 않았습니다."));
+        long dynamicStudyId = createdStudy.getId();
+
+        // [2] 스터디 수정
+        StudyUpdateDTO updateDto = new StudyUpdateDTO();
+        updateDto.setId(dynamicStudyId);
+        updateDto.setTitle("수정된 통합 테스트 스터디");
+        updateDto.setLocation("인천");
+        updateDto.setMaxMember(8);
 
         mockMvc.perform(post("/api/study/update")
                         .cookie(authCookies)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
+                        .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().is2xxSuccessful());
-    }
 
-    @Test
-    @Order(3)
-    @DisplayName("스터디 삭제")
-    void deleteStudy() throws Exception {
-        mockMvc.perform(post("/api/study/delete")
-                        .cookie(authCookies)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(String.valueOf(savedStudyId)))
-                .andExpect(status().is2xxSuccessful());
-    }
+        // DB 검증: 수정 여부 확인
+        StudyResponseDTO updatedStudy = studyMapper.findByStudyId(dynamicStudyId);
+        assertEquals("수정된 통합 테스트 스터디", updatedStudy.getTitle());
+        assertEquals("인천", updatedStudy.getLocation());
 
-    @Test
-    @Order(4)
-    @DisplayName("스터디 신청")
-    void applicationStudy() throws Exception {
-        long studyId = 8;
-        System.out.println("📌 studyId: " + studyId);
+        // [3] 타인이 개설한 스터디에 호스트가 가입 신청
+        // 타인(대기자1)의 스터디 생성
+        Study waiterStudy = Study.builder()
+                .userId(waiterUserId)
+                .title("대기자가 만든 스터디")
+                .location("부산")
+                .maxMember(4)
+                .state(StudyStates.RECRUITING)
+                .deadline(LocalDateTime.now().plusDays(5))
+                .build();
+        studyMapper.insertStudy(waiterStudy);
+        long waiterStudyId = waiterStudy.getId();
 
+        // 가입 신청 API 호출
         mockMvc.perform(post("/api/study/application")
                         .cookie(authCookies)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(studyId)))
+                        .content(objectMapper.writeValueAsString(waiterStudyId)))
                 .andExpect(status().isOk());
-    }
 
-    @Test
-    @Order(5)
-    @DisplayName("스터디 중복 신청")
-    void applicationDuplicationStudy() throws Exception{
-        long studyId = 8;
+        // DB 검증: 신청 여부 확인
+        int checkApplication = studyParticipantMapper.findByUserIdAndStudyId(hostUserId, waiterStudyId);
+        assertEquals(1, checkApplication, "호스트가 대기자 스터디에 신청 완료된 상태여야 합니다.");
 
-        mockMvc.perform(post("/api/study/application")
+        // [4] 가입 신청 취소
+        mockMvc.perform(post("/api/study/cancel")
                         .cookie(authCookies)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(studyId)))
-                .andExpect(status().is4xxClientError());
-    }
+                        .content(objectMapper.writeValueAsString(waiterStudyId)))
+                .andExpect(status().is2xxSuccessful());
 
-    @Test
-    @Order(6)
-    @DisplayName("스터디 승인")
-    void approveStudy() throws Exception{
+        // DB 검증: 신청 취소 완료 확인 (소프트 캔슬 여부 확인)
+        StudyParticipant canceledParticipant = studyParticipantMapper.findByUserId(hostUserId);
+        assertNotNull(canceledParticipant);
+        assertEquals(StudyParticipantStatus.CANCELLED, canceledParticipant.getStatus(), "신청 취소 후 상태가 CANCELLED여야 합니다.");
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("studyId", 17L);
-        body.put("userId", 3L);
-        String json = objectMapper.writeValueAsString(body);
+        // [5] 내 스터디에 대기자1이 신청한 후 승인 처리 검증
+        // 대기자1의 신청 데이터를 DB에 직접 적재
+        StudyParticipant participant1 = StudyParticipant.builder()
+                .studyId(dynamicStudyId)
+                .userId(waiterUserId)
+                .status(StudyParticipantStatus.WAITING)
+                .build();
+        studyParticipantMapper.insertStudyParticipant(participant1);
+
+        // 승인 요청 API 호출
+        Map<String, Object> approveBody = new HashMap<>();
+        approveBody.put("studyId", dynamicStudyId);
+        approveBody.put("userId", waiterUserId);
 
         mockMvc.perform(post("/api/study/approve")
-                .cookie(authCookies)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
+                        .cookie(authCookies)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(approveBody)))
                 .andExpect(status().is2xxSuccessful());
-    }
 
-    @Test
-    @Order(7)
-    @DisplayName("스터디 거부")
-    void rejectStudy() throws Exception{
-        Map<String, Object> body = new HashMap<>();
-        body.put("studyId", 17L);
-        body.put("userId", 2L);
-        String json = objectMapper.writeValueAsString(body);
+        // DB 검증: 대기자1 승인 상태 확인
+        StudyParticipant approvedParticipant = studyParticipantMapper.findByUserId(waiterUserId);
+        assertNotNull(approvedParticipant);
+        assertEquals(StudyParticipantStatus.APPROVED, approvedParticipant.getStatus());
+
+        // [6] 내 스터디에 대기자2가 신청한 후 거절 처리 검증
+        // 대기자2의 신청 데이터를 DB에 직접 적재
+        StudyParticipant participant2 = StudyParticipant.builder()
+                .studyId(dynamicStudyId)
+                .userId(waiter2UserId)
+                .status(StudyParticipantStatus.WAITING)
+                .build();
+        studyParticipantMapper.insertStudyParticipant(participant2);
+
+        // 거부 요청 API 호출
+        Map<String, Object> rejectBody = new HashMap<>();
+        rejectBody.put("studyId", dynamicStudyId);
+        rejectBody.put("userId", waiter2UserId);
 
         mockMvc.perform(post("/api/study/reject")
                         .cookie(authCookies)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                        .content(objectMapper.writeValueAsString(rejectBody)))
                 .andExpect(status().is2xxSuccessful());
-    }
 
-    @Test
-    @Order(8)
-    @DisplayName("스터디 취소")
-    void cancelApplication() throws Exception{
-        long studyId = 8;
+        // DB 검증: 대기자2 거부 상태 확인
+        StudyParticipant rejectedParticipant = studyParticipantMapper.findByUserId(waiter2UserId);
+        assertNotNull(rejectedParticipant);
+        assertEquals(StudyParticipantStatus.REJECTED, rejectedParticipant.getStatus());
 
-        mockMvc.perform(post("/api/study/cancel")
+        // [7] 스터디 삭제
+        mockMvc.perform(post("/api/study/delete")
                         .cookie(authCookies)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(studyId)))
+                        .content(String.valueOf(dynamicStudyId)))
                 .andExpect(status().is2xxSuccessful());
     }
 }

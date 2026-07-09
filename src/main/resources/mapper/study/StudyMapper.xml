@@ -20,7 +20,7 @@
         SET delete_at = now()
         WHERE id = #{id}
     </update>
-    <update id="updateStudyState" parameterType="com.westudy.study.enums.StudyStates">
+    <update id="updateStudyState">
         UPDATE study
         SET state = #{state}, modified_at = now()
         WHERE id = #{id}

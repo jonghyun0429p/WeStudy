@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -27,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("local")
+@Transactional
 public class SecurityTest {
 
     @Autowired
@@ -56,7 +58,7 @@ public class SecurityTest {
             log.info(jsonSignupRequest);
 
             //회원가입
-            mockMvc.perform(MockMvcRequestBuilders.post("/users/signup")
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/users/signup")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(jsonSignupRequest))
                     .andExpect(status().is3xxRedirection())
@@ -77,7 +79,7 @@ public class SecurityTest {
         String jsonLoginRequest = objectMapper.writeValueAsString(userLoginDTO);
         log.info("로그인 실행");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/users/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonLoginRequest))
                 .andExpect(status().isOk());
@@ -98,7 +100,7 @@ public class SecurityTest {
         String jsonLoginRequest = objectMapper.writeValueAsString(userLoginDTO);
         log.info("로그인 실행");
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/users/login")
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/users/login")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(jsonLoginRequest))
                                     .andExpect(status().isOk())
@@ -113,6 +115,6 @@ public class SecurityTest {
         log.info("리디렉트 URL: {}", redirectUrl);
 
         // 검증 가능
-        Assertions.assertEquals("/admin", redirectUrl); // 관리자면 "/admin" 기대
+        Assertions.assertEquals("/page/admin", redirectUrl); // 관리자면 "/page/admin" 기대
     }
 }

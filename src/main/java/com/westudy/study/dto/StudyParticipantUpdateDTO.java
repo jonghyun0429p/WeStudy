@@ -12,7 +12,7 @@ public class StudyParticipantUpdateDTO {
     private StudyParticipantStatus status;
 
     public StudyParticipantUpdateDTO(long id, long studyId, StudyParticipantStatus studyParticipantStatus){
-        this.userId = userId;
+        this.userId = id;
         this.studyId = studyId;
         this.status = studyParticipantStatus;
     }

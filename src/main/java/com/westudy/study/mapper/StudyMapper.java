@@ -5,6 +5,7 @@ import com.westudy.study.dto.StudyUpdateDTO;
 import com.westudy.study.entity.Study;
 import com.westudy.study.enums.StudyStates;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface StudyMapper {
     long countStudy();
     long countSearchStudy(String keyword);
     void updateStudy(StudyUpdateDTO studyUpdateDTO);
-    void updateStudyState(StudyStates studyStates, long id);
+    void updateStudyState(@Param("state") StudyStates studyStates, @Param("id") long id);
     void deleteStudy(long id);
 
     long findUserIdByStudyId(long id);

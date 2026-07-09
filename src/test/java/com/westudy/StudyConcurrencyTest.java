@@ -13,10 +13,13 @@ import com.westudy.study.service.StudyService;
 import com.westudy.user.entity.User;
 import com.westudy.user.enums.UserRole;
 import com.westudy.user.mapper.UserMapper;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
@@ -45,6 +48,35 @@ public class StudyConcurrencyTest {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @BeforeEach
+    void setupDatabase() {
+        try {
+            jdbcTemplate.execute("ALTER TABLE study ADD COLUMN IF NOT EXISTS deadline DATETIME NULL");
+        } catch (Exception e) {
+            System.out.println("스터디 테이블 컬럼 추가 실패 혹은 이미 존재함: " + e.getMessage());
+        }
+        cleanDb();
+    }
+
+    @AfterEach
+    void tearDown() {
+        cleanDb();
+    }
+
+    private void cleanDb() {
+        try {
+            jdbcTemplate.execute("DELETE FROM study_participant WHERE study_id IN (SELECT id FROM study WHERE title = '동시성 테스트 스터디')");
+            jdbcTemplate.execute("DELETE FROM study WHERE title = '동시성 테스트 스터디'");
+            jdbcTemplate.execute("DELETE FROM alarm WHERE receiver_id IN (SELECT id FROM user WHERE username = 'host' OR username LIKE 'waiter%') OR sender_id IN (SELECT id FROM user WHERE username = 'host' OR username LIKE 'waiter%')");
+            jdbcTemplate.execute("DELETE FROM user WHERE username = 'host' OR username LIKE 'waiter%'");
+        } catch (Exception e) {
+            System.out.println("동시성 테스트 DB 정리 실패: " + e.getMessage());
+        }
+    }
 
     @Test
     @DisplayName("비관적 잠금 적용 - 10명이 동시에 승인 요청 시 정확히 1명만 승인되어야 함")
@@ -119,6 +151,7 @@ public class StudyConcurrencyTest {
                 .email(email)
                 .password("password")
                 .nickname(username)
+                .phoneNumber("010-0000-0000")
                 .role(UserRole.ROLE_USER)
                 .build();
         userMapper.insertUser(user);

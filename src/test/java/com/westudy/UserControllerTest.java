@@ -13,12 +13,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Transactional;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 @SpringBootTest
+@Transactional
 public class UserControllerTest {
 
     @Autowired
@@ -32,30 +34,25 @@ public class UserControllerTest {
 
     private static final Logger log = LoggerFactory.getLogger(UserControllerTest.class);
 
-    @BeforeEach
-    void clean(){
-        userMapper.deleteByUserName("testuser");
-    }
-
     @Test
     void httpRequestSignup() throws Exception {
         log.info("User 생성");
         UserDTO userDTO = new UserDTO();
-        userDTO.setUsername("testUser");
+        userDTO.setUsername("signupuser");
         userDTO.setPassword("testpassword");
-        userDTO.setEmail("testuser@naver.com");
-        userDTO.setNickname("tester");
+        userDTO.setEmail("signupuser@naver.com");
+        userDTO.setNickname("signuptester");
         userDTO.setPhoneNumber("010-1234-5678");
 
         String jsonRequest = objectMapper.writeValueAsString(userDTO);
 
         log.info(jsonRequest);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/users/signup")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonRequest))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.redirect_url").value("/login"));
     }
 
 }
