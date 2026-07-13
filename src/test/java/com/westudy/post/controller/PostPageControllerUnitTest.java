@@ -4,6 +4,7 @@ import com.westudy.comment.dto.CommentResponseDTO;
 import com.westudy.comment.service.CommentService;
 import com.westudy.post.dto.PostDetailResponseDTO;
 import com.westudy.post.service.PostSevice;
+import com.westudy.bookmark.service.BookmarkService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.ConcurrentModel;
@@ -23,9 +24,10 @@ public class PostPageControllerUnitTest {
         // 서비스 모킹
         PostSevice postSevice = mock(PostSevice.class);
         CommentService commentService = mock(CommentService.class);
+        BookmarkService bookmarkService = mock(BookmarkService.class);
 
         // 컨트롤러 인스턴스 생성
-        PostPageController controller = new PostPageController(postSevice, commentService);
+        PostPageController controller = new PostPageController(postSevice, commentService, bookmarkService);
 
         // 가상 데이터 준비
         long postId = 1L;
