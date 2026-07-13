@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,7 +45,7 @@ public class SecurityTest {
 
     @BeforeEach
     void clean() throws Exception {
-        User user = userMapper.findByUsername("testuser");
+        User user = userMapper.findByUsername("testUser");
         if(user == null){
             log.info("UserDTO 생성");
             UserDTO userDTO = new UserDTO();
@@ -61,9 +62,8 @@ public class SecurityTest {
             mockMvc.perform(MockMvcRequestBuilders.post("/api/users/signup")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(jsonSignupRequest))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(redirectedUrl("/"));
-
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.redirect_url").value("/login"));
         }
     }
 
@@ -79,11 +79,16 @@ public class SecurityTest {
         String jsonLoginRequest = objectMapper.writeValueAsString(userLoginDTO);
         log.info("로그인 실행");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/login")
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/users/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonLoginRequest))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andReturn();
 
+        String response = result.getResponse().getContentAsString();
+        Map<String, Object> responseMap = objectMapper.readValue(response, Map.class);
+        String redirectUrl = (String) responseMap.get("redirect_url");
+        Assertions.assertEquals("/", redirectUrl);
     }
 
     @Test
