@@ -12,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import com.westudy.study.service.StudyService;
+
 @Slf4j
 @Controller
 @RequestMapping("/page/user")
@@ -19,9 +21,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class UserPageController {
 
     private final UserService userService;
+    private final StudyService studyService;
 
-    public UserPageController(UserService userService) {
+    public UserPageController(UserService userService, StudyService studyService) {
         this.userService = userService;
+        this.studyService = studyService;
     }
 
     @GetMapping("/login")
@@ -45,7 +49,11 @@ public class UserPageController {
                 return "/layout/user/useredit";
             case "data":
                 log.info("정보 페이지 진입");
-                model.addAttribute("user", userService.getUserInfo(SecurityUtil.getCurrentUserId()));
+                long userId = SecurityUtil.getCurrentUserId();
+                model.addAttribute("user", userService.getUserInfo(userId));
+                model.addAttribute("participatingStudies", studyService.getParticipatingStudies(userId));
+                model.addAttribute("openedStudies", studyService.getOpenedStudies(userId));
+                model.addAttribute("bookmarkedStudies", studyService.getBookmarkedStudies(userId));
                 return "/layout/user/userpage";
             default:
                 throw new BaseException(PageErrorCode.PAGE_MISSING);

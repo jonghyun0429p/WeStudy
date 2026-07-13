@@ -94,4 +94,51 @@
         WHERE id = #{id}
         FOR UPDATE
     </select>
+
+    <select id="findParticipatingStudies" resultType="com.westudy.study.dto.MyPageStudyDTO">
+        SELECT 
+            s.id, 
+            s.post_id AS postId, 
+            s.user_id AS userId, 
+            s.title, 
+            s.location, 
+            s.max_member AS maxMember, 
+            s.state,
+            (SELECT COUNT(*) FROM study_participant sp WHERE sp.study_id = s.id AND sp.status = 'APPROVED') AS currentMemberCount
+        FROM study s
+        JOIN study_participant sp ON s.id = sp.study_id
+        WHERE sp.user_id = #{userId} AND sp.status = 'APPROVED' AND s.delete_at IS NULL
+        ORDER BY s.created_at DESC
+    </select>
+
+    <select id="findOpenedStudies" resultType="com.westudy.study.dto.MyPageStudyDTO">
+        SELECT 
+            s.id, 
+            s.post_id AS postId, 
+            s.user_id AS userId, 
+            s.title, 
+            s.location, 
+            s.max_member AS maxMember, 
+            s.state,
+            (SELECT COUNT(*) FROM study_participant sp WHERE sp.study_id = s.id AND sp.status = 'APPROVED') AS currentMemberCount
+        FROM study s
+        WHERE s.user_id = #{userId} AND s.delete_at IS NULL
+        ORDER BY s.created_at DESC
+    </select>
+
+    <select id="findBookmarkedStudies" resultType="com.westudy.study.dto.MyPageStudyDTO">
+        SELECT 
+            s.id, 
+            s.post_id AS postId, 
+            s.user_id AS userId, 
+            s.title, 
+            s.location, 
+            s.max_member AS maxMember, 
+            s.state,
+            (SELECT COUNT(*) FROM study_participant sp WHERE sp.study_id = s.id AND sp.status = 'APPROVED') AS currentMemberCount
+        FROM study s
+        JOIN bookmark b ON s.post_id = b.post_id
+        WHERE b.user_id = #{userId} AND s.delete_at IS NULL
+        ORDER BY s.created_at DESC
+    </select>
 </mapper>

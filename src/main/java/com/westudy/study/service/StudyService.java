@@ -268,4 +268,16 @@ public class StudyService {
         isWriter(studyId);
         studyMapper.deleteStudy(studyId);
     }
+
+    public List<MyPageStudyDTO> getParticipatingStudies(long userId) {
+        return studyMapper.findParticipatingStudies(userId);
+    }
+
+    public List<MyPageStudyDTO> getOpenedStudies(long userId) {
+        return studyMapper.findOpenedStudies(userId);
+    }
+
+    public List<MyPageStudyDTO> getBookmarkedStudies(long userId) {
+        return studyMapper.findBookmarkedStudies(userId);
+    }
 }

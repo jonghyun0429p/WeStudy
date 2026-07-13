@@ -1,5 +1,6 @@
 package com.westudy.study.mapper;
 
+import com.westudy.study.dto.MyPageStudyDTO;
 import com.westudy.study.dto.StudyResponseDTO;
 import com.westudy.study.dto.StudyUpdateDTO;
 import com.westudy.study.entity.Study;
@@ -21,6 +22,10 @@ public interface StudyMapper {
     void updateStudy(StudyUpdateDTO studyUpdateDTO);
     void updateStudyState(@Param("state") StudyStates studyStates, @Param("id") long id);
     void deleteStudy(long id);
+
+    List<MyPageStudyDTO> findParticipatingStudies(long userId);
+    List<MyPageStudyDTO> findOpenedStudies(long userId);
+    List<MyPageStudyDTO> findBookmarkedStudies(long userId);
 
     long findUserIdByStudyId(long id);
     List<Long> findParticipantIds(long studyId);
