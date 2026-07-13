@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.westudy.bookmark.mapper.BookmarkMapper">
+
+    <select id="isBookmarked" resultType="int">
+        SELECT COUNT(*)
+        FROM bookmark
+        WHERE post_id = #{postId} AND user_id = #{userId}
+    </select>
+
+    <insert id="insertBookmark">
+        INSERT INTO bookmark (post_id, user_id)
+        VALUES (#{postId}, #{userId})
+    </insert>
+
+    <delete id="deleteBookmark">
+        DELETE FROM bookmark
+        WHERE post_id = #{postId} AND user_id = #{userId}
+    </delete>
+
+</mapper>

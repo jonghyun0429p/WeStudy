@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.westudy.bookmark.service.BookmarkService;
+import com.westudy.security.util.SecurityUtil;
 import java.util.Objects;
 
 @Slf4j
@@ -26,10 +28,14 @@ public class PostPageController {
 
     private final PostSevice postSevice;
     private final com.westudy.comment.service.CommentService commentService;
+    private final BookmarkService bookmarkService;
 
-    public PostPageController(PostSevice postSevice, com.westudy.comment.service.CommentService commentService) {
+    public PostPageController(PostSevice postSevice, 
+                              com.westudy.comment.service.CommentService commentService,
+                              BookmarkService bookmarkService) {
         this.postSevice = postSevice;
         this.commentService = commentService;
+        this.bookmarkService = bookmarkService;
     }
 
     @GetMapping({"/",""})
@@ -83,6 +89,14 @@ public class PostPageController {
         model.addAttribute("page", postSevice.getPostDetailResponse(id));
         model.addAttribute("categories", PostCategory.values());
         model.addAttribute("comments", commentService.getCommentsByPostId(id));
+
+        Long userId = SecurityUtil.resolveCurrentUserIdSafely();
+        boolean isBookmarked = false;
+        if (userId != null) {
+            isBookmarked = bookmarkService.isBookmarked(id, userId);
+        }
+        model.addAttribute("isBookmarked", isBookmarked);
+
         return "/layout/post/detail";
     }
 
