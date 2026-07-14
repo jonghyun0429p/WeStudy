@@ -15,7 +15,7 @@ public interface LikeMapper {
     void minusLikeCommentCount(long commentId);
     void minusLikePostCount(long postId);
     boolean isPostLiked(long postId, long userId);
-    boolean isCommentLiked(long commetnId, long userId);
-    int findPostLikeCount(long postId);
-    int findCommentLikeCount(long comment);
+    boolean isCommentLiked(long commentId, long userId);
+    Integer findPostLikeCount(long postId);
+    Integer findCommentLikeCount(long comment);
 }

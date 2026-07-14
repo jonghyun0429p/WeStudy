@@ -67,7 +67,8 @@ public class LikeService {
 
     //find
     public int getPostLikeCount(long postId){
-        return likeMapper.findPostLikeCount(postId);
+        Integer count = likeMapper.findPostLikeCount(postId);
+        return count == null ? 0 : count;
     }
 
     public boolean checkPostLike(long postId){
@@ -79,7 +80,8 @@ public class LikeService {
     }
 
     public int getCommentCount(long commentId){
-        return likeMapper.findCommentLikeCount(commentId);
+        Integer count = likeMapper.findCommentLikeCount(commentId);
+        return count == null ? 0 : count;
     }
 
     //delete
