@@ -9,7 +9,7 @@ public interface LikeMapper {
     void addLikeCommentCount(long commentId);
     void addLikePostCount(long postId);
     void deleteLikeComment(long commentId, long userId);
-    void deleteLikePost(long commentId, long userId);
+    void deleteLikePost(long postId, long userId);
     void ensurePostLikeCount(long postId);
     void ensureCommentLikeCount(long commentId);
     void minusLikeCommentCount(long commentId);
