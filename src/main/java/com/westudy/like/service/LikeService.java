@@ -62,7 +62,7 @@ public class LikeService {
     public void insertCommentLike(long commenId){
         likeMapper.ensureCommentLikeCount(commenId);
         likeMapper.insertLikeComment(commenId, SecurityUtil.getCurrentUserId());
-        likeMapper.addLikePostCount(commenId);
+        likeMapper.addLikeCommentCount(commenId);
     }
 
     //find
