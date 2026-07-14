@@ -189,6 +189,16 @@
                         <span id="bookmark-text">북마크</span>
                     </button>
 
+                    <!-- 좋아요: 초기 상태는 서버에서 isLiked, likeCount 내려주면 반영 -->
+                    <button id="btn-like" type="button"
+                        th:attr="data-liked=${isLiked != null ? isLiked : false}"
+                        class="flex min-w-[120px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-6 bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary text-base font-bold gap-2 border border-border-light dark:border-border-dark transition-all">
+                        <span id="like-icon" class="material-symbols-outlined">thumb_up</span>
+                        <span id="like-text">좋아요</span>
+                        <span id="like-count" class="bg-primary/20 text-primary dark:bg-primary/30 px-2 py-0.5 rounded-full text-xs font-bold"
+                            th:text="${likeCount != null ? likeCount : 0}">0</span>
+                    </button>
+
                     <button id="btn-share" type="button"
                         class="flex min-w-[120px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-6 bg-surface-light dark:bg-surface-dark text-text-light-primary dark:text-text-dark-primary text-base font-bold gap-2 border border-border-light dark:border-border-dark">
                         <span class="material-symbols-outlined">share</span>
@@ -242,12 +252,23 @@
                                     </div>
                                 </div>
 
-                                <button th:if="${c.isWriter}" type="button"
-                                    class="flex items-center gap-1 text-sm px-3 h-9 rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark"
-                                    th:attr="data-comment-id=${c.commentId}" onclick="deleteComment(this)">
-                                    <span class="material-symbols-outlined" style="font-size:18px;">delete</span>
-                                    삭제
-                                </button>
+                                <div class="flex items-center gap-2">
+                                    <!-- 댓글 좋아요 버튼 -->
+                                    <button type="button"
+                                        th:attr="data-comment-id=${c.commentId}, data-liked=${c.isLiked}"
+                                        class="btn-comment-like flex items-center gap-1 text-xs px-2.5 h-9 rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark hover:bg-primary/10 transition-colors">
+                                        <span class="comment-like-icon material-symbols-outlined text-[16px]">thumb_up</span>
+                                        <span class="comment-like-count text-xs" th:text="${c.likeCount}">0</span>
+                                    </button>
+
+                                    <!-- 댓글 삭제 버튼 -->
+                                    <button th:if="${c.isWriter}" type="button"
+                                        class="flex items-center gap-1 text-sm px-3 h-9 rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark"
+                                        th:attr="data-comment-id=${c.commentId}" onclick="deleteComment(this)">
+                                        <span class="material-symbols-outlined" style="font-size:18px;">delete</span>
+                                        삭제
+                                    </button>
+                                </div>
                             </div>
 
                             <p class="text-text-light-primary dark:text-text-dark-primary text-sm leading-relaxed whitespace-pre-wrap"
@@ -428,13 +449,21 @@
                 syncBookmarkUI(!current);
 
                 try {
-                    // ✅ 너 백엔드에 맞게 엔드포인트만 바꾸면 됨
                     const res = await fetch('/api/bookmarks/toggle', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         credentials: 'include',
                         body: JSON.stringify({ postId: Number(postId) })
                     });
+
+                    if (res.status === 401) {
+                        syncBookmarkUI(current);
+                        toast('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+                        setTimeout(() => {
+                            window.location.href = '/page/user/login';
+                        }, 1500);
+                        return;
+                    }
 
                     if (!res.ok) throw new Error('toggle failed');
                     const data = await res.json(); // {bookmarked: true/false} 기대
@@ -446,6 +475,143 @@
                     syncBookmarkUI(current);
                     toast('북마크 처리 중 오류가 발생했습니다.');
                 }
+            });
+        })();
+
+        // ===== 게시글 좋아요 토글 =====
+        function syncLikeUI(liked, count) {
+            const btn = document.getElementById('btn-like');
+            const icon = document.getElementById('like-icon');
+            const text = document.getElementById('like-text');
+            const countEl = document.getElementById('like-count');
+            if (!btn || !icon || !text || !countEl) return;
+
+            btn.dataset.liked = String(liked);
+            countEl.textContent = String(count);
+
+            if (liked) {
+                btn.classList.remove('bg-surface-light', 'dark:bg-surface-dark', 'text-text-light-primary', 'dark:text-text-dark-primary');
+                btn.classList.add('bg-primary', 'text-white');
+                text.textContent = '좋아요됨';
+            } else {
+                btn.classList.remove('bg-primary', 'text-white');
+                btn.classList.add('bg-surface-light', 'dark:bg-surface-dark', 'text-text-light-primary', 'dark:text-text-dark-primary');
+                text.textContent = '좋아요';
+            }
+        }
+
+        (function initLike() {
+            const btn = document.getElementById('btn-like');
+            const countEl = document.getElementById('like-count');
+            if (!btn || !postId || !countEl) return;
+
+            const initialLiked = (btn.dataset.liked === 'true');
+            const initialCount = Number(countEl.textContent) || 0;
+            syncLikeUI(initialLiked, initialCount);
+
+            btn.addEventListener('click', async () => {
+                const currentLiked = (btn.dataset.liked === 'true');
+                const currentCount = Number(countEl.textContent) || 0;
+                
+                // 낙관적 UI 업데이트
+                const nextLiked = !currentLiked;
+                const nextCount = nextLiked ? (currentCount + 1) : Math.max(0, currentCount - 1);
+                syncLikeUI(nextLiked, nextCount);
+
+                try {
+                    const endpoint = nextLiked ? '/api/like/post' : '/api/like/notLikePost';
+                    const res = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(Number(postId))
+                    });
+
+                    if (res.status === 401) {
+                        syncLikeUI(currentLiked, currentCount);
+                        toast('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+                        setTimeout(() => {
+                            window.location.href = '/page/user/login';
+                        }, 1500);
+                        return;
+                    }
+
+                    if (!res.ok) throw new Error('Like toggle failed');
+                } catch (e) {
+                    syncLikeUI(currentLiked, currentCount);
+                    toast('좋아요 처리 중 오류가 발생했습니다.');
+                }
+            });
+        })();
+
+        // ===== 댓글 좋아요 토글 =====
+        function syncCommentLikeUI(btn, liked, count) {
+            btn.dataset.liked = String(liked);
+            const countEl = btn.querySelector('.comment-like-count');
+            if (countEl) countEl.textContent = String(count);
+
+            if (liked) {
+                btn.classList.remove('bg-background-light', 'dark:bg-background-dark', 'text-text-light-secondary', 'dark:text-text-dark-secondary');
+                btn.classList.add('bg-primary/20', 'text-primary', 'border-primary/30');
+            } else {
+                btn.classList.remove('bg-primary/20', 'text-primary', 'border-primary/30');
+                btn.classList.add('bg-background-light', 'dark:bg-background-dark', 'text-text-light-secondary', 'dark:text-text-dark-secondary');
+            }
+        }
+
+        (function initCommentLikes() {
+            const commentList = document.getElementById('comment-list');
+            if (!commentList) return;
+
+            // 이벤트 위임
+            commentList.addEventListener('click', async (e) => {
+                const btn = e.target.closest('.btn-comment-like');
+                if (!btn) return;
+
+                const commentId = btn.dataset.commentId;
+                if (!commentId) return;
+
+                const currentLiked = (btn.dataset.liked === 'true');
+                const countEl = btn.querySelector('.comment-like-count');
+                const currentCount = Number(countEl ? countEl.textContent : 0) || 0;
+
+                // 낙관적 업데이트
+                const nextLiked = !currentLiked;
+                const nextCount = nextLiked ? (currentCount + 1) : Math.max(0, currentCount - 1);
+                syncCommentLikeUI(btn, nextLiked, nextCount);
+
+                try {
+                    const endpoint = nextLiked ? '/api/like/comment' : '/api/like/notLikeComment';
+                    const res = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(Number(commentId))
+                    });
+
+                    if (res.status === 401) {
+                        syncCommentLikeUI(btn, currentLiked, currentCount);
+                        toast('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+                        setTimeout(() => {
+                            window.location.href = '/page/user/login';
+                        }, 1500);
+                        return;
+                    }
+
+                    if (!res.ok) throw new Error('Comment Like toggle failed');
+                } catch (err) {
+                    syncCommentLikeUI(btn, currentLiked, currentCount);
+                    toast('댓글 좋아요 처리 중 오류가 발생했습니다.');
+                }
+            });
+
+            // 초기 렌더링된 댓글들의 UI 동기화
+            const buttons = commentList.querySelectorAll('.btn-comment-like');
+            buttons.forEach(btn => {
+                const liked = (btn.dataset.liked === 'true');
+                const countEl = btn.querySelector('.comment-like-count');
+                const count = Number(countEl ? countEl.textContent : 0) || 0;
+                syncCommentLikeUI(btn, liked, count);
             });
         })();
 
