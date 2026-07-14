@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.westudy.bookmark.service.BookmarkService;
+import com.westudy.like.service.LikeService;
 import com.westudy.security.util.SecurityUtil;
 import java.util.Objects;
 
@@ -29,13 +30,16 @@ public class PostPageController {
     private final PostSevice postSevice;
     private final com.westudy.comment.service.CommentService commentService;
     private final BookmarkService bookmarkService;
+    private final LikeService likeService;
 
     public PostPageController(PostSevice postSevice, 
                               com.westudy.comment.service.CommentService commentService,
-                              BookmarkService bookmarkService) {
+                              BookmarkService bookmarkService,
+                              LikeService likeService) {
         this.postSevice = postSevice;
         this.commentService = commentService;
         this.bookmarkService = bookmarkService;
+        this.likeService = likeService;
     }
 
     @GetMapping({"/",""})
@@ -92,10 +96,14 @@ public class PostPageController {
 
         Long userId = SecurityUtil.resolveCurrentUserIdSafely();
         boolean isBookmarked = false;
+        boolean isLiked = false;
         if (userId != null) {
             isBookmarked = bookmarkService.isBookmarked(id, userId);
+            isLiked = likeService.checkPostLike(id);
         }
         model.addAttribute("isBookmarked", isBookmarked);
+        model.addAttribute("isLiked", isLiked);
+        model.addAttribute("likeCount", likeService.getPostLikeCount(id));
 
         return "/layout/post/detail";
     }

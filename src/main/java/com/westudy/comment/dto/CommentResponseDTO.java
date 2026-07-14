@@ -18,4 +18,6 @@ public class CommentResponseDTO {
     private String content;
     private LocalDateTime createdAt;
     private boolean isWriter;
+    private int likeCount;
+    private boolean isLiked;
 }

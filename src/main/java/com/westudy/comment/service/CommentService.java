@@ -8,6 +8,7 @@ import com.westudy.comment.enums.CommentErrorCode;
 import com.westudy.comment.mapper.CommentMapper;
 import com.westudy.global.exception.BaseException;
 import com.westudy.security.util.SecurityUtil;
+import com.westudy.like.service.LikeService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +17,11 @@ import java.util.List;
 public class CommentService {
 
     private final CommentMapper commentMapper;
+    private final LikeService likeService;
 
-    public CommentService(CommentMapper commentMapper) {
+    public CommentService(CommentMapper commentMapper, LikeService likeService) {
         this.commentMapper = commentMapper;
+        this.likeService = likeService;
     }
 
     public void isWriter(long commentId){
@@ -45,6 +48,12 @@ public class CommentService {
         List<CommentResponseDTO> comments = commentMapper.findCommentsByPostId(postId);
         for (CommentResponseDTO comment : comments) {
             comment.setWriter(currentUserId != null && currentUserId.equals(comment.getUserId()));
+            comment.setLikeCount(likeService.getCommentCount(comment.getCommentId()));
+            if (currentUserId != null) {
+                comment.setLiked(likeService.checkCommentLike(comment.getCommentId()));
+            } else {
+                comment.setLiked(false);
+            }
         }
         return comments;
     }
