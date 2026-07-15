@@ -115,7 +115,7 @@ public class PostPageController {
         model.addAttribute("likeCount", likeService.getPostLikeCount(id));
 
         // 스터디 정보 연동
-        if (pageResponse != null && pageResponse.getStudyId() != null) {
+        if (pageResponse != null && pageResponse.getStudyId() != null && pageResponse.getStudyId() > 0) {
             StudyResponseDTO study = studyService.findByStudyId(pageResponse.getStudyId());
             if (study != null) {
                 model.addAttribute("study", study);

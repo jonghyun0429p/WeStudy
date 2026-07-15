@@ -35,7 +35,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -279,5 +281,97 @@ public class StudyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(String.valueOf(dynamicStudyId)))
                 .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    @DisplayName("스터디 상세 조회 시 모델 바인딩 및 가입 신청 상태 전이 검증")
+    void testStudyDetailModelBindingAndStatusTransitions() throws Exception {
+        // [1] 스터디 및 연결 게시글 DB 직접 등록
+        // 1-1. 게시글 생성
+        jdbcTemplate.update(
+            "INSERT INTO post (user_id, views, category, title, summary) VALUES (?, 0, 'STUDY', '상세 모델 바인딩 테스트 글', 'Summary')",
+            hostUserId
+        );
+        long testPostId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        jdbcTemplate.update("INSERT INTO post_content (post_id, content) VALUES (?, '본문 내용')", testPostId);
+
+        // 1-2. 스터디 생성
+        jdbcTemplate.update(
+            "INSERT INTO study (post_id, user_id, title, location, max_member, state, created_at) VALUES (?, ?, '상세 모델 바인딩 테스트 글', '서울', 3, 'RECRUITING', NOW())",
+            testPostId, hostUserId
+        );
+        long testStudyId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        jdbcTemplate.update("UPDATE post SET study_id = ? WHERE id = ?", testStudyId, testPostId);
+
+        // [2] 방장 계정으로 상세 페이지 조회 검증
+        org.springframework.test.web.servlet.MvcResult hostResult = mockMvc.perform(get("/page/post/detail")
+                        .cookie(authCookies)
+                        .param("id", String.valueOf(testPostId)))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("study"))
+                .andExpect(model().attributeExists("isHost"))
+                .andExpect(model().attributeExists("currentMemberCount"))
+                .andReturn();
+
+        Boolean isHost = (Boolean) hostResult.getModelAndView().getModel().get("isHost");
+        assertTrue(isHost, "방장이 본인의 스터디 상세 페이지를 조회하면 isHost가 true여야 합니다.");
+        
+        Integer currentMemberCount = (Integer) hostResult.getModelAndView().getModel().get("currentMemberCount");
+        assertEquals(0, currentMemberCount, "초기 승인된 참가자 수는 0명이어야 합니다.");
+
+        // [3] 대기자 1 계정으로 로그인 후 상세 페이지 조회 검증
+        UserLoginDTO waiterLogin = new UserLoginDTO();
+        waiterLogin.setEmail("waiter1@naver.com");
+        waiterLogin.setPassword("testpassword");
+
+        Cookie[] waiterCookies = mockMvc.perform(post("/api/users/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(waiterLogin)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getCookies();
+
+        org.springframework.test.web.servlet.MvcResult waiter1ResultBefore = mockMvc.perform(get("/page/post/detail")
+                        .cookie(waiterCookies)
+                        .param("id", String.valueOf(testPostId)))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("isHost"))
+                .andReturn();
+
+        Boolean isHostForWaiter = (Boolean) waiter1ResultBefore.getModelAndView().getModel().get("isHost");
+        assertFalse(isHostForWaiter, "일반 회원이 조회할 경우 isHost는 false여야 합니다.");
+        assertNull(waiter1ResultBefore.getModelAndView().getModel().get("participantStatus"), "신청 전에는 상태가 null이어야 합니다.");
+
+        // [4] 대기자 1의 참가 신청 API 실행
+        mockMvc.perform(post("/api/study/application")
+                        .cookie(waiterCookies)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testStudyId)))
+                .andExpect(status().isOk());
+
+        // 대기자 1 시점에서 상세 페이지 재조회 시 상태 WAITING 검증
+        org.springframework.test.web.servlet.MvcResult waiter1ResultAfter = mockMvc.perform(get("/page/post/detail")
+                        .cookie(waiterCookies)
+                        .param("id", String.valueOf(testPostId)))
+                .andExpect(status().isOk())
+                .andReturn();
+        assertEquals("WAITING", waiter1ResultAfter.getModelAndView().getModel().get("participantStatus"));
+
+        // [5] 방장 시점에서 상세 페이지 재조회 시 신청자 목록 및 대기 상태 검증
+        org.springframework.test.web.servlet.MvcResult hostResultAfterApp = mockMvc.perform(get("/page/post/detail")
+                        .cookie(authCookies)
+                        .param("id", String.valueOf(testPostId)))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("applicants"))
+                .andReturn();
+
+        List<?> applicants = (List<?>) hostResultAfterApp.getModelAndView().getModel().get("applicants");
+        assertNotNull(applicants);
+        assertEquals(1, applicants.size(), "신청자가 1명 등록되어 있어야 합니다.");
+        
+        com.westudy.study.dto.StudyParticipanResponseDTO applicantDto = (com.westudy.study.dto.StudyParticipanResponseDTO) applicants.get(0);
+        assertEquals(waiterUserId, applicantDto.getUserId());
+        assertEquals("WAITING", applicantDto.getStatus().name());
     }
 }
