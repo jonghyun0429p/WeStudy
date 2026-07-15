@@ -17,7 +17,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.westudy.bookmark.service.BookmarkService;
 import com.westudy.like.service.LikeService;
 import com.westudy.security.util.SecurityUtil;
+import com.westudy.study.service.StudyService;
+import com.westudy.study.dto.StudyResponseDTO;
+import com.westudy.study.dto.StudyParticipanResponseDTO;
+import com.westudy.study.entity.StudyParticipant;
 import java.util.Objects;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -31,15 +36,18 @@ public class PostPageController {
     private final com.westudy.comment.service.CommentService commentService;
     private final BookmarkService bookmarkService;
     private final LikeService likeService;
+    private final StudyService studyService;
 
     public PostPageController(PostSevice postSevice, 
                               com.westudy.comment.service.CommentService commentService,
                               BookmarkService bookmarkService,
-                              LikeService likeService) {
+                              LikeService likeService,
+                              StudyService studyService) {
         this.postSevice = postSevice;
         this.commentService = commentService;
         this.bookmarkService = bookmarkService;
         this.likeService = likeService;
+        this.studyService = studyService;
     }
 
     @GetMapping({"/",""})
@@ -90,7 +98,8 @@ public class PostPageController {
             Model model){
 
         model.addAttribute("now", java.time.LocalDateTime.now());
-        model.addAttribute("page", postSevice.getPostDetailResponse(id));
+        PostDetailResponseDTO pageResponse = postSevice.getPostDetailResponse(id);
+        model.addAttribute("page", pageResponse);
         model.addAttribute("categories", PostCategory.values());
         model.addAttribute("comments", commentService.getCommentsByPostId(id));
 
@@ -104,6 +113,34 @@ public class PostPageController {
         model.addAttribute("isBookmarked", isBookmarked);
         model.addAttribute("isLiked", isLiked);
         model.addAttribute("likeCount", likeService.getPostLikeCount(id));
+
+        // 스터디 정보 연동
+        if (pageResponse != null && pageResponse.getStudyId() != null) {
+            StudyResponseDTO study = studyService.findByStudyId(pageResponse.getStudyId());
+            if (study != null) {
+                model.addAttribute("study", study);
+                int approvedMemberCount = studyService.getStudyParticipantCount(study.getId());
+                model.addAttribute("currentMemberCount", approvedMemberCount);
+
+                boolean isHost = false;
+                String participantStatus = null;
+                List<StudyParticipanResponseDTO> applicants = null;
+
+                if (userId != null) {
+                    isHost = (userId == study.getUserId());
+                    StudyParticipant participant = studyService.getParticipant(userId, study.getId());
+                    if (participant != null) {
+                        participantStatus = participant.getStatus().name();
+                    }
+                    if (isHost) {
+                        applicants = studyService.findParticipantByStudyId(study.getId());
+                    }
+                }
+                model.addAttribute("isHost", isHost);
+                model.addAttribute("participantStatus", participantStatus);
+                model.addAttribute("applicants", applicants);
+            }
+        }
 
         return "/layout/post/detail";
     }

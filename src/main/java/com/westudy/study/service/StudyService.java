@@ -236,9 +236,11 @@ public class StudyService {
     }
 
     public List<StudyParticipanResponseDTO> findParticipantByStudyId(long studyId){
-        return RequireHelper.requireNonEmpty(
-                studyParticipantMapper.findByStudyId(studyId), new BaseException(StudyErrorCode.STUDY_EMPTY)
-        );
+        return studyParticipantMapper.findByStudyId(studyId);
+    }
+
+    public StudyParticipant getParticipant(long userId, long studyId) {
+        return studyParticipantMapper.findParticipant(userId, studyId);
     }
 
     public int getStudyParticipantCount(long studyId){
