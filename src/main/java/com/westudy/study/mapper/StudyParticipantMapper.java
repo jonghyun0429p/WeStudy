@@ -4,6 +4,7 @@ import com.westudy.study.dto.StudyParticipanResponseDTO;
 import com.westudy.study.dto.StudyParticipantUpdateDTO;
 import com.westudy.study.entity.StudyParticipant;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public interface StudyParticipantMapper {
     StudyParticipant findByUserId(long userId);
     List<StudyParticipanResponseDTO> findByStudyId(long studyId);
     int findByUserIdAndStudyId(long userId, long studyId);
+    StudyParticipant findParticipant(@Param("userId") long userId, @Param("studyId") long studyId);
     int countStudyMember(long studyId);
     void updateStudyParticipant(StudyParticipantUpdateDTO studyParticipantUpdateDTO);
     void deleteByUserId(long id);

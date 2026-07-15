@@ -1,5 +1,6 @@
 package com.westudy.study.dto;
 
+import com.westudy.study.enums.StudyParticipantStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,4 +14,5 @@ public class StudyParticipanResponseDTO {
     private long userId;
     private String name;
     private LocalDateTime joinedAt;
+    private StudyParticipantStatus status;
 }
