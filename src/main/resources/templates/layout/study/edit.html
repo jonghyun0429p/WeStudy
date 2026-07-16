@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var study = [[${page}]];
+        if (study && study.postId) {
+            window.location.href = '/page/post/detail?id=' + study.postId;
+        } else {
+            window.location.href = '/page/post/';
+        }
+        /*]]>*/
+    </script>
+</head>
+<body></body>
+</html>

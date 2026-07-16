@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+    <th:block th:replace="~{layout/layout :: head}"></th:block>
+</head>
+
+<body>
+
+    <div th:replace="~{layout/layout :: layout(~{::content})}">
+        <div th:fragment="content" class="px-4 md:px-10 lg:px-20 xl:px-40">
+
+            <!-- 헤더 영역 -->
+            <div class="flex flex-wrap justify-between gap-4 p-2 mb-2 mt-6">
+                <div class="flex flex-col gap-2">
+                    <h2 class="text-3xl md:text-4xl font-black tracking-tight text-text-light-primary dark:text-text-dark-primary flex items-center gap-2">
+                        <span>🔥</span> 스터디 현황
+                    </h2>
+                    <p class="text-body-muted text-sm md:text-base">현재 모집 중이거나 진행 중인 스터디 그룹을 한눈에 확인해보세요.</p>
+                </div>
+            </div>
+
+            <!-- 검색창 -->
+            <form th:action="@{/page/study/search}" method="get" class="flex flex-col md:flex-row gap-4 p-4">
+                <div class="flex-grow">
+                    <label class="flex flex-col w-full h-12">
+                        <div class="flex h-full items-stretch rounded-full bg-border-light dark:bg-border-dark overflow-hidden">
+                            <div class="flex items-center justify-center px-4 text-muted-light dark:text-muted-dark">
+                                <span class="material-symbols-outlined">search</span>
+                            </div>
+                            <input name="keyword" required th:value="${param.keyword}"
+                                class="flex-1 bg-transparent px-4 text-base focus:outline-none text-text-light-primary dark:text-text-dark-primary"
+                                placeholder="스터디 제목 검색" />
+                        </div>
+                    </label>
+                </div>
+            </form>
+
+            <!-- 스터디 목록 카드 그리드 -->
+            <div th:if="${pages != null && !pages.isEmpty()}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
+
+                <div th:each="study : ${pages}"
+                    class="flex flex-col gap-4 rounded-2xl bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark shadow-sm overflow-hidden hover-effect cursor-pointer"
+                    th:onclick="'location.href=\'/page/post/detail?id=' + ${study.postId} + '\''">
+
+                    <!-- 카드 썸네일 영역 (그라데이션 및 상태 표시) -->
+                    <div class="relative w-full aspect-video bg-gradient-to-tr from-primary/30 to-purple-600/30 flex items-center justify-center p-6 text-center">
+                        <div class="absolute inset-0 bg-cover bg-center mix-blend-overlay opacity-30" style="background-image: url('https://picsum.photos/seed/study/600/400');"></div>
+                        <span class="text-lg font-extrabold text-main truncate max-w-full px-2" th:text="${study.title}">스터디 제목</span>
+                        
+                        <!-- 스터디 상태 배지 -->
+                        <div class="absolute top-3 left-3">
+                            <!-- 모집중 (RECRUITING) -->
+                            <span th:if="${study.state.name() == 'RECRUITING'}" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                                <span th:text="${study.state.getState()}">모집중</span>
+                            </span>
+                            <!-- 모집완료 (CLOSED) -->
+                            <span th:if="${study.state.name() == 'CLOSED'}" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                                <span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span>
+                                <span th:text="${study.state.getState()}">모집 완료</span>
+                            </span>
+                            <!-- 진행중 (IN_PROGRESS) -->
+                            <span th:if="${study.state.name() == 'IN_PROGRESS'}" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                                <span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
+                                <span th:text="${study.state.getState()}">진행중</span>
+                            </span>
+                            <!-- 종료 (FINISHED) -->
+                            <span th:if="${study.state.name() == 'FINISHED'}" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-500/10 text-gray-600 dark:text-gray-400 border border-gray-500/20">
+                                <span class="h-1.5 w-1.5 rounded-full bg-gray-500"></span>
+                                <span th:text="${study.state.getState()}">종료</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 카드 콘텐츠 영역 -->
+                    <div class="px-5 pb-5 flex flex-col gap-4">
+                        <div class="flex flex-col gap-2">
+                            <h3 class="text-base font-bold text-text-light-primary dark:text-text-dark-primary truncate" th:text="${study.title}">
+                                스터디 제목
+                            </h3>
+                            
+                            <div class="flex items-center gap-1.5 text-xs text-text-light-secondary dark:text-text-dark-secondary">
+                                <span class="material-symbols-outlined !text-base text-primary">location_on</span>
+                                <span class="truncate" th:text="${study.location != null && !study.location.isEmpty() ? study.location : '온라인/미지정'}">위치</span>
+                            </div>
+                        </div>
+
+                        <!-- 모집 현황 진척도 및 인원 정보 -->
+                        <div class="flex flex-col gap-1.5 mt-1">
+                            <div class="flex justify-between items-center text-xs text-text-light-secondary dark:text-text-dark-secondary">
+                                <span>참가 인원 설정</span>
+                                <span class="font-bold text-text-light-primary dark:text-text-dark-primary" th:text="'최대 ' + ${study.maxMember} + '명'">최대 5명</span>
+                            </div>
+                            <div class="w-full h-2 rounded-full bg-border-light dark:bg-border-dark overflow-hidden">
+                                <div class="h-full bg-primary rounded-full transition-all duration-500" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 스터디가 없을 때의 Empty State -->
+            <div th:if="${pages == null || pages.isEmpty()}" class="flex flex-col items-center justify-center p-20 border border-dashed border-border-light dark:border-border-dark rounded-3xl bg-card-light/50 dark:bg-card-dark/30 gap-4 mt-8">
+                <span class="material-symbols-outlined !text-6xl text-text-light-secondary/40">groups</span>
+                <div class="flex flex-col items-center gap-1 text-center">
+                    <h3 class="text-lg font-bold text-text-light-primary dark:text-text-dark-primary">등록된 스터디가 없습니다</h3>
+                    <p class="text-sm text-text-light-secondary">가장 먼저 새로운 스터디를 개설하여 멤버를 모아보세요!</p>
+                </div>
+                <th:block th:if="${nickname != null}">
+                    <a href="/page/post/write" class="mt-2 inline-flex items-center gap-2 px-5 h-11 bg-primary text-white font-bold rounded-xl hover:opacity-90 transition-opacity">
+                        <span class="material-symbols-outlined text-xl">add</span>
+                        새 스터디 만들기
+                    </a>
+                </th:block>
+            </div>
+
+            <!-- 페이지네이션 -->
+            <div th:if="${pageCount > 1}" class="flex justify-center p-4 mt-8">
+                <div class="flex items-center gap-2">
+
+                    <!-- 맨 처음 페이지 버튼 -->
+                    <a th:href="@{${param.keyword != null ? '/page/study/search' : '/page/study'}(keyword=${param.keyword}, page=1)}"
+                        class="flex items-center justify-center h-10 w-10 rounded-full bg-border-light dark:bg-border-dark text-muted-light hover:bg-primary/20 transition"
+                        th:classappend="${currentPage == 1} ? ' opacity-40 pointer-events-none' : ''">
+                        <span class="material-symbols-outlined">first_page</span>
+                    </a>
+
+                    <!-- 이전 페이지 버튼 -->
+                    <a th:href="@{${param.keyword != null ? '/page/study/search' : '/page/study'}(keyword=${param.keyword}, page=${currentPage - 1 > 0 ? currentPage - 1 : 1})}"
+                        class="flex items-center justify-center h-10 w-10 rounded-full bg-border-light dark:bg-border-dark text-muted-light hover:bg-primary/20 transition"
+                        th:classappend="${currentPage == 1} ? ' opacity-40 pointer-events-none' : ''">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </a>
+
+                    <!-- 가운데 페이지 번호들 -->
+                    <div th:each="i : ${#numbers.sequence(1, pageCount)}"
+                        th:if="${i >= currentPage - 2} and ${i <= currentPage + 2}">
+                        <a th:href="@{${param.keyword != null ? '/page/study/search' : '/page/study'}(keyword=${param.keyword}, page=${i})}" th:text="${i}"
+                            class="flex items-center justify-center h-10 w-10 rounded-full text-sm font-medium transition"
+                            th:classappend="${i == currentPage} ?
+                   ' bg-primary text-text-light font-bold'
+                   : ' bg-border-light dark:bg-border-dark text-muted-light hover:bg-primary/20'">
+                        </a>
+                    </div>
+
+                    <!-- 다음 페이지 버튼 -->
+                    <a th:href="@{${param.keyword != null ? '/page/study/search' : '/page/study'}(keyword=${param.keyword}, page=${currentPage + 1 < pageCount ? currentPage + 1 : pageCount})}"
+                        class="flex items-center justify-center h-10 w-10 rounded-full bg-border-light dark:bg-border-dark text-muted-light hover:bg-primary/20 transition"
+                        th:classappend="${currentPage == pageCount} ? ' opacity-40 pointer-events-none' : ''">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </a>
+
+                    <!-- 맨 마지막 페이지 버튼 -->
+                    <a th:href="@{${param.keyword != null ? '/page/study/search' : '/page/study'}(keyword=${param.keyword}, page=${pageCount})}"
+                        class="flex items-center justify-center h-10 w-10 rounded-full bg-border-light dark:bg-border-dark text-muted-light hover:bg-primary/20 transition"
+                        th:classappend="${currentPage == pageCount} ? ' opacity-40 pointer-events-none' : ''">
+                        <span class="material-symbols-outlined">last_page</span>
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- 글 작성 버튼 -->
+            <th:block th:if="${nickname != null}">
+                <a href="/page/post/write"
+                    class="fixed bottom-10 right-8 flex items-center justify-center h-16 w-16 rounded-full bg-primary text-text-light shadow-lg hover:opacity-90 transition">
+                    <span class="material-symbols-outlined !text-3xl">add</span>
+                </a>
+            </th:block>
+
+        </div>
+    </div>
+
+</body>
+
+</html>
