@@ -17,4 +17,5 @@ public class StudyResponseDTO {
     private int maxMember;
     private StudyStates state;
     private LocalDateTime createAt;
+    private int approvedMemberCount;
 }

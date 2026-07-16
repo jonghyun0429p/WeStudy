@@ -27,22 +27,25 @@
     </update>
 
     <select id="findByStudyId" resultType="com.westudy.study.dto.StudyResponseDTO">
-        SELECT id, post_id, user_id, title, location, max_member, state
-        FROM study
-        WHERE id = #{id} AND delete_at IS NULL
+        SELECT s.id, s.post_id, s.user_id, s.title, s.location, s.max_member, s.state,
+               (SELECT COUNT(*) FROM study_participant sp WHERE sp.study_id = s.id AND sp.status = 'APPROVED') AS approved_member_count
+        FROM study s
+        WHERE s.id = #{id} AND s.delete_at IS NULL
     </select>
 
     <select id="findByPostId" resultType="com.westudy.study.dto.StudyResponseDTO">
-        SELECT id, title, location, max_member, state
-        FROM study
-        WHERE post_id = #{id} AND delete_at IS NULL
+        SELECT s.id, s.post_id, s.user_id, s.title, s.location, s.max_member, s.state,
+               (SELECT COUNT(*) FROM study_participant sp WHERE sp.study_id = s.id AND sp.status = 'APPROVED') AS approved_member_count
+        FROM study s
+        WHERE s.post_id = #{id} AND s.delete_at IS NULL
     </select>
 
     <select id="findStudy" resultType="com.westudy.study.dto.StudyResponseDTO">
-        SELECT id, post_id, user_id, title, location, max_member, state
-        FROM study
-        WHERE delete_at IS NULL
-        ORDER BY created_at DESC
+        SELECT s.id, s.post_id, s.user_id, s.title, s.location, s.max_member, s.state,
+               (SELECT COUNT(*) FROM study_participant sp WHERE sp.study_id = s.id AND sp.status = 'APPROVED') AS approved_member_count
+        FROM study s
+        WHERE s.delete_at IS NULL
+        ORDER BY s.created_at DESC
         LIMIT #{size} OFFSET #{offset}
     </select>
     <select id="countStudy" resultType="java.lang.Long">
@@ -52,10 +55,11 @@
     </select>
 
     <select id="findSearchStudy" resultType="com.westudy.study.dto.StudyResponseDTO">
-        SELECT id, post_id, user_id, title, location, max_member, state
-        FROM study
-        WHERE delete_at IS NULL AND title LIKE CONCAT('%', #{keyword}, '%')
-        ORDER BY created_at DESC
+        SELECT s.id, s.post_id, s.user_id, s.title, s.location, s.max_member, s.state,
+               (SELECT COUNT(*) FROM study_participant sp WHERE sp.study_id = s.id AND sp.status = 'APPROVED') AS approved_member_count
+        FROM study s
+        WHERE s.delete_at IS NULL AND s.title LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY s.created_at DESC
         LIMIT #{size} OFFSET #{page}
     </select>
 
