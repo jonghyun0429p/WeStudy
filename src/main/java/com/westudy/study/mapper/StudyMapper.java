@@ -14,7 +14,7 @@ import java.util.List;
 public interface StudyMapper {
     void insertStudy(Study study);
     List<StudyResponseDTO> findStudy(int size, int offset);
-    List<StudyResponseDTO> findSearchStudy(String keyword, int page);
+    List<StudyResponseDTO> findSearchStudy(@Param("keyword") String keyword, @Param("size") int size, @Param("page") int page);
     StudyResponseDTO findByStudyId(long id);
     StudyResponseDTO findByPostId(long id);
     long countStudy();

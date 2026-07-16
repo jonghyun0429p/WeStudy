@@ -221,7 +221,7 @@ public class StudyService {
 
     public List<StudyResponseDTO> findSearchStudy(String keyword, int page) {
         return RequireHelper.requireNonEmpty(
-                studyMapper.findSearchStudy(keyword, page), new BaseException(StudyErrorCode.STUDY_EMPTY)
+                studyMapper.findSearchStudy(keyword, PAGE_SIZE, page), new BaseException(StudyErrorCode.STUDY_EMPTY)
         );
     }
 
