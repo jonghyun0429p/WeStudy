@@ -1,5 +1,7 @@
 package com.westudy.study.controller;
 
+import com.westudy.global.exception.BaseException;
+import com.westudy.study.enums.StudyErrorCode;
 import com.westudy.study.service.StudyService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.stereotype.Controller;
@@ -7,6 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Collections;
 
 @Controller
 @RequestMapping("/page/study")
@@ -24,9 +28,18 @@ public class StudyPageController {
         @RequestParam(value = "page", defaultValue = "1")int page,
         Model model){
 
+        try {
             model.addAttribute("pages", studyService.getStudyList(page));
             model.addAttribute("pageCount", studyService.getStudyCount());
-            model.addAttribute("currentPage", page);
+        } catch (BaseException e) {
+            if (e.getErrorCode() == StudyErrorCode.STUDY_EMPTY) {
+                model.addAttribute("pages", Collections.emptyList());
+                model.addAttribute("pageCount", 0);
+            } else {
+                throw e;
+            }
+        }
+        model.addAttribute("currentPage", page);
 
         return "/layout/study/board";
     }
@@ -38,8 +51,17 @@ public class StudyPageController {
             @RequestParam(value = "page", defaultValue = "1") int page,
             Model model){
 
-        model.addAttribute("pages", studyService.findSearchStudy(keyword, page));
-        model.addAttribute("pageCount", studyService.getSearchedStudyCount(keyword));
+        try {
+            model.addAttribute("pages", studyService.findSearchStudy(keyword, page));
+            model.addAttribute("pageCount", studyService.getSearchedStudyCount(keyword));
+        } catch (BaseException e) {
+            if (e.getErrorCode() == StudyErrorCode.STUDY_EMPTY) {
+                model.addAttribute("pages", Collections.emptyList());
+                model.addAttribute("pageCount", 0);
+            } else {
+                throw e;
+            }
+        }
         model.addAttribute("currentPage", page);
         return "/layout/study/board";
     }
