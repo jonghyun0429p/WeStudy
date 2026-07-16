@@ -93,7 +93,7 @@
                                 <span class="font-bold text-text-light-primary dark:text-text-dark-primary" th:text="${study.approvedMemberCount} + ' / ' + ${study.maxMember} + ' 명'">0 / 5 명</span>
                             </div>
                             <div class="w-full h-2 rounded-full bg-border-light dark:bg-border-dark overflow-hidden">
-                                <div class="h-full bg-primary rounded-full transition-all duration-500" th:style="'width: ' + (${study.maxMember > 0} ? ${(study.approvedMemberCount * 100.0) / study.maxMember} : 0) + '%';"></div>
+                                <div class="h-full bg-primary rounded-full transition-all duration-500" th:style="${'width: ' + (study.maxMember > 0 ? (study.approvedMemberCount * 100.0) / study.maxMember : 0) + '%'}"></div>
                             </div>
                         </div>
                     </div>
