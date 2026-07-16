@@ -39,6 +39,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -373,5 +374,28 @@ public class StudyControllerTest {
         com.westudy.study.dto.StudyParticipanResponseDTO applicantDto = (com.westudy.study.dto.StudyParticipanResponseDTO) applicants.get(0);
         assertEquals(waiterUserId, applicantDto.getUserId());
         assertEquals("WAITING", applicantDto.getStatus().name());
+    }
+
+    @Test
+    @DisplayName("스터디 목록 조회 및 검색 페이지 SSR 연동 검증")
+    void testStudyListPageAndSearchPage() throws Exception {
+        // [1] 스터디 목록 조회 검증
+        mockMvc.perform(get("/page/study")
+                        .param("page", "1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("/layout/study/board"))
+                .andExpect(model().attributeExists("pages"))
+                .andExpect(model().attributeExists("pageCount"))
+                .andExpect(model().attributeExists("currentPage"));
+
+        // [2] 스터디 키워드 검색 조회 검증
+        mockMvc.perform(get("/page/study/search")
+                        .param("keyword", "테스트")
+                        .param("page", "1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("/layout/study/board"))
+                .andExpect(model().attributeExists("pages"))
+                .andExpect(model().attributeExists("pageCount"))
+                .andExpect(model().attributeExists("currentPage"));
     }
 }
