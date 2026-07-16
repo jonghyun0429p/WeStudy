@@ -198,7 +198,7 @@ public class StudyService {
     //read
     public List<StudyResponseDTO> getStudyList(int page){
         return RequireHelper.requireNonEmpty(
-                studyMapper.findStudy(PAGE_SIZE, page), new BaseException(StudyErrorCode.STUDY_EMPTY)
+                studyMapper.findStudy(PAGE_SIZE, PAGE_SIZE * (page - 1)), new BaseException(StudyErrorCode.STUDY_EMPTY)
         );
     }
 
@@ -221,7 +221,7 @@ public class StudyService {
 
     public List<StudyResponseDTO> findSearchStudy(String keyword, int page) {
         return RequireHelper.requireNonEmpty(
-                studyMapper.findSearchStudy(keyword, PAGE_SIZE, page), new BaseException(StudyErrorCode.STUDY_EMPTY)
+                studyMapper.findSearchStudy(keyword, PAGE_SIZE, PAGE_SIZE * (page - 1)), new BaseException(StudyErrorCode.STUDY_EMPTY)
         );
     }
 
