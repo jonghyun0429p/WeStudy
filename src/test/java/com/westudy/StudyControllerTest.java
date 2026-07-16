@@ -379,18 +379,50 @@ public class StudyControllerTest {
     @Test
     @DisplayName("스터디 목록 조회 및 검색 페이지 SSR 연동 검증")
     void testStudyListPageAndSearchPage() throws Exception {
+        // [0] 스터디 및 연결 게시글 DB 직접 등록
+        jdbcTemplate.update(
+            "INSERT INTO post (user_id, views, category, title, summary) VALUES (?, 0, 'STUDY', '목록용 테스트 스터디', 'Summary')",
+            hostUserId
+        );
+        long testPostId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        jdbcTemplate.update("INSERT INTO post_content (post_id, content) VALUES (?, '본문 내용')", testPostId);
+
+        jdbcTemplate.update(
+            "INSERT INTO study (post_id, user_id, title, location, max_member, state, created_at) VALUES (?, ?, '목록용 테스트 스터디', '서울', 3, 'RECRUITING', NOW())",
+            testPostId, hostUserId
+        );
+        long testStudyId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        jdbcTemplate.update("UPDATE post SET study_id = ? WHERE id = ?", testStudyId, testPostId);
+
+        // 참가 신청자 1명 APPROVED 상태 등록
+        jdbcTemplate.update(
+            "INSERT INTO study_participant (study_id, user_id, status, joined_at) VALUES (?, ?, 'APPROVED', NOW())",
+            testStudyId, waiterUserId
+        );
+
         // [1] 스터디 목록 조회 검증
-        mockMvc.perform(get("/page/study")
+        org.springframework.test.web.servlet.MvcResult listResult = mockMvc.perform(get("/page/study")
                         .param("page", "1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("/layout/study/board"))
                 .andExpect(model().attributeExists("pages"))
                 .andExpect(model().attributeExists("pageCount"))
-                .andExpect(model().attributeExists("currentPage"));
+                .andExpect(model().attributeExists("currentPage"))
+                .andReturn();
+
+        List<?> pages = (List<?>) listResult.getModelAndView().getModel().get("pages");
+        assertNotNull(pages);
+        assertFalse(pages.isEmpty());
+        
+        com.westudy.study.dto.StudyResponseDTO firstStudy = (com.westudy.study.dto.StudyResponseDTO) pages.stream()
+                .filter(p -> ((com.westudy.study.dto.StudyResponseDTO) p).getId() == testStudyId)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("등록한 테스트 스터디를 목록에서 찾을 수 없습니다."));
+        assertEquals(1, firstStudy.getApprovedMemberCount(), "서브쿼리 매핑에 따른 승인 멤버 수(approvedMemberCount)는 1이어야 합니다.");
 
         // [2] 스터디 키워드 검색 조회 검증
         mockMvc.perform(get("/page/study/search")
-                        .param("keyword", "테스트")
+                        .param("keyword", "목록용")
                         .param("page", "1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("/layout/study/board"))
