@@ -14,7 +14,8 @@ import com.westudy.study.entity.StudyParticipant;
 import com.westudy.study.enums.StudyStates;
 import com.westudy.study.mapper.StudyMapper;
 import com.westudy.study.mapper.StudyParticipantMapper;
-import lombok.RequiredArgsConstructor;
+import com.westudy.study.event.StudyEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,13 +31,15 @@ public class StudyService {
     private final StudyConverter studyConverter;
     private final StudyParticipantMapper studyParticipantMapper;
     private final AlarmService alarmService;
+    private final ApplicationEventPublisher eventPublisher;
     private final Object lock = new Object();
 
-    public StudyService(StudyMapper studyMapper, StudyConverter studyConverter, StudyParticipantMapper studyParticipantMapper, AlarmService alarmService) {
+    public StudyService(StudyMapper studyMapper, StudyConverter studyConverter, StudyParticipantMapper studyParticipantMapper, AlarmService alarmService, ApplicationEventPublisher eventPublisher) {
         this.studyMapper = studyMapper;
         this.studyConverter = studyConverter;
         this.studyParticipantMapper = studyParticipantMapper;
         this.alarmService = alarmService;
+        this.eventPublisher = eventPublisher;
     }
 
 
@@ -182,13 +185,16 @@ public class StudyService {
         if (studyInsertDTO.getDeadline() == null) {
             studyInsertDTO.setDeadline(java.time.LocalDateTime.now().plusDays(14)); // 미지정 시 14일 뒤로 설정
         }
-        studyMapper.insertStudy(studyConverter.toStudy(studyInsertDTO, userId));
+        com.westudy.study.entity.Study study = studyConverter.toStudy(studyInsertDTO, userId);
+        studyMapper.insertStudy(study);
+        eventPublisher.publishEvent(new StudyEvent(study.getId(), "SAVE"));
     }
 
     public void insertStudyParticipant(long studyId){
         long userId = SecurityUtil.getCurrentUserId();
         if(studyParticipantMapper.findByUserIdAndStudyId(userId, studyId) == 0){
             studyParticipantMapper.insertStudyParticipant(studyConverter.toStudyParticipant(studyId, userId));
+            eventPublisher.publishEvent(new StudyEvent(studyId, "SAVE"));
         }else {
             throw new BaseException(StudyErrorCode.STUDY_ALREADY_APPLICATION);
         }
@@ -258,17 +264,20 @@ public class StudyService {
             }
         }
         studyMapper.updateStudy(studyUpdateDTO);
+        eventPublisher.publishEvent(new StudyEvent(studyUpdateDTO.getId(), "SAVE"));
     }
 
     public void updateStudyParticipant(StudyParticipantUpdateDTO studyParticipantUpdateDTO){
         isParticipant(studyParticipantUpdateDTO.getUserId());
         studyParticipantMapper.updateStudyParticipant(studyParticipantUpdateDTO);
+        eventPublisher.publishEvent(new StudyEvent(studyParticipantUpdateDTO.getStudyId(), "SAVE"));
     }
 
     //delete
     public void deleteStudy(long studyId){
         isWriter(studyId);
         studyMapper.deleteStudy(studyId);
+        eventPublisher.publishEvent(new StudyEvent(studyId, "DELETE"));
     }
 
     public List<MyPageStudyDTO> getParticipatingStudies(long userId) {
