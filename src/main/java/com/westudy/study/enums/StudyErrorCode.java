@@ -8,7 +8,8 @@ public enum StudyErrorCode implements BaseErrorCode {
     STUDY_FULL(HttpServletResponse.SC_BAD_REQUEST, "스터디가 이미 가득 차있습니다."),
     STUDY_NOT_WRITER(HttpServletResponse.SC_BAD_REQUEST, "스터디의 작성자가 아닙니다."),
     STUDY_NOT_PARTICIPANT(HttpServletResponse.SC_UNAUTHORIZED, "신청자가 아닙니다."),
-    STUDY_ALREADY_APPLICATION(HttpServletResponse.SC_BAD_REQUEST, "이미 스터디를 신청했습니다.");
+    STUDY_ALREADY_APPLICATION(HttpServletResponse.SC_BAD_REQUEST, "이미 스터디를 신청했습니다."),
+    STUDY_MEMBER_UNAUTHORIZED(HttpServletResponse.SC_UNAUTHORIZED, "승인된 스터디 멤버가 아닙니다.");
 
     private final int httpStatus;
     private final String message;
