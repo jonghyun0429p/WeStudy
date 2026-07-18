@@ -8,6 +8,9 @@ import com.westudy.chat.entity.ChatMessage;
 import com.westudy.chat.mapper.ChatMapper;
 import com.westudy.global.exception.BaseException;
 import com.westudy.post.enums.PostErrorCode;
+import com.westudy.study.entity.StudyParticipant;
+import com.westudy.study.enums.StudyErrorCode;
+import com.westudy.study.enums.StudyParticipantStatus;
 import com.westudy.study.mapper.StudyMapper;
 import com.westudy.study.mapper.StudyParticipantMapper;
 import com.westudy.security.util.SecurityUtil;
@@ -40,11 +43,11 @@ public class ChatService {
             return;
         }
 
-        // 2. 참여자인지 확인 (study_participant 테이블 조회)
-        int isParticipant = studyParticipantMapper.findByUserIdAndStudyId(userId, studyId);
-        if (isParticipant <= 0) {
-            log.warn("권한이 없는 사용자의 채팅 시도: userId = {}", userId);
-            throw new BaseException(PostErrorCode.POST_NOT_FOUND); // TODO: 적절한 권한 에러 코드로 대체 가능
+        // 2. 참여자인지 확인 및 상태 검증 (study_participant 테이블 조회)
+        StudyParticipant participant = studyParticipantMapper.findParticipant(userId, studyId);
+        if (participant == null || participant.getStatus() != StudyParticipantStatus.APPROVED) {
+            log.warn("권한이 없는 사용자의 채팅 시도: userId = {}, status = {}", userId, participant != null ? participant.getStatus() : "null");
+            throw new BaseException(StudyErrorCode.STUDY_MEMBER_UNAUTHORIZED);
         }
     }
 
