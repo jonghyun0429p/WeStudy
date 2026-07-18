@@ -65,6 +65,9 @@ public class StudyControllerTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private com.westudy.chat.service.ChatService chatService;
+
     private static final Logger log = LoggerFactory.getLogger(StudyControllerTest.class);
 
     private Cookie[] authCookies;
@@ -429,5 +432,62 @@ public class StudyControllerTest {
                 .andExpect(model().attributeExists("pages"))
                 .andExpect(model().attributeExists("pageCount"))
                 .andExpect(model().attributeExists("currentPage"));
+    }
+
+    @Test
+    @DisplayName("스터디 채팅방 참여 권한(방장 및 APPROVED 멤버만 허용) 검증")
+    void testChatRoomAccessControl() throws Exception {
+        // [0] 스터디 및 연결 게시글 DB 직접 등록
+        jdbcTemplate.update(
+            "INSERT INTO post (user_id, views, category, title, summary) VALUES (?, 0, 'STUDY', '채팅 테스트용 스터디', 'Summary')",
+            hostUserId
+        );
+        long testPostId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        jdbcTemplate.update("INSERT INTO post_content (post_id, content) VALUES (?, '본문 내용')", testPostId);
+
+        jdbcTemplate.update(
+            "INSERT INTO study (post_id, user_id, title, location, max_member, state, created_at) VALUES (?, ?, '채팅 테스트용 스터디', '서울', 3, 'RECRUITING', NOW())",
+            testPostId, hostUserId
+        );
+        long testStudyId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        jdbcTemplate.update("UPDATE post SET study_id = ? WHERE id = ?", testStudyId, testPostId);
+
+        // 1. 비참여 유저 (예: 9999L) -> 권한 없음 검증
+        long outsiderUserId = 9999L;
+        com.westudy.global.exception.BaseException outsiderEx = assertThrows(
+            com.westudy.global.exception.BaseException.class,
+            () -> chatService.validateParticipant(testStudyId, outsiderUserId)
+        );
+        assertEquals(com.westudy.study.enums.StudyErrorCode.STUDY_MEMBER_UNAUTHORIZED, outsiderEx.getErrorCode());
+
+        // 2. 대기중(WAITING) 신청 유저 -> 권한 없음 검증
+        jdbcTemplate.update(
+            "INSERT INTO study_participant (study_id, user_id, status, joined_at) VALUES (?, ?, 'WAITING', NOW())",
+            testStudyId, waiterUserId
+        );
+        com.westudy.global.exception.BaseException waitingEx = assertThrows(
+            com.westudy.global.exception.BaseException.class,
+            () -> chatService.validateParticipant(testStudyId, waiterUserId)
+        );
+        assertEquals(com.westudy.study.enums.StudyErrorCode.STUDY_MEMBER_UNAUTHORIZED, waitingEx.getErrorCode());
+
+        // 3. 거절(REJECTED)된 유저 -> 권한 없음 검증
+        studyParticipantMapper.updateStudyParticipant(
+            new com.westudy.study.dto.StudyParticipantUpdateDTO(waiterUserId, testStudyId, com.westudy.study.enums.StudyParticipantStatus.REJECTED)
+        );
+        com.westudy.global.exception.BaseException rejectedEx = assertThrows(
+            com.westudy.global.exception.BaseException.class,
+            () -> chatService.validateParticipant(testStudyId, waiterUserId)
+        );
+        assertEquals(com.westudy.study.enums.StudyErrorCode.STUDY_MEMBER_UNAUTHORIZED, rejectedEx.getErrorCode());
+
+        // 4. 승인(APPROVED)된 유저 -> 정상 통과 (예외 발생 안 함)
+        studyParticipantMapper.updateStudyParticipant(
+            new com.westudy.study.dto.StudyParticipantUpdateDTO(waiterUserId, testStudyId, com.westudy.study.enums.StudyParticipantStatus.APPROVED)
+        );
+        assertDoesNotThrow(() -> chatService.validateParticipant(testStudyId, waiterUserId));
+
+        // 5. 방장(hostUserId) -> 정상 통과 (예외 발생 안 함)
+        assertDoesNotThrow(() -> chatService.validateParticipant(testStudyId, hostUserId));
     }
 }
