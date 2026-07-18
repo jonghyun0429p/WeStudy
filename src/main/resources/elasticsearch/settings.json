@@ -1,0 +1,30 @@
+{
+  "analysis": {
+    "analyzer": {
+      "nori_synonym_analyzer": {
+        "tokenizer": "nori_user_tokenizer",
+        "filter": [
+          "lowercase",
+          "nori_part_of_speech",
+          "study_synonym_filter"
+        ]
+      }
+    },
+    "tokenizer": {
+      "nori_user_tokenizer": {
+        "type": "nori_tokenizer",
+        "decompound_mode": "mixed"
+      }
+    },
+    "filter": {
+      "study_synonym_filter": {
+        "type": "synonym",
+        "synonyms": [
+          "스프링, spring, springboot => spring, 스프링",
+          "리액트, react, reactjs => react, 리액트",
+          "알고리즘, 코딩테스트, 코테 => 코딩테스트"
+        ]
+      }
+    }
+  }
+}
