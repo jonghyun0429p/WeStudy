@@ -17,9 +17,11 @@ import java.util.Collections;
 public class StudyPageController {
 
     private final StudyService studyService;
+    private final com.westudy.study.service.StudySearchService studySearchService;
 
-    public StudyPageController(StudyService studyService) {
+    public StudyPageController(StudyService studyService, com.westudy.study.service.StudySearchService studySearchService) {
         this.studyService = studyService;
+        this.studySearchService = studySearchService;
     }
 
     @GetMapping("")
@@ -51,16 +53,13 @@ public class StudyPageController {
             @RequestParam(value = "page", defaultValue = "1") int page,
             Model model){
 
-        try {
-            model.addAttribute("pages", studyService.findSearchStudy(keyword, page));
-            model.addAttribute("pageCount", studyService.getSearchedStudyCount(keyword));
-        } catch (BaseException e) {
-            if (e.getErrorCode() == StudyErrorCode.STUDY_EMPTY) {
-                model.addAttribute("pages", Collections.emptyList());
-                model.addAttribute("pageCount", 0);
-            } else {
-                throw e;
-            }
+        List<com.westudy.study.document.StudyDocument> searchResults = studySearchService.searchStudy(keyword);
+        if (searchResults.isEmpty()) {
+            model.addAttribute("pages", Collections.emptyList());
+            model.addAttribute("pageCount", 0);
+        } else {
+            model.addAttribute("pages", searchResults);
+            model.addAttribute("pageCount", 1);
         }
         model.addAttribute("currentPage", page);
         return "/layout/study/board";
