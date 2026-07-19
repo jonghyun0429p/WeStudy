@@ -53,4 +53,6 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 	systemProperty "file.encoding", "UTF-8"
+	systemProperty "is.test", "true"
+	systemProperty "spring.main.allow-bean-definition-overriding", "true"
 }

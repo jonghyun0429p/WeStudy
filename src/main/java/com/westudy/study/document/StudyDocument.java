@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import com.westudy.study.enums.StudyStates;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -37,7 +38,7 @@ public class StudyDocument {
     private int maxMember;
 
     @Field(type = FieldType.Keyword)
-    private String state;
+    private StudyStates state;
 
     @Field(type = FieldType.Integer)
     private int approvedMemberCount;

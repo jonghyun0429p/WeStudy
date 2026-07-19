@@ -33,7 +33,7 @@ public class StudyElasticsearchListener {
                             .title(study.getTitle())
                             .location(study.getLocation())
                             .maxMember(study.getMaxMember())
-                            .state(study.getState().name())
+                            .state(study.getState())
                             .approvedMemberCount(study.getApprovedMemberCount())
                             .build();
                     studySearchRepository.save(doc);

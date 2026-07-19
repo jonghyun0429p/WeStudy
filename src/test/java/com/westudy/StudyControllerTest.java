@@ -68,6 +68,9 @@ public class StudyControllerTest {
     @Autowired
     private com.westudy.chat.service.ChatService chatService;
 
+    @org.springframework.boot.test.mock.mockito.MockBean
+    private com.westudy.study.service.StudySearchService studySearchService;
+
     private static final Logger log = LoggerFactory.getLogger(StudyControllerTest.class);
 
     private Cookie[] authCookies;
@@ -423,7 +426,23 @@ public class StudyControllerTest {
                 .orElseThrow(() -> new AssertionError("등록한 테스트 스터디를 목록에서 찾을 수 없습니다."));
         assertEquals(1, firstStudy.getApprovedMemberCount(), "서브쿼리 매핑에 따른 승인 멤버 수(approvedMemberCount)는 1이어야 합니다.");
 
-        // [2] 스터디 키워드 검색 조회 검증
+        // [2] Elasticsearch 검색 Mocking 등록
+        org.mockito.Mockito.when(studySearchService.searchStudy("목록용")).thenReturn(
+            List.of(
+                com.westudy.study.document.StudyDocument.builder()
+                        .id(String.valueOf(testStudyId))
+                        .postId(testPostId)
+                        .userId(hostUserId)
+                        .title("목록용 테스트 스터디")
+                        .location("서울")
+                        .maxMember(3)
+                        .state(com.westudy.study.enums.StudyStates.RECRUITING)
+                        .approvedMemberCount(1)
+                        .build()
+            )
+        );
+
+        // [3] 스터디 키워드 검색 조회 검증
         mockMvc.perform(get("/page/study/search")
                         .param("keyword", "목록용")
                         .param("page", "1"))
