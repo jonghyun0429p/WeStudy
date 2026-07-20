@@ -105,6 +105,13 @@
                 <span th:text="${bookmarkedStudies.size()}"
                   class="bg-border-light dark:bg-border-dark text-text-sub-light dark:text-text-sub-dark px-2 py-0.5 rounded-full text-xs">0</span>
               </button>
+              <button id="tab-alarms"
+                class="relative pb-3 text-text-sub-light dark:text-text-sub-dark font-medium text-sm sm:text-base hover:text-text-main-light dark:hover:text-text-main-dark transition-colors flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">notifications</span>
+                알림 내역
+                <span th:text="${alarms.size()}"
+                  class="bg-border-light dark:bg-border-dark text-text-sub-light dark:text-text-sub-dark px-2 py-0.5 rounded-full text-xs">0</span>
+              </button>
             </div>
           </div>
 
@@ -252,6 +259,52 @@
               </div>
               <p class="font-bold text-text-main-light dark:text-text-main-dark mb-1">관심 등록한 스터디가 없습니다.</p>
               <p class="text-xs text-text-sub-light dark:text-text-sub-dark">상세글에서 관심 있는 스터디를 북마크해 보세요!</p>
+            </div>
+          </div>
+
+          <!-- [Panel 4] 알림 내역 -->
+          <div id="panel-alarms" class="space-y-4 hidden">
+            <!-- 전체 읽음 처리 버튼 -->
+            <div class="flex justify-end mb-2" th:if="${alarms.size() > 0}">
+              <button onclick="readAllAlarms()" class="text-xs text-primary font-bold hover:underline flex items-center gap-1">
+                <span class="material-symbols-outlined text-[16px]">done_all</span>
+                모두 읽음 처리
+              </button>
+            </div>
+            
+            <div th:each="alarm : ${alarms}" 
+              th:class="'std-card bg-surface-light dark:bg-surface-dark rounded-xl border p-4 transition-all flex justify-between items-center ' + (${alarm.isRead} ? 'border-border-light dark:border-border-dark opacity-60' : 'border-primary/30 shadow-sm ring-1 ring-primary/5')">
+              <div class="flex items-start gap-3 flex-1">
+                <span th:class="'material-symbols-outlined mt-0.5 ' + (${alarm.isRead} ? 'text-text-sub-light' : 'text-primary')"
+                  th:text="${alarm.type.name() == 'STUDY_APPLICATION' ? 'person_add' : (alarm.type.name() == 'STUDY_APPROVE' ? 'task_alt' : (alarm.type.name() == 'STUDY_REJECT' ? 'cancel' : 'notifications'))}">notifications</span>
+                <div class="flex-1">
+                  <p class="text-sm font-semibold text-text-main-light dark:text-text-main-dark" th:text="${alarm.content}">알림 내용</p>
+                  <span class="text-xs text-text-sub-light dark:text-text-sub-dark" th:text="${#temporals.format(alarm.createdAt, 'yyyy. MM. dd. HH:mm')}">2023.10.24 12:00</span>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-3">
+                <!-- 바로가기 링크 -->
+                <a th:if="${alarm.targetUrl != null && alarm.targetUrl != ''}" th:href="@{${alarm.targetUrl}}" th:onclick="'readAlarm(' + ${alarm.id} + ')'" 
+                  class="text-xs text-primary font-bold hover:underline flex items-center gap-1">
+                  이동
+                  <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                </a>
+                <!-- 개별 읽기 처리 버튼 -->
+                <button th:if="${!alarm.isRead}" th:onclick="'readAlarm(' + ${alarm.id} + ', this)'" class="text-text-sub-light hover:text-primary transition-colors flex items-center">
+                  <span class="material-symbols-outlined text-[20px]">done</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Empty State Placeholder -->
+            <div th:if="${alarms.size() == 0}"
+              class="bg-surface-light/50 dark:bg-surface-dark/50 rounded-xl border border-dashed border-border-light dark:border-border-dark p-10 flex flex-col items-center justify-center text-center min-h-[200px]">
+              <div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
+                <span class="material-symbols-outlined">notifications_off</span>
+              </div>
+              <p class="font-bold text-text-main-light dark:text-text-main-dark mb-1">알림 내역이 없습니다.</p>
+              <p class="text-xs text-text-sub-light dark:text-text-sub-dark">새로운 소식이 오면 여기에 보관됩니다.</p>
             </div>
           </div>
         </section>
