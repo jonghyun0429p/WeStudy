@@ -310,13 +310,48 @@
         </section>
       </div>
 
-      <!-- 탭 토글 스크립트 추가 -->
+      <!-- 탭 토글 및 알림 처리 스크립트 추가 -->
       <script>
+        // 글로벌 스크립트 등록 (인라인 onclick 지원용)
+        function readAlarm(alarmId, btnEl) {
+          fetch(`/api/alarms/${alarmId}/read`, {
+            method: 'POST'
+          }).then(res => {
+            if (res.ok) {
+              if (btnEl) {
+                const card = btnEl.closest('.std-card');
+                card.classList.add('opacity-60', 'border-border-light', 'dark:border-border-dark');
+                card.classList.remove('border-primary/30', 'shadow-sm', 'ring-1', 'ring-primary/5');
+                
+                // 아이콘 색상 변경 (text-primary -> text-text-sub-light)
+                const icon = card.querySelector('.material-symbols-outlined');
+                if (icon) {
+                  icon.classList.remove('text-primary');
+                  icon.classList.add('text-text-sub-light');
+                }
+                
+                btnEl.remove();
+              }
+            }
+          });
+        }
+
+        function readAllAlarms() {
+          fetch('/api/alarms/read-all', {
+            method: 'POST'
+          }).then(res => {
+            if (res.ok) {
+              location.reload();
+            }
+          });
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
           const tabs = [
             { buttonId: "tab-participating", panelId: "panel-participating" },
             { buttonId: "tab-opened", panelId: "panel-opened" },
-            { buttonId: "tab-bookmarked", panelId: "panel-bookmarked" }
+            { buttonId: "tab-bookmarked", panelId: "panel-bookmarked" },
+            { buttonId: "tab-alarms", panelId: "panel-alarms" }
           ];
 
           tabs.forEach((tab) => {
