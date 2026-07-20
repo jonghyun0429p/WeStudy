@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.westudy.study.service.StudyService;
+import com.westudy.alarm.service.AlarmService;
 
 @Slf4j
 @Controller
@@ -22,10 +23,12 @@ public class UserPageController {
 
     private final UserService userService;
     private final StudyService studyService;
+    private final AlarmService alarmService;
 
-    public UserPageController(UserService userService, StudyService studyService) {
+    public UserPageController(UserService userService, StudyService studyService, AlarmService alarmService) {
         this.userService = userService;
         this.studyService = studyService;
+        this.alarmService = alarmService;
     }
 
     @GetMapping("/login")
@@ -54,6 +57,7 @@ public class UserPageController {
                 model.addAttribute("participatingStudies", studyService.getParticipatingStudies(userId));
                 model.addAttribute("openedStudies", studyService.getOpenedStudies(userId));
                 model.addAttribute("bookmarkedStudies", studyService.getBookmarkedStudies(userId));
+                model.addAttribute("alarms", alarmService.getAlarmList(userId));
                 return "/layout/user/userpage";
             default:
                 throw new BaseException(PageErrorCode.PAGE_MISSING);
