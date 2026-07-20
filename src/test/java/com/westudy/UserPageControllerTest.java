@@ -131,6 +131,9 @@ public class UserPageControllerTest {
         // 북마크 등록
         jdbcTemplate.update("INSERT INTO bookmark (post_id, user_id) VALUES (?, ?)", p3, testUserId);
 
+        // 알림 등록
+        jdbcTemplate.update("INSERT INTO alarm (receiver_id, sender_id, type, content, target_url, is_read) VALUES (?, ?, 'STUDY_APPROVE', '테스트 알림 내용', '/target', false)", testUserId, testUserId);
+
         // [2] 마이페이지 대시보드 요청 실행
         MvcResult mvcResult = mockMvc.perform(get("/page/user/info/data")
                         .cookie(authCookies))
@@ -140,6 +143,7 @@ public class UserPageControllerTest {
                 .andExpect(model().attributeExists("participatingStudies"))
                 .andExpect(model().attributeExists("openedStudies"))
                 .andExpect(model().attributeExists("bookmarkedStudies"))
+                .andExpect(model().attributeExists("alarms"))
                 .andReturn();
 
         // [3] 모델 값 캐스팅 및 검증
@@ -147,6 +151,7 @@ public class UserPageControllerTest {
         List<MyPageStudyDTO> participating = (List<MyPageStudyDTO>) modelMap.get("participatingStudies");
         List<MyPageStudyDTO> opened = (List<MyPageStudyDTO>) modelMap.get("openedStudies");
         List<MyPageStudyDTO> bookmarked = (List<MyPageStudyDTO>) modelMap.get("bookmarkedStudies");
+        List<com.westudy.alarm.dto.AlarmResponseDTO> alarms = (List<com.westudy.alarm.dto.AlarmResponseDTO>) modelMap.get("alarms");
 
         assertNotNull(participating);
         assertNotNull(opened);
@@ -183,5 +188,14 @@ public class UserPageControllerTest {
         assertEquals("북마크 스터디 테스트", bookStudy.getTitle());
         assertEquals("대전", bookStudy.getLocation());
         assertEquals(8, bookStudy.getMaxMember());
+
+        // 4-4. 알림 내역 검증
+        assertNotNull(alarms);
+        assertFalse(alarms.isEmpty(), "알림 목록에 데이터가 들어있어야 합니다.");
+        com.westudy.alarm.dto.AlarmResponseDTO alarm = alarms.get(0);
+        assertEquals("테스트 알림 내용", alarm.getContent());
+        assertEquals("/target", alarm.getTargetUrl());
+        assertFalse(alarm.isRead());
+        assertEquals(com.westudy.alarm.enums.AlarmType.STUDY_APPROVE, alarm.getType());
     }
 }
