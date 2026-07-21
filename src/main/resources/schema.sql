@@ -163,3 +163,17 @@ CREATE TABLE IF NOT EXISTS `alarm` (
   INDEX `idx_receiver_id` (`receiver_id`),
   FOREIGN KEY (`receiver_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 11. 스터디 일지(로그) 테이블 생성
+CREATE TABLE IF NOT EXISTS `study_log` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `study_id` BIGINT NOT NULL COMMENT '스터디 ID',
+  `user_id` BIGINT NOT NULL COMMENT '작성자 ID',
+  `title` VARCHAR(100) NOT NULL COMMENT '일지 제목',
+  `content` TEXT NOT NULL COMMENT '일지 내용',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '생성 일시',
+  `modified_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정 일시',
+  INDEX `idx_study_log_study_id` (`study_id`),
+  CONSTRAINT `fk_study_log_study` FOREIGN KEY (`study_id`) REFERENCES `study` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_study_log_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
