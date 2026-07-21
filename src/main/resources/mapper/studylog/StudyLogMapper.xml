@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.westudy.studylog.mapper.StudyLogMapper">
+
+    <insert id="insertLog" parameterType="com.westudy.studylog.entity.StudyLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO study_log (study_id, user_id, title, content)
+        VALUES (#{studyId}, #{userId}, #{title}, #{content})
+    </insert>
+
+    <update id="updateLog" parameterType="com.westudy.studylog.entity.StudyLog">
+        UPDATE study_log
+        SET title = #{title},
+            content = #{content},
+            modified_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteLog">
+        DELETE FROM study_log WHERE id = #{id}
+    </delete>
+
+    <select id="findById" resultType="com.westudy.studylog.entity.StudyLog">
+        SELECT id, study_id, user_id, title, content, created_at, modified_at
+        FROM study_log
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByStudyId" resultType="com.westudy.studylog.dto.StudyLogResponseDTO">
+        SELECT sl.id, 
+               sl.study_id, 
+               sl.user_id, 
+               u.nickname AS writer_nickname, 
+               sl.title, 
+               sl.content, 
+               sl.created_at, 
+               sl.modified_at
+        FROM study_log sl
+        INNER JOIN user u ON sl.user_id = u.id
+        WHERE sl.study_id = #{studyId}
+        ORDER BY sl.created_at DESC
+    </select>
+
+</mapper>
