@@ -1224,6 +1224,225 @@
                 }
             }, 50);
         }
+
+        // ===== 스터디 일지 및 자료실 (AJAX CRUD) =====
+        function fetchStudyLogs() {
+            const tabBtn = document.getElementById('detail-tab-archive');
+            if (!tabBtn) return;
+            const studyId = tabBtn.getAttribute('data-study-id');
+            const listContainer = document.getElementById('study-log-list');
+            if (!listContainer) return;
+            
+            fetch(`/api/studies/${studyId}/logs`)
+                .then(res => {
+                    if (res.ok) return res.json();
+                    throw new Error();
+                })
+                .then(data => {
+                    renderStudyLogs(data);
+                })
+                .catch(() => {
+                    listContainer.innerHTML = `
+                        <div class="flex flex-col items-center justify-center py-12 gap-3 text-red-500">
+                            <span class="material-symbols-outlined !text-4xl">error</span>
+                            <div class="text-sm font-bold">일지를 불러오는 중 오류가 발생했습니다.</div>
+                        </div>
+                    `;
+                });
+        }
+
+        function renderStudyLogs(logs) {
+            const listContainer = document.getElementById('study-log-list');
+            if (!listContainer) return;
+            
+            if (logs.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="bg-surface-light/50 dark:bg-surface-dark/50 rounded-xl border border-dashed border-border-light dark:border-border-dark p-10 flex flex-col items-center justify-center text-center min-h-[200px]">
+                        <div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
+                            <span class="material-symbols-outlined">menu_book</span>
+                        </div>
+                        <p class="font-bold text-text-light-primary dark:text-text-dark-primary mb-1">등록된 스터디 일지가 없습니다.</p>
+                        <p class="text-xs text-text-light-secondary dark:text-text-dark-secondary">첫 번째 일지를 작성해 보세요!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            logs.forEach(log => {
+                const dateStr = log.createdAt ? log.createdAt.replace('T', ' ').substring(0, 16) : '';
+                const modifiedStr = log.modifiedAt && log.modifiedAt !== log.createdAt ? ' (수정됨: ' + log.modifiedAt.replace('T', ' ').substring(0, 16) + ')' : '';
+                
+                html += `
+                    <div class="flex flex-col gap-3 p-5 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark shadow-sm">
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-8 w-8 bg-border-light dark:bg-border-dark flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-primary" style="font-size:18px;">person</span>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <p class="text-text-light-primary dark:text-text-dark-primary text-sm font-bold leading-normal truncate">${escapeHtml(log.writerNickname)}</p>
+                                    <p class="text-text-light-secondary dark:text-text-dark-secondary text-xs">${dateStr}${modifiedStr}</p>
+                                </div>
+                            </div>
+                            
+                            ${log.editable ? `
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="openLogModal(${log.id}, '${escapeQuote(log.title)}', '${escapeQuote(log.content)}')"
+                                    class="flex items-center gap-1 text-xs px-2.5 h-8 rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark hover:bg-primary/10 transition-colors text-text-light-primary dark:text-text-dark-primary">
+                                    <span class="material-symbols-outlined text-[14px]">edit</span>수정
+                                </button>
+                                <button type="button" onclick="deleteStudyLog(${log.id})"
+                                    class="flex items-center gap-1 text-xs px-2.5 h-8 rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark hover:bg-red-500/10 text-red-500 hover:text-red-600 transition-colors">
+                                    <span class="material-symbols-outlined text-[14px]">delete</span>삭제
+                                </button>
+                            </div>
+                            ` : ''}
+                        </div>
+                        
+                        <h4 class="text-text-light-primary dark:text-text-dark-primary text-base font-bold mt-1">${escapeHtml(log.title)}</h4>
+                        <p class="text-text-light-primary dark:text-text-dark-primary text-sm leading-relaxed whitespace-pre-wrap mt-1">${escapeHtml(log.content)}</p>
+                    </div>
+                `;
+            });
+            
+            listContainer.innerHTML = html;
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function escapeQuote(text) {
+            if (!text) return '';
+            return text
+                .replace(/\\/g, "\\\\")
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '&quot;')
+                .replace(/\n/g, '\\n')
+                .replace(/\r/g, '\\r');
+        }
+
+        function openLogModal(id = null, title = '', content = '') {
+            const modal = document.getElementById('study-log-modal');
+            const modalTitle = document.getElementById('study-log-modal-title');
+            const idInput = document.getElementById('study-log-id');
+            const titleInput = document.getElementById('study-log-title');
+            const contentInput = document.getElementById('study-log-content');
+            
+            if (!modal) return;
+            
+            idInput.value = id || '';
+            titleInput.value = title;
+            contentInput.value = content;
+            
+            if (id) {
+                modalTitle.textContent = '스터디 일지 수정';
+            } else {
+                modalTitle.textContent = '스터디 일지 작성';
+            }
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('.scale-95')?.classList.remove('scale-95');
+            }, 50);
+        }
+
+        function closeLogModal() {
+            const modal = document.getElementById('study-log-modal');
+            if (!modal) return;
+            
+            modal.classList.add('opacity-0');
+            modal.querySelector('.scale-95')?.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function submitStudyLog() {
+            const tabBtn = document.getElementById('detail-tab-archive');
+            if (!tabBtn) return;
+            const studyId = tabBtn.getAttribute('data-study-id');
+            
+            const id = document.getElementById('study-log-id').value;
+            const title = document.getElementById('study-log-title').value.trim();
+            const content = document.getElementById('study-log-content').value.trim();
+            
+            if (!title) return toast('제목을 입력해 주세요.');
+            if (!content) return toast('내용을 입력해 주세요.');
+            
+            const url = id ? `/api/studies/${studyId}/logs/${id}` : `/api/studies/${studyId}/logs`;
+            const method = id ? 'PUT' : 'POST';
+            
+            fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, content })
+            }).then(res => {
+                if (res.ok) {
+                    closeLogModal();
+                    fetchStudyLogs();
+                } else {
+                    toast('일지 저장 중 오류가 발생했습니다.');
+                }
+            }).catch(() => toast('일지 저장 중 오류가 발생했습니다.'));
+        }
+
+        function deleteStudyLog(logId) {
+            if (!confirm('정말 이 일지를 삭제하시겠습니까?')) return;
+            
+            const tabBtn = document.getElementById('detail-tab-archive');
+            if (!tabBtn) return;
+            const studyId = tabBtn.getAttribute('data-study-id');
+            
+            fetch(`/api/studies/${studyId}/logs/${logId}`, {
+                method: 'DELETE'
+            }).then(res => {
+                if (res.ok) {
+                    fetchStudyLogs();
+                } else {
+                    toast('일지 삭제 중 오류가 발생했습니다.');
+                }
+            }).catch(() => toast('일지 삭제 중 오류가 발생했습니다.'));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const commentsTab = document.getElementById('detail-tab-comments');
+            const archiveTab = document.getElementById('detail-tab-archive');
+            const commentsPanel = document.getElementById('detail-panel-comments');
+            const archivePanel = document.getElementById('detail-panel-archive');
+            
+            if (commentsTab && archiveTab) {
+                commentsTab.addEventListener('click', () => {
+                    commentsTab.classList.add('text-primary', 'font-bold', 'border-b-2', 'border-primary');
+                    commentsTab.classList.remove('text-text-light-secondary', 'dark:text-text-dark-secondary', 'font-medium');
+                    archiveTab.classList.remove('text-primary', 'font-bold', 'border-b-2', 'border-primary');
+                    archiveTab.classList.add('text-text-light-secondary', 'dark:text-text-dark-secondary', 'font-medium');
+                    
+                    commentsPanel.classList.remove('hidden');
+                    archivePanel.classList.add('hidden');
+                });
+                
+                archiveTab.addEventListener('click', () => {
+                    archiveTab.classList.add('text-primary', 'font-bold', 'border-b-2', 'border-primary');
+                    archiveTab.classList.remove('text-text-light-secondary', 'dark:text-text-dark-secondary', 'font-medium');
+                    commentsTab.classList.remove('text-primary', 'font-bold', 'border-b-2', 'border-primary');
+                    commentsTab.classList.add('text-text-light-secondary', 'dark:text-text-dark-secondary', 'font-medium');
+                    
+                    archivePanel.classList.remove('hidden');
+                    commentsPanel.classList.add('hidden');
+                    
+                    fetchStudyLogs();
+                });
+            }
+        });
     </script>
 
 </body>
