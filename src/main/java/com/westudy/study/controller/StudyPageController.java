@@ -48,13 +48,15 @@ public class StudyPageController {
     }
 
     @GetMapping("/search")
-    @Operation(summary = "검색한 스터디 페이지", description = "제목만 검사해서 확인")
+    @Operation(summary = "검색한 스터디 페이지", description = "제목, 위치, 분야 및 기술 스택 복합 검색")
     public String getSearchStudyPage(
-            @RequestParam(value = "keyword") String keyword,
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "category", required = false) String category,
+            @RequestParam(value = "techStack", required = false) String techStack,
             @RequestParam(value = "page", defaultValue = "1") int page,
             Model model){
 
-        List<com.westudy.study.document.StudyDocument> searchResults = studySearchService.searchStudy(keyword);
+        List<com.westudy.study.document.StudyDocument> searchResults = studySearchService.searchStudy(keyword, category, techStack);
         if (searchResults.isEmpty()) {
             model.addAttribute("pages", Collections.emptyList());
             model.addAttribute("pageCount", 0);
@@ -63,6 +65,9 @@ public class StudyPageController {
             model.addAttribute("pageCount", 1);
         }
         model.addAttribute("currentPage", page);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("category", category);
+        model.addAttribute("techStack", techStack);
         return "/layout/study/board";
     }
 
