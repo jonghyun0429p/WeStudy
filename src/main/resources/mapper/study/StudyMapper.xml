@@ -5,13 +5,13 @@
 
 <mapper namespace="com.westudy.study.mapper.StudyMapper">
     <insert id="insertStudy" parameterType="com.westudy.study.entity.Study" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO study (user_id, post_id, title, location, max_member, deadline, state, created_at, delete_at)
-        VALUES (#{userId}, #{postId}, #{title}, #{location}, #{maxMember}, #{deadline}, #{state}, now(), NULL)
+        INSERT INTO study (user_id, post_id, title, location, max_member, deadline, state, tech_stacks, category, created_at, delete_at)
+        VALUES (#{userId}, #{postId}, #{title}, #{location}, #{maxMember}, #{deadline}, #{state}, #{techStacks}, #{category}, now(), NULL)
     </insert>
 
     <update id="updateStudy" parameterType="com.westudy.study.dto.StudyUpdateDTO">
         UPDATE study
-        SET title = #{title}, location = #{location}, max_member = #{maxMember}, state = #{state}
+        SET title = #{title}, location = #{location}, max_member = #{maxMember}, state = #{state}, tech_stacks = #{techStacks}, category = #{category}
         WHERE id = #{id}
     </update>
 
@@ -27,21 +27,21 @@
     </update>
 
     <select id="findByStudyId" resultType="com.westudy.study.dto.StudyResponseDTO">
-        SELECT s.id, s.post_id, s.user_id, s.title, s.location, s.max_member, s.state,
+        SELECT s.id, s.post_id, s.user_id, s.title, s.location, s.max_member, s.state, s.tech_stacks AS techStacks, s.category,
                (SELECT COUNT(*) FROM study_participant sp WHERE sp.study_id = s.id AND sp.status = 'APPROVED') AS approved_member_count
         FROM study s
         WHERE s.id = #{id} AND s.delete_at IS NULL
     </select>
 
     <select id="findByPostId" resultType="com.westudy.study.dto.StudyResponseDTO">
-        SELECT s.id, s.post_id, s.user_id, s.title, s.location, s.max_member, s.state,
+        SELECT s.id, s.post_id, s.user_id, s.title, s.location, s.max_member, s.state, s.tech_stacks AS techStacks, s.category,
                (SELECT COUNT(*) FROM study_participant sp WHERE sp.study_id = s.id AND sp.status = 'APPROVED') AS approved_member_count
         FROM study s
         WHERE s.post_id = #{id} AND s.delete_at IS NULL
     </select>
 
     <select id="findStudy" resultType="com.westudy.study.dto.StudyResponseDTO">
-        SELECT s.id, s.post_id, s.user_id, s.title, s.location, s.max_member, s.state,
+        SELECT s.id, s.post_id, s.user_id, s.title, s.location, s.max_member, s.state, s.tech_stacks AS techStacks, s.category,
                (SELECT COUNT(*) FROM study_participant sp WHERE sp.study_id = s.id AND sp.status = 'APPROVED') AS approved_member_count
         FROM study s
         WHERE s.delete_at IS NULL
@@ -55,7 +55,7 @@
     </select>
 
     <select id="findSearchStudy" resultType="com.westudy.study.dto.StudyResponseDTO">
-        SELECT s.id, s.post_id, s.user_id, s.title, s.location, s.max_member, s.state,
+        SELECT s.id, s.post_id, s.user_id, s.title, s.location, s.max_member, s.state, s.tech_stacks AS techStacks, s.category,
                (SELECT COUNT(*) FROM study_participant sp WHERE sp.study_id = s.id AND sp.status = 'APPROVED') AS approved_member_count
         FROM study s
         WHERE s.delete_at IS NULL AND s.title LIKE CONCAT('%', #{keyword}, '%')

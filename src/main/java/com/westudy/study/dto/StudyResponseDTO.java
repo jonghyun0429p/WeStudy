@@ -16,6 +16,8 @@ public class StudyResponseDTO {
     private String location;
     private int maxMember;
     private StudyStates state;
+    private String techStacks;
+    private String category;
     private LocalDateTime createAt;
     private int approvedMemberCount;
 }

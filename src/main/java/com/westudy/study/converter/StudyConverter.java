@@ -18,6 +18,8 @@ public class StudyConverter {
                 .maxMember(studyInsertDTO.getMaxMember())
                 .deadline(studyInsertDTO.getDeadline())
                 .state(StudyStates.RECRUITING)
+                .techStacks(studyInsertDTO.getTechStacks())
+                .category(studyInsertDTO.getCategory())
                 .build();
     }
     public StudyParticipant toStudyParticipant(long studyId, long userId){
