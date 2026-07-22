@@ -12,7 +12,7 @@ import java.util.List;
 public interface CommentMapper {
     void insertComment(CommentInsertDTO commentInsertDTO);
     List<Comment> findCommentById(long id);
-    List<CommentResponseDTO> findCommentsByPostId(long postId);
+    List<CommentResponseDTO> findCommentsByPostId(@org.apache.ibatis.annotations.Param("postId") long postId, @org.apache.ibatis.annotations.Param("currentUserId") Long currentUserId);
     long findUserIdByCommentId(long id);
     void updateComment(CommentUpdateDTO commentUpdateDTO);
     void deleteComment(long commentId);

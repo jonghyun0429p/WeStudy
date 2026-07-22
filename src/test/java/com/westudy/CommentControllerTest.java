@@ -140,7 +140,7 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.redirect_url").value("/post/detail?id=" + dynamicPostId));
 
         // DB 검증: 실제로 댓글이 데이터베이스에 등록되었는지 확인
-        List<CommentResponseDTO> commentsAfterInsert = commentMapper.findCommentsByPostId(dynamicPostId);
+        List<CommentResponseDTO> commentsAfterInsert = commentMapper.findCommentsByPostId(dynamicPostId, null);
         assertEquals(1, commentsAfterInsert.size(), "DB에 댓글이 1개 적재되어야 합니다.");
         CommentResponseDTO createdComment = commentsAfterInsert.get(0);
         assertEquals("첫 통합 테스트 댓글", createdComment.getContent(), "DB에 저장된 댓글 내용이 일치해야 합니다.");
@@ -169,7 +169,7 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.redirect_url").value("/post/detail?id=" + dynamicPostId));
 
         // DB 검증: 실제로 데이터베이스 상의 댓글 내용이 수정되었는지 확인
-        List<CommentResponseDTO> commentsAfterUpdate = commentMapper.findCommentsByPostId(dynamicPostId);
+        List<CommentResponseDTO> commentsAfterUpdate = commentMapper.findCommentsByPostId(dynamicPostId, null);
         assertEquals(1, commentsAfterUpdate.size());
         assertEquals("수정된 통합 테스트 댓글", commentsAfterUpdate.get(0).getContent(), "DB의 댓글 내용이 수정 완료 상태여야 합니다.");
 
@@ -183,7 +183,7 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.redirect_url").value("/post"));
 
         // DB 검증: 실제로 데이터베이스 상에서 댓글이 소프트 딜리트(삭제 처리) 되었는지 확인
-        List<CommentResponseDTO> commentsAfterDelete = commentMapper.findCommentsByPostId(dynamicPostId);
+        List<CommentResponseDTO> commentsAfterDelete = commentMapper.findCommentsByPostId(dynamicPostId, null);
         assertTrue(commentsAfterDelete.isEmpty(), "삭제 처리 후 액티브 댓글 조회 목록은 비어있어야 합니다.");
     }
 }

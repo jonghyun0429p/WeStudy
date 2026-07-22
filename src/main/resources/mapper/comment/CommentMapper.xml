@@ -20,9 +20,13 @@
             c.user_id AS userId,
             u.nickname AS writerNickname,
             c.content AS content,
-            c.created_at AS createdAt
+            c.created_at AS createdAt,
+            COALESCE(lc.like_count, 0) AS likeCount,
+            CASE WHEN l.id IS NOT NULL THEN true ELSE false END AS isLiked
         FROM comment c
         JOIN user u ON c.user_id = u.id
+        LEFT JOIN like_count lc ON lc.comment_id = c.id
+        LEFT JOIN likes l ON l.comment_id = c.id AND l.user_id = #{currentUserId}
         WHERE c.post_id = #{postId} AND c.delete_at IS NULL
         ORDER BY c.created_at ASC
     </select>

@@ -45,15 +45,9 @@ public class CommentService {
 
     public List<CommentResponseDTO> getCommentsByPostId(long postId) {
         Long currentUserId = SecurityUtil.resolveCurrentUserIdSafely();
-        List<CommentResponseDTO> comments = commentMapper.findCommentsByPostId(postId);
+        List<CommentResponseDTO> comments = commentMapper.findCommentsByPostId(postId, currentUserId);
         for (CommentResponseDTO comment : comments) {
             comment.setWriter(currentUserId != null && currentUserId.equals(comment.getUserId()));
-            comment.setLikeCount(likeService.getCommentCount(comment.getCommentId()));
-            if (currentUserId != null) {
-                comment.setLiked(likeService.checkCommentLike(comment.getCommentId()));
-            } else {
-                comment.setLiked(false);
-            }
         }
         return comments;
     }
