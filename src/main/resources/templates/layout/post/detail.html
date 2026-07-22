@@ -354,8 +354,8 @@
 
                 <div class="border-t border-border-light dark:border-border-dark my-2"></div>
 
-                <!-- 스터디 전용 탭 바 (개설자 또는 승인된 스터디 멤버인 경우에만 렌더링) -->
-                <div th:if="${page.studyId != null && (page.isWriter || participantStatus == 'APPROVED')}" 
+                <!-- 스터디 전용 탭 바 (스터디가 존재하면 렌더링) -->
+                <div th:if="${page.studyId != null}" 
                      class="flex gap-8 border-b border-border-light dark:border-border-dark mb-6 mt-4">
                     <button id="detail-tab-comments" type="button"
                         class="relative pb-3 text-primary font-bold text-base md:text-lg border-b-2 border-primary transition-all flex items-center gap-2">
@@ -439,7 +439,7 @@
                 </div>
 
                 <!-- [탭 패널 2] 스터디 일지 및 자료실 -->
-                <div th:if="${page.studyId != null && (page.isWriter || participantStatus == 'APPROVED')}" 
+                <div th:if="${page.studyId != null}" 
                      id="detail-panel-archive" class="hidden flex flex-col gap-6">
                      
                     <div class="flex justify-between items-center">
@@ -447,7 +447,7 @@
                             <span class="material-symbols-outlined text-primary text-[26px]">menu_book</span>
                             스터디 일지
                         </h2>
-                        <button type="button" onclick="openLogModal()" 
+                        <button th:if="${page.isWriter || participantStatus == 'APPROVED'}" type="button" onclick="openLogModal()" 
                             class="flex min-w-[100px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-primary text-text-light-primary text-sm font-bold gap-1.5 shadow-sm">
                             <span class="material-symbols-outlined text-[18px]">add</span>
                             일지 작성
@@ -1235,11 +1235,18 @@
             
             fetch(`/api/studies/${studyId}/logs`)
                 .then(res => {
+                    if (res.status === 401 || res.status === 403) {
+                        return { unauthorized: true };
+                    }
                     if (res.ok) return res.json();
                     throw new Error();
                 })
                 .then(data => {
-                    renderStudyLogs(data);
+                    if (data && data.unauthorized) {
+                        renderUnauthorizedLogView();
+                    } else {
+                        renderStudyLogs(data);
+                    }
                 })
                 .catch(() => {
                     listContainer.innerHTML = `
@@ -1249,6 +1256,22 @@
                         </div>
                     `;
                 });
+        }
+
+        function renderUnauthorizedLogView() {
+            const listContainer = document.getElementById('study-log-list');
+            if (!listContainer) return;
+            
+            listContainer.innerHTML = `
+                <div class="flex flex-col items-center justify-center p-8 text-center rounded-2xl bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark shadow-sm py-16 gap-4 mt-2">
+                    <span class="material-symbols-outlined !text-5xl text-primary opacity-80 animate-bounce">lock</span>
+                    <h3 class="text-lg font-extrabold text-text-light-primary dark:text-text-dark-primary">스터디원 전용 공간</h3>
+                    <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary max-w-md leading-relaxed">
+                        이 공간은 스터디 멤버들만 이용할 수 있는 일지 및 자료실입니다.<br>
+                        스터디 신청 후 승인(APPROVED)이 완료되면 공동 일지를 열람하고 기록할 수 있습니다.
+                    </p>
+                </div>
+            `;
         }
 
         function renderStudyLogs(logs) {
