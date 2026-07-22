@@ -35,6 +35,8 @@ public class StudyElasticsearchListener {
                             .maxMember(study.getMaxMember())
                             .state(study.getState())
                             .approvedMemberCount(study.getApprovedMemberCount())
+                            .techStacks(study.getTechStacks())
+                            .category(study.getCategory())
                             .build();
                     studySearchRepository.save(doc);
                     log.info("Elasticsearch 인덱싱 성공 - studyId: {}", event.getStudyId());

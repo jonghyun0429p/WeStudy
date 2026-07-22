@@ -42,4 +42,10 @@ public class StudyDocument {
 
     @Field(type = FieldType.Integer)
     private int approvedMemberCount;
+
+    @Field(type = FieldType.Text, analyzer = "standard")
+    private String techStacks;
+
+    @Field(type = FieldType.Keyword)
+    private String category;
 }
