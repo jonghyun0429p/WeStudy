@@ -63,6 +63,8 @@ CREATE TABLE IF NOT EXISTS study (
                                     max_member BIGINT NOT NULL,
                                     deadline DATETIME NULL,
                                     state varchar(20) DEFAULT  'RECRUITING',
+                                    tech_stacks VARCHAR(255) NULL,
+                                    category VARCHAR(50) NULL,
                                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                                     modified_at DATETIME,
                                     delete_at DATETIME,
@@ -177,8 +179,4 @@ CREATE TABLE IF NOT EXISTS `study_log` (
   CONSTRAINT `fk_study_log_study` FOREIGN KEY (`study_id`) REFERENCES `study` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_study_log_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- study 테이블 컬럼 추가 (스택/분야 필터링용)
-ALTER TABLE study ADD COLUMN IF NOT EXISTS tech_stacks VARCHAR(255) NULL;
-ALTER TABLE study ADD COLUMN IF NOT EXISTS category VARCHAR(50) NULL;
 

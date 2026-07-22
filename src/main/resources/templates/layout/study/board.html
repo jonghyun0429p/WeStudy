@@ -83,7 +83,7 @@
 
                     <!-- 카드 썸네일 영역 (그라데이션 및 상태 표시) -->
                     <div class="relative w-full aspect-video bg-gradient-to-tr from-primary/30 to-purple-600/30 flex items-center justify-center p-6 text-center">
-                        <div class="absolute inset-0 bg-cover bg-center mix-blend-overlay opacity-30" style="background-image: url('https://picsum.photos/seed/study/600/400');"></div>
+                        <div class="absolute inset-0 bg-cover bg-center mix-blend-overlay opacity-30" th:style="'background-image: url(\'https://picsum.photos/seed/' + ${study.id} + '/600/400\');'"></div>
                         <span class="text-lg font-extrabold text-main truncate max-w-full px-2" th:text="${study.title}">스터디 제목</span>
                         
                         <!-- 스터디 상태 배지 -->
