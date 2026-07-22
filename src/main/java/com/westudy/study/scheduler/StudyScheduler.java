@@ -3,8 +3,10 @@ package com.westudy.study.scheduler;
 import com.westudy.alarm.enums.AlarmType;
 import com.westudy.alarm.service.AlarmService;
 import com.westudy.study.mapper.StudyMapper;
+import com.westudy.study.event.StudyEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ public class StudyScheduler {
 
     private final StudyMapper studyMapper;
     private final AlarmService alarmService;
+    private final ApplicationEventPublisher eventPublisher;
 
     // 매일 자정(00:00:00)에 실행되는 스케줄러.
     // 모집 중이면서 마감 기한이 지난 스터디를 자동으로 마감(CLOSED) 처리합니다.
@@ -53,6 +56,9 @@ public class StudyScheduler {
             for (Long participantId : participantIds) {
                 alarmService.send(participantId, leaderId, AlarmType.STUDY_REJECT, message, targetUrl);
             }
+
+            // Elasticsearch 동기화 이벤트 발행
+            eventPublisher.publishEvent(new StudyEvent(studyId, "SAVE"));
         }
         
         log.info("[Scheduler] 스터디 자동 마감 배치 완료");
