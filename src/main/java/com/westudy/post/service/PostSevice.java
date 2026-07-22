@@ -101,6 +101,8 @@ public class PostSevice {
             studyDTO.setMaxMember(postInsertDTO.getMaxMember() != null ? postInsertDTO.getMaxMember() : 1);
             studyDTO.setDeadline(postInsertDTO.getDeadline());
             studyDTO.setState(com.westudy.study.enums.StudyStates.RECRUITING);
+            studyDTO.setTechStacks(postInsertDTO.getTechStacks());
+            studyDTO.setCategory(postInsertDTO.getStudyCategory());
             studyService.insertStudy(studyDTO);
         }
     }

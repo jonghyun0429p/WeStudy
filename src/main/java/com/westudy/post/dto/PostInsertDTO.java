@@ -18,4 +18,6 @@ public class PostInsertDTO {
     // Study 전용 필드
     private Integer maxMember;
     private java.time.LocalDateTime deadline;
+    private String studyCategory;
+    private String techStacks;
 }
