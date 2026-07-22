@@ -427,7 +427,7 @@ public class StudyControllerTest {
         assertEquals(1, firstStudy.getApprovedMemberCount(), "서브쿼리 매핑에 따른 승인 멤버 수(approvedMemberCount)는 1이어야 합니다.");
 
         // [2] Elasticsearch 검색 Mocking 등록
-        org.mockito.Mockito.when(studySearchService.searchStudy("목록용")).thenReturn(
+        org.mockito.Mockito.when(studySearchService.searchStudy("목록용", null, null)).thenReturn(
             List.of(
                 com.westudy.study.document.StudyDocument.builder()
                         .id(String.valueOf(testStudyId))
