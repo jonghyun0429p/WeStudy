@@ -27,6 +27,9 @@ public class StudySchedulerTest {
     @Mock
     private AlarmService alarmService;
 
+    @Mock
+    private org.springframework.context.ApplicationEventPublisher eventPublisher;
+
     @InjectMocks
     private StudyScheduler studyScheduler;
 
