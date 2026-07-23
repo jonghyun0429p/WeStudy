@@ -6,74 +6,72 @@
 <mapper namespace="com.westudy.like.mapper.LikeMapper">
 
     <insert id="insertLikeComment">
-        INSERT INTO likes (user_id, comment_id, like_at)
+        INSERT INTO comment_like (user_id, comment_id, like_at)
         VALUES (#{userId}, #{commentId}, now())
-        ON DUPLICATE KEY UPDATE comment_id = comment_id;
     </insert>
     <insert id="insertLikePost">
-        INSERT INTO likes (post_id, user_id, like_at)
+        INSERT INTO post_like (post_id, user_id, like_at)
         VALUES (#{postId}, #{userId}, now())
-        ON DUPLICATE KEY UPDATE post_id = post_id;
     </insert>
     <update id="addLikeCommentCount">
-        UPDATE like_count
+        UPDATE comment_like_count
         SET like_count = like_count+1
         WHERE comment_id = #{commentId}
     </update>
     <update id="addLikePostCount">
-        UPDATE like_count
+        UPDATE post_like_count
         SET like_count = like_count+1
         WHERE post_id = #{postId}
     </update>
     <insert id="ensurePostLikeCount">
-        INSERT INTO like_count (post_id, like_count)
+        INSERT INTO post_like_count (post_id, like_count)
         VALUES (#{postId}, 0)
-        ON DUPLICATE KEY UPDATE like_count = like_count;
+        ON DUPLICATE KEY UPDATE post_id = post_id
     </insert>
     <insert id="ensureCommentLikeCount">
-        INSERT INTO like_count (comment_id, like_count)
+        INSERT INTO comment_like_count (comment_id, like_count)
         VALUES (#{commentId}, 0)
-        ON DUPLICATE KEY UPDATE like_count = like_count;
+        ON DUPLICATE KEY UPDATE comment_id = comment_id
     </insert>
     <update id="minusLikeCommentCount">
-        UPDATE like_count
+        UPDATE comment_like_count
         SET like_count = like_count-1
         WHERE comment_id = #{commentId}
     </update>
     <update id="minusLikePostCount">
-        UPDATE like_count
+        UPDATE post_like_count
         SET like_count = like_count-1
         WHERE post_id = #{postId}
     </update>
     <delete id="deleteLikeComment">
-        DELETE FROM likes
+        DELETE FROM comment_like
         WHERE comment_id = #{commentId} AND user_id = #{userId}
     </delete>
     <delete id="deleteLikePost">
-        DELETE FROM likes
+        DELETE FROM post_like
         WHERE post_id = #{postId} AND user_id = #{userId}
     </delete>
     <select id="isPostLiked" resultType="boolean">
         SELECT EXISTS(
-            SELECT 1 FROM likes
+            SELECT 1 FROM post_like
             WHERE post_id = #{postId} AND user_id = #{userId}
         )
     </select>
     <select id="isCommentLiked" resultType="boolean">
         SELECT EXISTS(
-            SELECT 1 FROM likes
+            SELECT 1 FROM comment_like
             WHERE comment_id = #{commentId} AND user_id = #{userId}
         )
     </select>
     <select id="findPostLikeCount" resultType="Integer">
         SELECT COALESCE(like_count, 0)
-        FROM like_count
+        FROM post_like_count
         WHERE post_id = #{postId}
     </select>
     <select id="findCommentLikeCount" resultType="Integer">
         SELECT COALESCE(like_count, 0)
-        FROM like_count
-        WHERE comment_id = #{postId}
+        FROM comment_like_count
+        WHERE comment_id = #{commentId}
     </select>
 
 </mapper>

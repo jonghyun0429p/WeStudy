@@ -100,32 +100,46 @@ CREATE TABLE IF NOT EXISTS comment (
                                     CONSTRAINT fk_comment_post FOREIGN KEY (post_id) REFERENCES post(id)
 );
 
-CREATE TABLE IF NOT EXISTS likes (
-                                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                     post_id BIGINT NULL,
-                                     user_id BIGINT NOT NULL,
-                                     comment_id BIGINT NULL,
-                                     like_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE IF NOT EXISTS post_like (
+                                         id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                         post_id BIGINT NOT NULL,
+                                         user_id BIGINT NOT NULL,
+                                         like_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-                                     CONSTRAINT fk_likes_post FOREIGN KEY (post_id) REFERENCES post(id),
-                                     CONSTRAINT fk_likes_user FOREIGN KEY (user_id) REFERENCES user(id),
-                                     CONSTRAINT fk_likes_comment FOREIGN KEY (comment_id) REFERENCES comment(id),
+                                         CONSTRAINT fk_post_like_post FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE,
+                                         CONSTRAINT fk_post_like_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
 
-                                     UNIQUE KEY ux_likes_post_user (post_id, user_id),
-                                     UNIQUE KEY ux_likes_comment_user (comment_id, user_id)
+                                         KEY idx_post_like_post (post_id),
+                                         KEY idx_post_like_user (user_id)
 );
 
-CREATE TABLE IF NOT EXISTS like_count (
-                                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                        post_id BIGINT NULL,
-                                        comment_id BIGINT NULL,
-                                        like_count BIGINT NOT NULL DEFAULT 0,
+CREATE TABLE IF NOT EXISTS comment_like (
+                                            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                            comment_id BIGINT NOT NULL,
+                                            user_id BIGINT NOT NULL,
+                                            like_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-                                        CONSTRAINT fk_like_count_post FOREIGN KEY (post_id) REFERENCES post(id),
-                                        CONSTRAINT fk_like_count_comment FOREIGN KEY (comment_id) REFERENCES comment(id),
+                                            CONSTRAINT fk_comment_like_comment FOREIGN KEY (comment_id) REFERENCES comment(id) ON DELETE CASCADE,
+                                            CONSTRAINT fk_comment_like_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
 
-                                        UNIQUE KEY ux_cnt_post (post_id),
-                                        UNIQUE KEY ux_cnt_comment (comment_id)
+                                            KEY idx_comment_like_comment (comment_id),
+                                            KEY idx_comment_like_user (user_id)
+);
+
+CREATE TABLE IF NOT EXISTS post_like_count (
+                                             id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                             post_id BIGINT NOT NULL UNIQUE,
+                                             like_count BIGINT NOT NULL DEFAULT 0,
+
+                                             CONSTRAINT fk_post_like_count_post FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS comment_like_count (
+                                                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                                comment_id BIGINT NOT NULL UNIQUE,
+                                                like_count BIGINT NOT NULL DEFAULT 0,
+
+                                                CONSTRAINT fk_comment_like_count_comment FOREIGN KEY (comment_id) REFERENCES comment(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS bookmark (

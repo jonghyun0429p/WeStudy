@@ -54,15 +54,21 @@ public class LikeService {
 
     //create
     public void insertPostLike(long postId){
+        long userId = SecurityUtil.getCurrentUserId();
         likeMapper.ensurePostLikeCount(postId);
-        likeMapper.insertLikePost(postId, SecurityUtil.getCurrentUserId());
-        likeMapper.addLikePostCount(postId);
+        if (!likeMapper.isPostLiked(postId, userId)) {
+            likeMapper.insertLikePost(postId, userId);
+            likeMapper.addLikePostCount(postId);
+        }
     }
 
     public void insertCommentLike(long commenId){
+        long userId = SecurityUtil.getCurrentUserId();
         likeMapper.ensureCommentLikeCount(commenId);
-        likeMapper.insertLikeComment(commenId, SecurityUtil.getCurrentUserId());
-        likeMapper.addLikeCommentCount(commenId);
+        if (!likeMapper.isCommentLiked(commenId, userId)) {
+            likeMapper.insertLikeComment(commenId, userId);
+            likeMapper.addLikeCommentCount(commenId);
+        }
     }
 
     //find
@@ -86,12 +92,18 @@ public class LikeService {
 
     //delete
     public void minusPostLike(long postId){
-        likeMapper.deleteLikePost(postId, SecurityUtil.getCurrentUserId());
-        likeMapper.minusLikePostCount(postId);
+        long userId = SecurityUtil.getCurrentUserId();
+        if (likeMapper.isPostLiked(postId, userId)) {
+            likeMapper.deleteLikePost(postId, userId);
+            likeMapper.minusLikePostCount(postId);
+        }
     }
 
     public void minusCommentLike(long commentId){
-        likeMapper.deleteLikeComment(commentId, SecurityUtil.getCurrentUserId());
-        likeMapper.minusLikeCommentCount(commentId);
+        long userId = SecurityUtil.getCurrentUserId();
+        if (likeMapper.isCommentLiked(commentId, userId)) {
+            likeMapper.deleteLikeComment(commentId, userId);
+            likeMapper.minusLikeCommentCount(commentId);
+        }
     }
 }
