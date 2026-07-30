@@ -13,15 +13,18 @@ import com.westudy.user.port.SecurityPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserService {
     private final UserMapper userMapper;
     private final UserConverter userConverter;
     private final SecurityPort securityPort;
 
+    @Transactional
     public void register(UserDTO userDto) {
         log.info("register user: {}", userDto.getUsername());
         checkDuplicateEmail(userDto.getEmail());
@@ -42,6 +45,7 @@ public class UserService {
         log.info("중복 체크 완료.");
     }
 
+    @Transactional
     public void updateUser(long userId, UserEditDTO userEdit){
         User existedUser = findByUserId(userId);
 

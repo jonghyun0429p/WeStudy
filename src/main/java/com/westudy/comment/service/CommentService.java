@@ -10,10 +10,12 @@ import com.westudy.global.exception.BaseException;
 import com.westudy.security.util.SecurityUtil;
 import com.westudy.like.service.LikeService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class CommentService {
 
     private final CommentMapper commentMapper;
@@ -33,6 +35,7 @@ public class CommentService {
     }
 
     //create
+    @Transactional
     public void insertComment(CommentInsertDTO commentInsertDTO){
         commentInsertDTO.setUserId(SecurityUtil.getCurrentUserId());
         commentMapper.insertComment(commentInsertDTO);
@@ -53,12 +56,14 @@ public class CommentService {
     }
 
     //Update
+    @Transactional
     public void updateComment(CommentUpdateDTO commentUpdateDTO){
         isWriter(commentUpdateDTO.getId());
         commentMapper.updateComment(commentUpdateDTO);
     }
 
     //Delete
+    @Transactional
     public void deleteComment(long id){
         isWriter(id);
         commentMapper.deleteComment(id);

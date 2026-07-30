@@ -7,9 +7,11 @@ import com.westudy.security.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 public class LikeService {
 
     private final LikeMapper likeMapper;
@@ -18,6 +20,7 @@ public class LikeService {
         this.likeMapper = likeMapper;
     }
 
+    @Transactional
     public void likePost(long postId){
         try {
             insertPostLike(postId);
@@ -27,6 +30,7 @@ public class LikeService {
         }
     }
 
+    @Transactional
     public void likeComment(long commentId){
         try{
             insertCommentLike(commentId);
@@ -44,15 +48,18 @@ public class LikeService {
         return getCommentCount(commentId);
     }
 
+    @Transactional
     public void notlikePostLike(long postId){
         minusPostLike(postId);
     }
 
+    @Transactional
     public void notlikeCommentLike(long commentId){
         minusCommentLike(commentId);
     }
 
     //create
+    @Transactional
     public void insertPostLike(long postId){
         long userId = SecurityUtil.getCurrentUserId();
         likeMapper.ensurePostLikeCount(postId);
@@ -62,6 +69,7 @@ public class LikeService {
         }
     }
 
+    @Transactional
     public void insertCommentLike(long commenId){
         long userId = SecurityUtil.getCurrentUserId();
         likeMapper.ensureCommentLikeCount(commenId);
@@ -91,6 +99,7 @@ public class LikeService {
     }
 
     //delete
+    @Transactional
     public void minusPostLike(long postId){
         long userId = SecurityUtil.getCurrentUserId();
         if (likeMapper.isPostLiked(postId, userId)) {
@@ -99,6 +108,7 @@ public class LikeService {
         }
     }
 
+    @Transactional
     public void minusCommentLike(long commentId){
         long userId = SecurityUtil.getCurrentUserId();
         if (likeMapper.isCommentLiked(commentId, userId)) {

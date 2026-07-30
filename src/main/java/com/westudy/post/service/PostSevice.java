@@ -13,11 +13,13 @@ import com.westudy.post.mapper.PostMapper;
 import com.westudy.security.util.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 public class PostSevice {
 
     // private final int POST_SIZE = 12;
@@ -82,6 +84,7 @@ public class PostSevice {
     }
 
     // Create
+    @Transactional
     public void insertPost(Long userId, PostInsertDTO postInsertDTO) {
         log.info("게시글 데이터 변환 및 저장");
         Post post = postConverter.toPost(userId, postInsertDTO);
@@ -146,6 +149,7 @@ public class PostSevice {
     }
 
     // Update
+    @Transactional
     public void updatePost(PostUpdateDTO postUpdateDTO) {
         isWriter(postUpdateDTO.getPostId());
         Post oldPost = postMapper.findByPostId(postUpdateDTO.getPostId());
@@ -155,6 +159,7 @@ public class PostSevice {
     }
 
     // Delete
+    @Transactional
     public void deletePost(long postId) {
         isWriter(postId);
         postMapper.deleteByPostId(postId);
