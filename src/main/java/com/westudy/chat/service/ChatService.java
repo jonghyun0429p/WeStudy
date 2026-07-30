@@ -2,6 +2,7 @@ package com.westudy.chat.service;
 
 import com.westudy.alarm.enums.AlarmType;
 import com.westudy.alarm.service.AlarmService;
+import com.westudy.chat.dto.ChatRoomResponseDTO;
 import com.westudy.chat.dto.ChatMessageRequestDTO;
 import com.westudy.chat.dto.ChatMessageResponseDTO;
 import com.westudy.chat.entity.ChatMessage;
@@ -104,5 +105,10 @@ public class ChatService {
         validateParticipant(studyId, userId);
         
         return chatMapper.findMessagesByStudyId(studyId);
+    }
+
+    public List<ChatRoomResponseDTO> getMyChatRooms() {
+        Long userId = SecurityUtil.getCurrentUserId();
+        return chatMapper.findChatRoomsByUserId(userId);
     }
 }

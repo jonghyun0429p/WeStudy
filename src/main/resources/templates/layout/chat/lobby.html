@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+    <th:block th:replace="~{layout/layout :: head}"></th:block>
+    <!-- 실시간 채팅용 STOMP & SockJS -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+
+<body>
+
+    <div th:replace="~{layout/layout :: layout(~{::content})}">
+        <div th:fragment="content" class="px-4 md:px-10 lg:px-20 xl:px-40 py-6">
+
+            <!-- Title Header -->
+            <div class="flex flex-col gap-2 mb-6 mt-4">
+                <h2 class="text-3xl font-black tracking-tight text-text-light-primary dark:text-text-dark-primary flex items-center gap-2">
+                    <span>💬</span> 실시간 스터디 소통망
+                </h2>
+                <p class="text-body-muted text-sm">내가 개설했거나 승인된 스터디의 멤버들과 실시간으로 메시지를 교환해보세요.</p>
+            </div>
+
+            <!-- Main Flex Container -->
+            <div class="flex h-[75vh] md:h-[650px] bg-white/5 dark:bg-white/5 border border-white/10 rounded-3xl overflow-hidden glass shadow-2xl">
+                
+                <!-- Sidebar -->
+                <div class="w-full md:w-80 border-r border-white/10 flex flex-col bg-black/10">
+                    <div class="p-5 border-b border-white/10">
+                        <h3 class="font-extrabold text-sm text-text-light-primary dark:text-text-dark-primary flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary !text-xl">forum</span>
+                            채팅방 목록 (<span th:text="${#lists.size(rooms)}">0</span>)
+                        </h3>
+                    </div>
+                    
+                    <div class="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
+                        <!-- Room Cards -->
+                        <div th:each="room : ${rooms}" 
+                             th:id="'room-card-' + ${room.studyId}"
+                             th:onclick="selectRoom([[${room.studyId}]], [[${room.title}]], [[${room.isHost}]], [[${room.approvedMemberCount}]], [[${room.maxMember}]], [[${room.postId}]])"
+                             class="room-card p-4 rounded-2xl cursor-pointer hover:bg-white/5 border border-transparent transition-all duration-300 flex flex-col gap-1.5 bg-white/5 dark:bg-white/5">
+                            <div class="flex justify-between items-start gap-2">
+                                <h4 class="font-bold text-sm text-text-light-primary dark:text-text-dark-primary truncate" th:text="${room.title}">스터디 제목</h4>
+                                <span th:if="${room.isHost}" class="text-[9px] font-black text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full shrink-0">방장</span>
+                                <span th:unless="${room.isHost}" class="text-[9px] font-black text-gray-400 bg-white/10 border border-white/10 px-2 py-0.5 rounded-full shrink-0">팀원</span>
+                            </div>
+                            <div class="flex items-center justify-between text-[11px] text-gray-400">
+                                <span th:text="'멤버 ' + ${room.approvedMemberCount} + ' / ' + ${room.maxMember} + ' 명'">멤버 1/5명</span>
+                                <span class="truncate max-w-[120px] italic text-[11px] opacity-70" th:id="'room-last-msg-' + ${room.studyId}" th:text="${room.lastMessage != null ? room.lastMessage : '새 메시지가 없습니다'}">최근 메시지</span>
+                            </div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div th:if="${#lists.isEmpty(rooms)}" class="flex flex-col items-center justify-center py-20 text-center gap-3">
+                            <span class="material-symbols-outlined text-4xl text-gray-500">chat_bubble_outline</span>
+                            <p class="text-sm text-gray-400">참여 중인 대화방이 없습니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Pane -->
+                <div class="flex-1 flex flex-col h-full bg-black/5 relative">
+                    <!-- Empty Placeholder -->
+                    <div id="chat-empty-state" class="absolute inset-0 flex flex-col items-center justify-center p-10 text-center gap-4">
+                        <div class="size-16 rounded-full bg-primary/10 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-3xl text-primary animate-pulse">forum</span>
+                        </div>
+                        <h3 class="text-lg font-extrabold text-text-light-primary dark:text-text-dark-primary">대화할 스터디 채팅방을 선택해 주세요</h3>
+                        <p class="text-sm text-gray-400 max-w-sm leading-relaxed">
+                            내가 방장으로 개설했거나, 정식 참여 멤버로 승인 완료된 스터디 대화방 목록이 왼쪽에 표시됩니다.
+                        </p>
+                    </div>
+
+                    <!-- Active Chat Pane -->
+                    <div id="chat-active-state" class="flex flex-col hidden h-full">
+                        <!-- Top Bar -->
+                        <div class="p-5 border-b border-white/10 flex items-center justify-between bg-black/10">
+                            <div class="flex flex-col">
+                                <h3 id="active-room-title" class="font-extrabold text-base text-text-light-primary dark:text-text-dark-primary">스터디 대화방</h3>
+                                <span id="active-room-members" class="text-[11px] text-gray-400 mt-0.5">멤버 N / M 명</span>
+                            </div>
+                            <a id="active-room-post-link" href="#" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+                                스터디 상세글 보기
+                                <span class="material-symbols-outlined !text-xs">arrow_forward</span>
+                            </a>
+                        </div>
+                        <!-- Messages list -->
+                        <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+                            <!-- Messages rendered dynamically -->
+                        </div>
+                        <!-- Input Form -->
+                        <form id="chat-form-el" class="p-4 border-t border-white/10 flex items-center gap-3 bg-black/10" onsubmit="sendChatMessage(event)">
+                            <input type="text" id="chat-input" placeholder="메시지를 입력하세요..." autocomplete="off"
+                                   class="flex-1 h-12 px-5 rounded-full bg-white/10 dark:bg-white/5 border border-white/10 focus:outline-none focus:border-primary text-sm text-text-light-primary dark:text-text-dark-primary">
+                            <button type="submit" class="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-white hover:opacity-90 active:scale-95 transition-all shadow-[0_4px_15px_rgba(233,177,99,0.3)]">
+                                <span class="material-symbols-outlined">send</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Client-side Chat Controller Script -->
+    <th:block th:fragment="script">
+        <script th:inline="javascript">
+            const myNickname = [[${nickname}]];
+            let stompClient = null;
+            let currentStudyId = null;
+            let currentSubscription = null;
+
+            function selectRoom(studyId, title, isHost, approvedCount, maxCount, postId) {
+                // 1. UI 토글
+                document.getElementById('chat-empty-state').classList.add('hidden');
+                const activeState = document.getElementById('chat-active-state');
+                activeState.classList.remove('hidden');
+                activeState.classList.add('flex');
+
+                // 2. 헤더 세팅
+                document.getElementById('active-room-title').textContent = title;
+                document.getElementById('active-room-members').textContent = `멤버 ${approvedCount} / ${maxCount} 명`;
+                document.getElementById('active-room-post-link').href = `/page/post/detail?id=${postId}`;
+
+                // 3. 카드 액티브 스타일
+                document.querySelectorAll('.room-card').forEach(card => {
+                    card.classList.remove('bg-primary/20', 'border-primary/30', 'scale-[1.01]');
+                });
+                const activeCard = document.getElementById('room-card-' + studyId);
+                if (activeCard) {
+                    activeCard.classList.add('bg-primary/20', 'border-primary/30', 'scale-[1.01]');
+                }
+
+                currentStudyId = studyId;
+
+                // 4. 기존 메시지 로드 및 구독 스위칭
+                loadChatHistory(studyId);
+            }
+
+            async function loadChatHistory(studyId) {
+                const box = document.getElementById('chat-messages');
+                box.innerHTML = '<div class="text-center text-gray-400 text-xs py-10">대화 기록을 로드하는 중...</div>';
+
+                try {
+                    const res = await fetch(`/api/chat/${studyId}/messages`, { credentials: 'include' });
+                    if (res.ok) {
+                        const messages = await res.json();
+                        renderChatHistory(messages);
+                        connectWebSocket(studyId);
+                    } else if (res.status === 401 || res.status === 403) {
+                        box.innerHTML = '<div class="text-center text-red-400 text-xs font-bold py-10">이 대화방에 접근 권한이 없습니다. 🔒</div>';
+                    } else {
+                        throw new Error();
+                    }
+                } catch (e) {
+                    box.innerHTML = '<div class="text-center text-red-500 text-xs font-bold py-10">대화 기록 로딩 중 오류가 발생했습니다.</div>';
+                }
+            }
+
+            function renderChatHistory(messages) {
+                const box = document.getElementById('chat-messages');
+                box.innerHTML = '';
+                if (!messages || messages.length === 0) {
+                    box.innerHTML = '<div class="text-center text-gray-400 text-xs font-bold py-10" id="chat-empty-msg">첫 메시지를 남겨보세요! ✨</div>';
+                } else {
+                    messages.forEach(msg => appendMessage(msg));
+                }
+                scrollToBottom();
+            }
+
+            function appendMessage(msg) {
+                const box = document.getElementById('chat-messages');
+                const emptyTxt = document.getElementById('chat-empty-msg');
+                if (emptyTxt) emptyTxt.remove();
+
+                const isMe = (msg.senderNickname === myNickname);
+
+                const div = document.createElement('div');
+                div.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-4 animate-in fade-in slide-in-from-bottom-2 duration-300`;
+
+                div.innerHTML = `
+                    ${!isMe ? `<span class="text-[11px] font-black opacity-40 mb-1.5 ml-1 text-text-light-primary dark:text-text-dark-primary">${msg.senderNickname}</span>` : ''}
+                    <div class="flex items-end gap-2 ${isMe ? 'flex-row-reverse' : 'flex-row'} max-w-[75%]">
+                        <div class="${isMe ? 'bg-primary text-white shadow-[0_4px_15px_rgba(233,177,99,0.3)] rounded-l-2xl rounded-tr-2xl' : 'bg-white/10 dark:bg-white/5 text-text-light-primary dark:text-text-dark-primary border border-white/10 rounded-r-2xl rounded-tl-2xl'} px-4 py-2.5 text-[13px] leading-relaxed break-words font-medium">
+                            ${msg.message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
+                        </div>
+                        <span class="text-[9px] text-gray-400 shrink-0 min-w-8">${msg.createdAt ? msg.createdAt.split('T')[1].substring(0, 5) : ''}</span>
+                    </div>
+                `;
+                box.appendChild(div);
+                scrollToBottom();
+            }
+
+            function connectWebSocket(studyId) {
+                // 기존 구독 정리
+                if (currentSubscription) {
+                    currentSubscription.unsubscribe();
+                    currentSubscription = null;
+                }
+
+                if (!stompClient) {
+                    const socket = new SockJS('/ws-stomp');
+                    stompClient = Stomp.over(socket);
+                    stompClient.debug = null;
+
+                    stompClient.connect({}, function (frame) {
+                        subscribeToRoom(studyId);
+                    });
+                } else {
+                    subscribeToRoom(studyId);
+                }
+            }
+
+            function subscribeToRoom(studyId) {
+                currentSubscription = stompClient.subscribe(`/topic/study/${studyId}`, function (message) {
+                    const msg = JSON.parse(message.body);
+                    // 현재 선택된 방일 때만 메시지 렌더링
+                    if (currentStudyId === msg.studyId) {
+                        appendMessage(msg);
+                    }
+                    // 왼쪽 사이드바 마지막 메시지 프리뷰 갱신
+                    const preview = document.getElementById('room-last-msg-' + msg.studyId);
+                    if (preview) {
+                        preview.textContent = msg.message;
+                    }
+                });
+            }
+
+            function sendChatMessage(e) {
+                e.preventDefault();
+                const input = document.getElementById('chat-input');
+                const message = input.value.trim();
+                if (!message || !stompClient || !currentStudyId) return;
+
+                stompClient.send(`/app/chat/${currentStudyId}`, {}, JSON.stringify({ message }));
+                input.value = '';
+            }
+
+            function scrollToBottom() {
+                setTimeout(() => {
+                    const box = document.getElementById('chat-messages');
+                    if (box) {
+                        box.scrollTop = box.scrollHeight;
+                    }
+                }, 50);
+            }
+        </script>
+    </th:block>
+
+</body>
+
+</html>

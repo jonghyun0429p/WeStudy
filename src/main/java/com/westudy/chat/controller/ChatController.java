@@ -1,5 +1,6 @@
 package com.westudy.chat.controller;
 
+import com.westudy.chat.dto.ChatRoomResponseDTO;
 import com.westudy.chat.dto.ChatMessageRequestDTO;
 import com.westudy.chat.dto.ChatMessageResponseDTO;
 import com.westudy.chat.service.ChatService;
@@ -52,5 +53,16 @@ public class ChatController {
         log.info("과거 채팅 내역 불러오기 요청 - studyId: {}", studyId);
         List<ChatMessageResponseDTO> messageList = chatService.getChatHistory(studyId);
         return ResponseEntity.ok(messageList);
+    }
+
+    /**
+     * 내가 가입된 실시간 채팅방 목록 조회
+     */
+    @GetMapping("/api/chat/rooms")
+    @Operation(summary = "내가 가입된 채팅방 목록 조회", description = "내가 방장이거나 승인된 스터디 채팅방 리스트를 가져옵니다.")
+    public ResponseEntity<List<ChatRoomResponseDTO>> getMyChatRooms() {
+        log.info("내가 가입된 채팅방 목록 불러오기");
+        List<ChatRoomResponseDTO> rooms = chatService.getMyChatRooms();
+        return ResponseEntity.ok(rooms);
     }
 }

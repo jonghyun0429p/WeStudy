@@ -18,4 +18,22 @@
         ORDER BY c.created_at ASC
     </select>
 
+    <select id="findChatRoomsByUserId" resultType="com.westudy.chat.dto.ChatRoomResponseDTO">
+        SELECT 
+            s.id AS studyId,
+            s.post_id AS postId,
+            s.title,
+            s.location,
+            s.max_member AS maxMember,
+            s.state,
+            CASE WHEN s.user_id = #{userId} THEN true ELSE false END AS isHost,
+            (SELECT COUNT(*) FROM study_participant sp WHERE sp.study_id = s.id AND sp.status = 'APPROVED') AS approvedMemberCount,
+            (SELECT message FROM chat_message cm WHERE cm.study_id = s.id ORDER BY cm.created_at DESC LIMIT 1) AS lastMessage
+        FROM study s
+        LEFT JOIN study_participant sp ON s.id = sp.study_id AND sp.user_id = #{userId}
+        WHERE s.delete_at IS NULL 
+          AND (s.user_id = #{userId} OR sp.status = 'APPROVED')
+        ORDER BY (SELECT cm.created_at FROM chat_message cm WHERE cm.study_id = s.id ORDER BY cm.created_at DESC LIMIT 1) DESC, s.created_at DESC
+    </select>
+
 </mapper>

@@ -142,6 +142,8 @@
 
               <!-- 로그인 상태에 따라 분기 -->
               <th:block th:if="${nickname != null}">
+                <a class="text-sm font-medium leading-normal text-text-light-primary dark:text-text-dark-primary"
+                  href="/page/chat">실시간 채팅</a>
                 <a href="/page/user/info/data"
                   class="text-sm font-medium leading-normal text-text-light-primary dark:text-text-dark-primary">
                   <span th:text="${nickname} + ' 님'">사용자 님</span>
