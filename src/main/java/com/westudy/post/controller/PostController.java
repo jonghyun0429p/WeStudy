@@ -32,9 +32,7 @@ public class PostController {
     @PostMapping("/insert")
     @Operation(summary = "게시글 작성", description = "게시글을 저장합니다.")
     public ResponseEntity<Map<String, String>> insertPost(@RequestBody PostInsertDTO postDTO){
-        log.info("게시글 작성 요청 진입");
         postSevice.insertPost(SecurityUtil.getCurrentUserId(), postDTO);
-        log.info("게시글 작성 성공");
         return ResponseUtils.redirect("/page/post");
     }
 

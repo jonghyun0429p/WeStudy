@@ -40,7 +40,6 @@ public class StudyContoller {
     @Operation(summary = "스터디 인원 승인", description = "스터디 신청 인원 승인 요청")
     public ResponseEntity<Map<String, String>> approveStudy(@RequestBody StudyManageDTO studyManageDTO){
                 boolean isFull = studyService.approveAndCheckIfFull(studyManageDTO.getUserId(), studyManageDTO.getStudyId());
-        log.info("스터디 인원 승인 성공");
 
         Map<String, String> response = new HashMap<>();
         response.put("status", isFull ? "FULL" : "OK");
@@ -68,7 +67,6 @@ public class StudyContoller {
     @Operation(summary = "스터디 생성", description = "스터디를 생성하면 DB에 저장")
     public ResponseEntity<Map<String, String>> insertStudy(@RequestBody StudyInsertDTO studyInsertDTO){
         studyService.insertStudy(studyInsertDTO);
-        log.info("스터디 생성 성공");
 
         return ResponseUtils.redirect("/page/study");
     }
@@ -77,7 +75,6 @@ public class StudyContoller {
     @Operation(summary = "스터디 내용 변경", description = "스터디 변경사항 적용")
     public ResponseEntity<Map<String, String>> updateStudy(@RequestBody StudyUpdateDTO studyUpdateDTO){
         studyService.updateStudy(studyUpdateDTO);
-        log.info("스터디 업데이트 성공");
 
         return ResponseUtils.redirect("/page/study/detail?id="+studyUpdateDTO.getId());
     }
@@ -86,7 +83,6 @@ public class StudyContoller {
     @Operation(summary = "제거 시간 지정", description = "soft delete를 적용하는 제거 과정")
     public ResponseEntity<Map<String, String>> deleteStudy(@RequestBody long id){
         studyService.deleteStudy(id);
-        log.info("스터디 제거 설정");
 
         return ResponseUtils.redirect("/page/study");
     }
