@@ -46,3 +46,6 @@ jwt:
 kakao:
   rest-api-key: ${KAKAO_REST_API_KEY:default-rest-key}
   js-api-key: ${KAKAO_JS_API_KEY:default-js-key}
+
+ai-server:
+  url: ${AI_SERVER_URL:http://localhost:8000}
